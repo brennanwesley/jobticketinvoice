@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Test Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        .input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .language-toggle {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #f3f4f6;
+        }
+        pre {
+            background-color: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Auth Test Page</h1>
+            <button id="languageToggle" class="language-toggle">
+                <span id="currentLang">English</span>
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="flex border-b mb-4">
+                <div id="loginTab" class="tab active" onclick="switchTab('login')">Login</div>
+                <div id="registerTab" class="tab" onclick="switchTab('register')">Register</div>
+                <div id="profileTab" class="tab" onclick="switchTab('profile')">Profile</div>
+                <div id="logoTab" class="tab" onclick="switchTab('logo')">Logo Upload</div>
+            </div>
+
+            <div id="loginContent" class="tab-content active">
+                <h2 class="text-xl font-semibold mb-4" data-en="Login" data-es="Iniciar Sesión">Login</h2>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="label" for="loginEmail" data-en="Email" data-es="Correo Electrónico">Email</label>
+                        <input type="email" id="loginEmail" class="input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="label" for="loginPassword" data-en="Password" data-es="Contraseña">Password</label>
+                        <input type="password" id="loginPassword" class="input" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-en="Login" data-es="Iniciar Sesión">Login</button>
+                </form>
+            </div>
+
+            <div id="registerContent" class="tab-content">
+                <h2 class="text-xl font-semibold mb-4" data-en="Register" data-es="Registrarse">Register</h2>
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label class="label" for="registerName" data-en="Name" data-es="Nombre">Name</label>
+                        <input type="text" id="registerName" class="input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="label" for="registerEmail" data-en="Email" data-es="Correo Electrónico">Email</label>
+                        <input type="email" id="registerEmail" class="input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="label" for="registerPassword" data-en="Password" data-es="Contraseña">Password</label>
+                        <input type="password" id="registerPassword" class="input" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="label" for="registerRole" data-en="Role" data-es="Rol">Role</label>
+                        <select id="registerRole" class="input" required>
+                            <option value="tech" data-en="Technician" data-es="Técnico">Technician</option>
+                            <option value="manager" data-en="Manager" data-es="Gerente">Manager</option>
+                        </select>
+                    </div>
+                    <div id="techFields" class="mb-3">
+                        <label class="label" for="registerJobType" data-en="Job Type" data-es="Tipo de Trabajo">Job Type</label>
+                        <select id="registerJobType" class="input">
+                            <option value="pump_service_technician" data-en="Pump Service Technician" data-es="Técnico de Servicio de Bombas">Pump Service Technician</option>
+                            <option value="hvac_technician" data-en="HVAC Technician" data-es="Técnico de HVAC">HVAC Technician</option>
+                            <option value="plumbing_technician" data-en="Plumbing Technician" data-es="Técnico de Plomería">Plumbing Technician</option>
+                            <option value="electrical_technician" data-en="Electrical Technician" data-es="Técnico Eléctrico">Electrical Technician</option>
+                            <option value="general_maintenance" data-en="General Maintenance" data-es="Mantenimiento General">General Maintenance</option>
+                        </select>
+                    </div>
+                    <div id="managerFields" class="mb-3" style="display: none;">
+                        <label class="label" for="registerCompany" data-en="Company Name" data-es="Nombre de la Empresa">Company Name</label>
+                        <input type="text" id="registerCompany" class="input">
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-en="Register" data-es="Registrarse">Register</button>
+                </form>
+            </div>
+
+            <div id="profileContent" class="tab-content">
+                <h2 class="text-xl font-semibold mb-4" data-en="User Profile" data-es="Perfil de Usuario">User Profile</h2>
+                <button id="fetchProfileBtn" class="btn btn-primary mb-4" data-en="Fetch Profile" data-es="Obtener Perfil">Fetch Profile</button>
+                <div id="profileData" class="bg-gray-50 p-4 rounded-md">
+                    <p data-en="Login first to see your profile data" data-es="Inicie sesión primero para ver los datos de su perfil">Login first to see your profile data</p>
+                </div>
+            </div>
+
+            <div id="logoContent" class="tab-content">
+                <h2 class="text-xl font-semibold mb-4" data-en="Logo Upload" data-es="Subir Logo">Logo Upload</h2>
+                <form id="logoForm">
+                    <div class="mb-3">
+                        <label class="label" for="logoFile" data-en="Select Logo Image" data-es="Seleccionar Imagen de Logo">Select Logo Image</label>
+                        <input type="file" id="logoFile" class="input" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-en="Upload Logo" data-es="Subir Logo">Upload Logo</button>
+                </form>
+                <div id="currentLogo" class="mt-4">
+                    <p data-en="Current Logo:" data-es="Logo Actual:">Current Logo:</p>
+                    <div id="logoContainer" class="mt-2">
+                        <p data-en="No logo available" data-es="No hay logo disponible">No logo available</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="text-xl font-semibold mb-4" data-en="Authentication Status" data-es="Estado de Autenticación">Authentication Status</h2>
+            <div id="authStatus" class="mb-4">
+                <p data-en="Not logged in" data-es="No ha iniciado sesión">Not logged in</p>
+            </div>
+            <button id="logoutBtn" class="btn btn-secondary" data-en="Logout" data-es="Cerrar Sesión">Logout</button>
+        </div>
+
+        <div class="card">
+            <h2 class="text-xl font-semibold mb-4" data-en="API Response" data-es="Respuesta de la API">API Response</h2>
+            <pre id="apiResponse">No response yet</pre>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = 'http://localhost:8000/api';
+        let currentLanguage = 'en';
+        let authToken = localStorage.getItem('auth_token');
+        
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const logoForm = document.getElementById('logoForm');
+        const fetchProfileBtn = document.getElementById('fetchProfileBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const languageToggle = document.getElementById('languageToggle');
+        const registerRole = document.getElementById('registerRole');
+        const techFields = document.getElementById('techFields');
+        const managerFields = document.getElementById('managerFields');
+        const authStatus = document.getElementById('authStatus');
+        const apiResponse = document.getElementById('apiResponse');
+        const profileData = document.getElementById('profileData');
+        const logoContainer = document.getElementById('logoContainer');
+        const currentLang = document.getElementById('currentLang');
+
+        // Initialize
+        function init() {
+            updateAuthStatus();
+            setupEventListeners();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            loginForm.addEventListener('submit', handleLogin);
+            registerForm.addEventListener('submit', handleRegister);
+            logoForm.addEventListener('submit', handleLogoUpload);
+            fetchProfileBtn.addEventListener('click', fetchProfile);
+            logoutBtn.addEventListener('click', handleLogout);
+            languageToggle.addEventListener('click', toggleLanguage);
+            registerRole.addEventListener('change', toggleRoleFields);
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Hide all tabs and content
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Show selected tab and content
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            document.getElementById(`${tabName}Content`).classList.add('active');
+        }
+
+        // Toggle role-specific fields
+        function toggleRoleFields() {
+            const role = registerRole.value;
+            if (role === 'tech') {
+                techFields.style.display = 'block';
+                managerFields.style.display = 'none';
+            } else {
+                techFields.style.display = 'none';
+                managerFields.style.display = 'block';
+            }
+        }
+
+        // Toggle Language
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'es' : 'en';
+            currentLang.textContent = currentLanguage === 'en' ? 'English' : 'Español';
+            
+            document.querySelectorAll(`[data-${currentLanguage}]`).forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLanguage}`);
+            });
+        }
+
+        // Update Auth Status
+        function updateAuthStatus() {
+            if (authToken) {
+                const payload = parseJwt(authToken);
+                authStatus.innerHTML = `
+                    <p data-en="Logged in as:" data-es="Conectado como:">
+                        ${currentLanguage === 'en' ? 'Logged in as:' : 'Conectado como:'} 
+                        <strong>${payload.email || 'Unknown'}</strong>
+                    </p>
+                `;
+                logoutBtn.style.display = 'block';
+            } else {
+                authStatus.innerHTML = `
+                    <p data-en="Not logged in" data-es="No ha iniciado sesión">
+                        ${currentLanguage === 'en' ? 'Not logged in' : 'No ha iniciado sesión'}
+                    </p>
+                `;
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        // Parse JWT Token
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                return {};
+            }
+        }
+
+        // API Calls
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                apiResponse.textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok && data.token) {
+                    authToken = data.token;
+                    localStorage.setItem('auth_token', authToken);
+                    updateAuthStatus();
+                    alert(currentLanguage === 'en' ? 'Login successful!' : '¡Inicio de sesión exitoso!');
+                }
+            } catch (error) {
+                apiResponse.textContent = error.toString();
+                console.error('Login error:', error);
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const role = document.getElementById('registerRole').value;
+            
+            const userData = { name, email, password, role };
+            
+            if (role === 'tech') {
+                userData.job_type = document.getElementById('registerJobType').value;
+            } else {
+                userData.company_name = document.getElementById('registerCompany').value;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                apiResponse.textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    alert(currentLanguage === 'en' ? 'Registration successful! Please login.' : '¡Registro exitoso! Por favor inicie sesión.');
+                    switchTab('login');
+                }
+            } catch (error) {
+                apiResponse.textContent = error.toString();
+                console.error('Registration error:', error);
+            }
+        }
+
+        async function fetchProfile() {
+            if (!authToken) {
+                alert(currentLanguage === 'en' ? 'Please login first' : 'Por favor inicie sesión primero');
+                switchTab('login');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/users/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                apiResponse.textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    profileData.innerHTML = `
+                        <div>
+                            <p><strong data-en="Name:" data-es="Nombre:">${currentLanguage === 'en' ? 'Name:' : 'Nombre:'}</strong> ${data.name}</p>
+                            <p><strong data-en="Email:" data-es="Correo:">${currentLanguage === 'en' ? 'Email:' : 'Correo:'}</strong> ${data.email}</p>
+                            <p><strong data-en="Role:" data-es="Rol:">${currentLanguage === 'en' ? 'Role:' : 'Rol:'}</strong> ${data.role === 'tech' ? 
+                                (currentLanguage === 'en' ? 'Technician' : 'Técnico') : 
+                                (currentLanguage === 'en' ? 'Manager' : 'Gerente')}</p>
+                            ${data.role === 'tech' ? 
+                                `<p><strong data-en="Job Type:" data-es="Tipo de Trabajo:">${currentLanguage === 'en' ? 'Job Type:' : 'Tipo de Trabajo:'}</strong> ${data.job_type}</p>` : 
+                                `<p><strong data-en="Company:" data-es="Empresa:">${currentLanguage === 'en' ? 'Company:' : 'Empresa:'}</strong> ${data.company_name}</p>`}
+                        </div>
+                    `;
+                    
+                    // Update logo container if logo exists
+                    if (data.logo_url) {
+                        logoContainer.innerHTML = `<img src="${data.logo_url}" alt="Logo" class="max-h-32">`;
+                    }
+                }
+            } catch (error) {
+                apiResponse.textContent = error.toString();
+                console.error('Profile fetch error:', error);
+            }
+        }
+
+        async function handleLogoUpload(e) {
+            e.preventDefault();
+            
+            if (!authToken) {
+                alert(currentLanguage === 'en' ? 'Please login first' : 'Por favor inicie sesión primero');
+                switchTab('login');
+                return;
+            }
+            
+            const logoFile = document.getElementById('logoFile').files[0];
+            if (!logoFile) {
+                alert(currentLanguage === 'en' ? 'Please select a file' : 'Por favor seleccione un archivo');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('logo', logoFile);
+            
+            try {
+                const response = await fetch(`${API_URL}/users/logo`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                apiResponse.textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    alert(currentLanguage === 'en' ? 'Logo uploaded successfully!' : '¡Logo subido exitosamente!');
+                    fetchProfile(); // Refresh profile to see the new logo
+                }
+            } catch (error) {
+                apiResponse.textContent = error.toString();
+                console.error('Logo upload error:', error);
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('auth_token');
+            authToken = null;
+            updateAuthStatus();
+            profileData.innerHTML = `<p data-en="Login first to see your profile data" data-es="Inicie sesión primero para ver los datos de su perfil">
+                ${currentLanguage === 'en' ? 'Login first to see your profile data' : 'Inicie sesión primero para ver los datos de su perfil'}
+            </p>`;
+            logoContainer.innerHTML = `<p data-en="No logo available" data-es="No hay logo disponible">
+                ${currentLanguage === 'en' ? 'No logo available' : 'No hay logo disponible'}
+            </p>`;
+            alert(currentLanguage === 'en' ? 'Logged out successfully' : 'Sesión cerrada exitosamente');
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>

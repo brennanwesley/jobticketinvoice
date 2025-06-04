@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:vX1iSqJ3Oqe1a0Go@db.mzzdpqkfyfrbbppdmftj.supabase.co:5432/postgres
+      - SECRET_KEY=${SECRET_KEY:-your-very-secure-key}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      - ALGORITHM=${ALGORITHM:-HS256}
+      - FERNET_KEY=${FERNET_KEY}
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  frontend:
+    image: node:18-slim
+    working_dir: /app
+    ports:
+      - "3001:3001"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api/v1
+      - PORT=3001
+      - HOST=0.0.0.0
+      - WDS_SOCKET_PORT=3001
+      - DANGEROUSLY_DISABLE_HOST_CHECK=true
+    volumes:
+      - ./frontend:/app
+    command: bash -c "npm install --legacy-peer-deps && npm start"
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-jobticketinvoice}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
