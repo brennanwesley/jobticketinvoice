@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
+import LanguageToggle from './LanguageToggle';
 
 /**
  * Public Landing Page component
@@ -10,23 +11,27 @@ const PublicLandingPage = () => {
   const { t } = useLanguage();
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white relative">
+      {/* Language Toggle */}
+      <div className="h-14 relative">
+        <LanguageToggle />
+      </div>
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              {t('publicLanding.title')}
+              {t('publicLanding.headline') || "Oilfield Job Ticketing & Invoicing Made Simple"}
             </h1>
             <p className="text-xl text-gray-300 mb-8">
-              {t('publicLanding.subtitle')}
+              {t('publicLanding.subheadline') || "The fastest way for oilfield service companies to get paid."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/signup"
                 className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg text-center transition-colors"
               >
-                {t('publicLanding.signUp')}
+                {t('publicLanding.getStarted') || "Get Started"}
               </Link>
               <Link
                 to="/login"

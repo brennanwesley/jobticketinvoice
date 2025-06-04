@@ -3,6 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import RoleSelection from './RoleSelection';
 import TechSignupForm from './TechSignupForm';
 import ManagerSignupForm from './ManagerSignupForm';
+import LanguageToggle from './LanguageToggle';
 
 /**
  * Signup Page component
@@ -34,7 +35,11 @@ const SignupPage = () => {
   };
   
   return (
-    <div className="min-h-screen bg-slate-900 py-12 px-4">
+    <div className="min-h-screen bg-slate-900 py-12 px-4 relative">
+      {/* Language Toggle */}
+      <div className="h-14 relative">
+        <LanguageToggle />
+      </div>
       <div className="max-w-md mx-auto mb-8">
         <h1 className="text-3xl font-bold text-center text-white mb-2">
           {selectedRole ? t(`signup.${selectedRole}Signup`) : t('signup.title')}

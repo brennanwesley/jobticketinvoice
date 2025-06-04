@@ -16,6 +16,8 @@ const translations = {
     publicLanding: {
       title: 'Streamline Your Job Tickets and Invoices',
       subtitle: 'The all-in-one platform for field service technicians and managers to create, track, and manage job tickets and invoices.',
+      headline: 'Oilfield Job Ticketing & Invoicing Made Simple',
+      subheadline: 'The fastest way for oilfield service companies to get paid.',
       signUp: 'Sign Up',
       login: 'Login',
       featuresTitle: 'Why Choose Our Platform',
@@ -199,6 +201,8 @@ const translations = {
     publicLanding: {
       title: 'Optimice sus Boletas de Trabajo y Facturas',
       subtitle: 'La plataforma todo en uno para técnicos de servicio y gerentes para crear, rastrear y administrar boletas de trabajo y facturas.',
+      headline: 'Boletos y Facturación para el Campo Petrolero, Simplificados',
+      subheadline: 'La forma más rápida para que las empresas de servicios petroleros reciban su pago.',
       signUp: 'Registrarse',
       login: 'Iniciar Sesión',
       featuresTitle: 'Por Qué Elegir Nuestra Plataforma',

@@ -15,7 +15,10 @@ const LanguageToggle = () => {
   return (
     <button
       onClick={toggleLanguage}
-      className="absolute top-0 right-0 m-4 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors flex items-center"
+      className="absolute top-0 right-0 m-4 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-md transition-colors flex items-center focus:outline-none focus:ring-2 focus:ring-orange-500"
+      aria-label={`${instructionText} ${targetLanguage}`}
+      title={`${instructionText} ${targetLanguage}`}
+      tabIndex={0}
     >
       <span className="text-xs italic text-gray-400 mr-1">{instructionText}</span>
       <span>{targetLanguage}</span>
