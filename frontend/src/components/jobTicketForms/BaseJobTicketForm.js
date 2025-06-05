@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTicket } from '../../context/TicketContext';
 import { useAuth } from '../../context/AuthContext';
+import { calculateHoursBetween } from '../../utils/validators';
 
 /**
  * BaseJobTicketForm - Core form component that centralizes common job ticket functionality
