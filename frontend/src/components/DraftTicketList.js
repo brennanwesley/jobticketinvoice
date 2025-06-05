@@ -77,26 +77,28 @@ const DraftTicketList = () => {
         {t('jobTicket.drafts')}
       </h1>
       
-      {draftTickets.length === 0 ? (
-        <div className="text-center py-12 bg-gray-800 rounded-lg">
-          <p className="text-gray-400">{t('jobTicket.noDrafts')}</p>
-        </div>
-      ) : (
+      (
         <div className="overflow-x-auto bg-gray-800 rounded-lg shadow max-w-full">
           <table className="min-w-full divide-y divide-gray-700">
             <thead>
               <tr>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider w-24">
+                  {t('common.edit')}
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-24 sm:w-auto">
                   {t('jobTicket.date')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-32 sm:w-auto">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-48 sm:w-1/4">
                   {t('jobTicket.company')}
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden md:table-cell">
-                  {t('jobTicket.description')}
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-48 sm:w-1/4">
+                  {t('jobTicket.location')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-16 sm:w-auto">
                   {t('jobTicket.hours')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  {t('jobTicket.description')}
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
                   {t('common.actions')}
@@ -104,23 +106,45 @@ const DraftTicketList = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-700">
-              {draftTickets.map((ticket) => (
+              {draftTickets.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="px-6 py-4">
+                    <div className="text-center py-8">
+                      <p className="text-gray-400">{t('jobTicket.noDrafts')}</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : draftTickets.map((ticket) => (
                 <tr key={ticket.id} className="hover:bg-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
+                    <button
+                      onClick={() => handleEditTicket(ticket)}
+                      className="text-orange-500 hover:text-orange-400 font-medium"
+                      aria-label={`${t('common.edit')} ${ticket.companyName || t('jobTicket.untitledTicket')}`}
+                    >
+                      {t('common.edit')}
+                    </button>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     {formatDate(ticket.jobDate)}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <div className="max-w-[120px] sm:max-w-xs truncate">
+                    <div className="truncate">
                       {ticket.companyName || t('jobTicket.untitledTicket')}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm hidden md:table-cell">
-                    <div className="max-w-xs truncate">
-                      {ticket.workDescription || '-'}
+                  <td className="px-6 py-4 text-sm">
+                    <div className="truncate">
+                      {ticket.location || '-'}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     {ticket.workTotalHours || '0'}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <div className="truncate">
+                      {ticket.workDescription || '-'}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <div className="flex flex-col sm:flex-row justify-end sm:space-x-3 space-y-2 sm:space-y-0">
@@ -130,13 +154,6 @@ const DraftTicketList = () => {
                         aria-label={`${t('common.view')} ${ticket.companyName || t('jobTicket.untitledTicket')}`}
                       >
                         {t('common.view')}
-                      </button>
-                      <button
-                        onClick={() => handleEditTicket(ticket)}
-                        className="text-orange-500 hover:text-orange-400"
-                        aria-label={`${t('common.edit')} ${ticket.companyName || t('jobTicket.untitledTicket')}`}
-                      >
-                        {t('common.edit')}
                       </button>
                       <button
                         onClick={() => handleDeleteTicket(ticket.id)}
@@ -159,23 +176,20 @@ const DraftTicketList = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-medium mb-4">
-              {t('jobTicket.editDraft')}
+              Need to edit this Job Ticket?
             </h3>
-            <p className="text-gray-300 mb-6">
-              {t('jobTicket.confirmEditDraft')}
-            </p>
             <div className="flex justify-end space-x-3">
               <button
                 onClick={cancelEditDraft}
                 className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md"
               >
-                {t('common.cancel')}
+                No
               </button>
               <button
                 onClick={confirmEditDraft}
                 className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md"
               >
-                {t('common.continue')}
+                Yes
               </button>
             </div>
           </div>
