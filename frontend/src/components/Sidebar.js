@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useTicket } from '../context/TicketContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { FolderIcon, DocumentTextIcon, UserIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, DocumentTextIcon, UserIcon, DocumentCheckIcon } from '@heroicons/react/24/outline';
 
 /**
  * Utility function to conditionally join class names
@@ -27,12 +27,16 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
   const { user, isAuthenticated, logout } = useAuth();
   
   // Handle navigation item click
-  const handleNavigationClick = (item) => {
-    if (item.name === translations.navigation[0].name) {
-      setViewMode('landing');
-    } else if (item.name === translations.navigation[1].name) {
-      setViewMode('draftList');
-    }
+  const handleCreateTicketClick = () => {
+    setViewMode('landing');
+  };
+  
+  const handleSubmittedTicketsClick = () => {
+    setViewMode('submittedList');
+  };
+  
+  const handleDraftTicketsClick = () => {
+    setViewMode('draftList');
   };
 
   return (
@@ -101,72 +105,60 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <li>
               <ul role="list" className="-mx-2 space-y-1">
-                {/* Job Tickets section */}
-                <li>
-                  <a
-                    href="#"
-                    className={classNames(
-                      viewMode === 'landing'
-                        ? 'bg-gray-800 text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
-                    )}
-                    onClick={() => handleNavigationClick(translations.navigation[0])}
+                {/* Create Job Ticket Button */}
+                <li className="mb-6">
+                  <button
+                    onClick={handleCreateTicketClick}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white rounded-md py-2 px-4 flex items-center justify-center gap-x-2 transition-colors"
                   >
-                    <FolderIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                    {translations.navigation[0].name}
-                  </a>
+                    <PlusCircleIcon className="h-5 w-5" aria-hidden="true" />
+                    <span>{t('jobTicket.createNew')}</span>
+                  </button>
                 </li>
                 
-                {/* Draft Job Tickets section */}
+                {/* Job Tickets Header */}
                 <li>
-                  <div 
-                    className="text-xs font-semibold leading-6 text-gray-400 px-2 mt-4 mb-2 cursor-pointer hover:text-white"
-                    onClick={() => handleNavigationClick(translations.navigation[1])}
-                  >
-                    {translations.navigation[1].name}
+                  <div className="text-sm font-semibold leading-6 text-white px-2 mb-3">
+                    {t('nav.jobTickets')}
                   </div>
-                  {draftTickets.length === 0 ? (
-                    <div className="text-xs text-gray-500 px-2">{translations.noDrafts}</div>
-                  ) : (
-                    <ul role="list" className="-mx-2 space-y-1">
-                      {draftTickets.map((draft) => (
-                        <li key={draft.id}>
-                          <button
-                            onClick={() => {
-                              setSelectedDraftTicket(draft);
-                              setViewMode('draft');
-                            }}
-                            className={classNames(
-                              selectedDraftTicket?.id === draft.id
-                                ? 'bg-gray-800 text-white'
-                                : 'text-gray-400 hover:text-white hover:bg-gray-800',
-                              'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold w-full text-left'
-                            )}
-                          >
-                            <DocumentTextIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                            <span className="truncate">
-                              {draft.companyName || draft.workDescription?.substring(0, 20) + '...'}
-                            </span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                 </li>
                 
                 {/* Submitted Job Tickets section */}
                 <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400 px-2 mt-4 mb-2">
-                    {translations.navigation[2].name}
-                  </div>
-                  <div className="text-xs text-gray-500 px-2">{translations.noSubmitted}</div>
+                  <button
+                    onClick={handleSubmittedTicketsClick}
+                    className={classNames(
+                      viewMode === 'submittedList'
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800',
+                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold w-full text-left'
+                    )}
+                  >
+                    <DocumentCheckIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                    {t('nav.submitted')}
+                  </button>
+                </li>
+                
+                {/* Draft Job Tickets section */}
+                <li>
+                  <button
+                    onClick={handleDraftTicketsClick}
+                    className={classNames(
+                      viewMode === 'draftList'
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800',
+                      'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold w-full text-left'
+                    )}
+                  >
+                    <DocumentTextIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                    {t('nav.drafts')}
+                  </button>
                 </li>
                 
                 {/* Development Tools section - only visible in development mode */}
                 {process.env.NODE_ENV === 'development' && (
-                  <li>
-                    <div className="text-xs font-semibold leading-6 text-gray-400 px-2 mt-6 mb-2">
+                  <li className="mt-8">
+                    <div className="text-xs font-semibold leading-6 text-gray-400 px-2 mb-2">
                       Development Tools
                     </div>
                     <ul role="list" className="-mx-2 space-y-1">

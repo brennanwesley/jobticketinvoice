@@ -7,9 +7,10 @@ import Sidebar from './Sidebar';
 import LanguageToggle from './LanguageToggle';
 import LandingPage from './LandingPage';
 import VoiceRecorder from './VoiceRecorder';
-import ManualForm from './ManualForm';
+import JobTicketFormSelector from './JobTicketFormSelector';
 import DraftTicketList from './DraftTicketList';
 import DraftTicketView from './DraftTicketView';
+import SubmittedTicketList from './SubmittedTicketList';
 
 /**
  * AppDashboard component
@@ -101,14 +102,17 @@ const AppContent = () => {
       {/* Draft Job Tickets List View */}
       {viewMode === 'draftList' && <DraftTicketList />}
       
+      {/* Submitted Job Tickets List View */}
+      {viewMode === 'submittedList' && <SubmittedTicketList />}
+      
       {/* Landing Page */}
       {viewMode === 'landing' && ticketMode === null && <LandingPage />}
       
       {/* Voice Job Ticket Flow */}
       {viewMode === 'form' && ticketMode === 'voice' && <VoiceRecorder />}
       
-      {/* Manual Input Form */}
-      {viewMode === 'form' && ticketMode === 'manual' && <ManualForm />}
+      {/* Job Ticket Form - uses dynamic form selector based on job type */}
+      {viewMode === 'form' && ticketMode === 'manual' && <JobTicketFormSelector />}
       
       {/* Draft Ticket View */}
       {viewMode === 'draft' && <DraftTicketView />}

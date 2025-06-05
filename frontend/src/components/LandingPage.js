@@ -9,7 +9,7 @@ import { useVoice } from '../context/VoiceContext';
  * Displays the initial screen with options to create job tickets
  */
 const LandingPage = () => {
-  const { translations } = useLanguage();
+  const { t } = useLanguage();
   const { setTicketMode, setViewMode } = useTicket();
   const { startVoiceRecording } = useVoice();
   
@@ -28,21 +28,21 @@ const LandingPage = () => {
   
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
-      <h2 className="text-xl font-bold text-center mb-8">{translations.createJobTicket}</h2>
+      <h2 className="text-xl font-bold text-center mb-8">{t('jobTicket.createNew')}</h2>
       <div className="flex flex-col sm:flex-row gap-4">
         <button
           onClick={handleManualClick}
           className="flex items-center justify-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-4 rounded-lg transition-colors"
         >
           <PencilSquareIcon className="h-8 w-8 text-orange-500" />
-          <span>{translations.byHand}</span>
+          <span>{t('byHand')}</span>
         </button>
         <button
           onClick={handleVoiceClick}
           className="flex items-center justify-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-4 rounded-lg transition-colors"
         >
           <MicrophoneIcon className="h-8 w-8 text-orange-500" />
-          <span>{translations.byVoice}</span>
+          <span>{t('byVoice')}</span>
         </button>
       </div>
     </div>
