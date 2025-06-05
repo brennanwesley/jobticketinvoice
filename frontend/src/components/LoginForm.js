@@ -69,8 +69,14 @@ const LoginForm = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        // Redirect to dashboard on success
-        navigate('/dashboard');
+        // For the dev admin account, redirect directly to job ticket entry page
+        // DEVELOPMENT ONLY - This special routing will be removed in production
+        if (result.is_dev_admin) {
+          navigate('/dashboard');
+        } else {
+          // Regular user flow - redirect to dashboard
+          navigate('/dashboard');
+        }
       } else {
         setSubmitError(result.error);
       }

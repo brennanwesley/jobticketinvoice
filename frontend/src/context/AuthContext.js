@@ -55,6 +55,28 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     
+    // DEVELOPMENT ONLY: Hardcoded admin account for testing
+    // TODO: REMOVE THIS BEFORE PRODUCTION DEPLOYMENT
+    if (email === 'BrennanWesley' && password === 'admin000') {
+      console.log('DEV MODE: Using hardcoded admin account');
+      // Set a mock token and user for the admin
+      const mockToken = 'dev-admin-token';
+      setAuthToken(mockToken);
+      setToken(mockToken);
+      
+      // Set admin user data
+      const adminUser = {
+        id: 'admin-dev',
+        email: 'admin@example.com',
+        name: 'Admin User',
+        role: 'admin',
+        is_dev_admin: true // Flag to identify this is the dev admin account
+      };
+      setUser(adminUser);
+      
+      return { success: true, is_dev_admin: true };
+    }
+    
     try {
       const formData = new FormData();
       formData.append('username', email); // OAuth2 expects 'username' field
