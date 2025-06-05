@@ -38,7 +38,11 @@ const LoginForm = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Email validation
+    // Special case for admin username
+    // DEVELOPMENT ONLY - This check will be removed in production
+    const isAdminLogin = formData.email.trim() === 'BrennanWesley';
+    
+    // Email validation - skip format validation for admin username
     if (!formData.email.trim()) {
       newErrors.email = t('validation.emailRequired');
     }
@@ -107,12 +111,13 @@ const LoginForm = () => {
             {t('login.email')}
           </label>
           <input
-            type="email"
+            type="text" /* Changed from type="email" to type="text" to allow non-email usernames */
             id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             className={`w-full px-4 py-2 bg-slate-700 border ${errors.email ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+            placeholder="Email or Admin Username" /* Updated placeholder */
           />
           {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
         </div>
