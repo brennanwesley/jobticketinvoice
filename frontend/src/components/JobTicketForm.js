@@ -9,7 +9,7 @@ import { calculateHoursBetween } from '../utils/validators';
  * Uses React Hook Form for form management
  */
 const JobTicketForm = ({ readOnly = false, draftData = null }) => {
-  const { translations } = useLanguage();
+  const { t } = useLanguage();
   const { formData, updateFormData, saveJobTicketAsDraft } = useTicket();
   
   // State for selected part in dropdown
@@ -59,12 +59,12 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
   // Get parts list based on current language
   const getPartsList = () => {
     return [
-      { value: translations.partLubricant, label: translations.partLubricant },
-      { value: translations.partPumpSeal, label: translations.partPumpSeal },
-      { value: translations.partThrustChamber, label: translations.partThrustChamber },
-      { value: translations.partVFDBreaker, label: translations.partVFDBreaker },
-      { value: translations.partServiceKit, label: translations.partServiceKit },
-      { value: translations.partOther, label: translations.partOther },
+      { value: t('jobTicket.parts.lubricant'), label: t('jobTicket.parts.lubricant') },
+      { value: t('jobTicket.parts.pumpSeal'), label: t('jobTicket.parts.pumpSeal') },
+      { value: t('jobTicket.parts.thrustChamber'), label: t('jobTicket.parts.thrustChamber') },
+      { value: t('jobTicket.parts.vfdBreakerSwitch'), label: t('jobTicket.parts.vfdBreakerSwitch') },
+      { value: t('jobTicket.parts.serviceKit'), label: t('jobTicket.parts.serviceKit') },
+      { value: t('jobTicket.parts.other'), label: t('jobTicket.parts.other') },
     ];
   };
   
@@ -127,7 +127,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Job Date */}
       <div>
         <label htmlFor="jobDate" className="block text-sm font-medium text-gray-300">
-          {translations.jobDate}
+          {t('jobTicket.date')}
         </label>
         <div className="mt-1">
           <input
@@ -144,7 +144,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Company Name */}
       <div>
         <label htmlFor="companyName" className="block text-sm font-medium text-gray-300">
-          {translations.companyName}
+          {t('jobTicket.companyName')}
         </label>
         <div className="mt-1">
           <input
@@ -161,7 +161,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Customer Name */}
       <div>
         <label htmlFor="customerName" className="block text-sm font-medium text-gray-300">
-          {translations.customerName}
+          {t('jobTicket.customerName')}
         </label>
         <div className="mt-1">
           <input
@@ -178,7 +178,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Location */}
       <div>
         <label htmlFor="location" className="block text-sm font-medium text-gray-300">
-          {translations.location}
+          {t('jobTicket.location')}
         </label>
         <div className="mt-1">
           <input
@@ -195,7 +195,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Work Type */}
       <div>
         <label htmlFor="workType" className="block text-sm font-medium text-gray-300">
-          {translations.workType}
+          {t('jobTicket.workType')}
         </label>
         <div className="mt-1">
           <input
@@ -212,7 +212,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Equipment */}
       <div>
         <label htmlFor="equipment" className="block text-sm font-medium text-gray-300">
-          {translations.equipment}
+          {t('jobTicket.equipment')}
         </label>
         <div className="mt-1">
           <input
@@ -225,115 +225,113 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
           />
         </div>
       </div>
-      
-      {/* Work Time Section */}
-      <div className="grid grid-cols-1 gap-y-6 gap-x-6 sm:grid-cols-3 max-w-3xl">
+
+      {/* Work Hours */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label htmlFor="workStartTime" className="block text-sm font-medium text-gray-300">
-            {translations.workStartTime}
+            {t('jobTicket.workStartTime')}
           </label>
           <div className="mt-1">
             <input
               type="time"
               id="workStartTime"
               name="workStartTime"
-              className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
               readOnly={readOnly}
               {...register('workStartTime')}
             />
           </div>
         </div>
-        
         <div>
           <label htmlFor="workEndTime" className="block text-sm font-medium text-gray-300">
-            {translations.workEndTime}
+            {t('jobTicket.workEndTime')}
           </label>
           <div className="mt-1">
             <input
               type="time"
               id="workEndTime"
               name="workEndTime"
-              className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
               readOnly={readOnly}
               {...register('workEndTime')}
             />
           </div>
         </div>
-        
-        <div>
-          <label htmlFor="workTotalHours" className="block text-sm font-medium text-gray-300">
-            {translations.workTotalHours}
-          </label>
-          <div className="mt-1">
-            <input
-              type="number"
-              step="0.25"
-              id="workTotalHours"
-              name="workTotalHours"
-              className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-              readOnly={readOnly}
-              {...register('workTotalHours')}
-            />
-          </div>
+      </div>
+      
+      {/* Total Work Hours (calculated) */}
+      <div>
+        <label htmlFor="workTotalHours" className="block text-sm font-medium text-gray-300">
+          {t('jobTicket.workTotalHours')}
+        </label>
+        <div className="mt-1">
+          <input
+            type="text"
+            id="workTotalHours"
+            name="workTotalHours"
+            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+            readOnly={true}
+            {...register('workTotalHours')}
+          />
         </div>
       </div>
       
-      {/* Drive Time Section */}
-      <div className="grid grid-cols-1 gap-y-6 gap-x-6 sm:grid-cols-3 max-w-3xl">
+      {/* Drive Hours */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label htmlFor="driveStartTime" className="block text-sm font-medium text-gray-300">
-            {translations.driveStartTime}
+            {t('jobTicket.driveStartTime')}
           </label>
           <div className="mt-1">
             <input
               type="time"
               id="driveStartTime"
               name="driveStartTime"
-              className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
               readOnly={readOnly}
               {...register('driveStartTime')}
             />
           </div>
         </div>
-        
         <div>
           <label htmlFor="driveEndTime" className="block text-sm font-medium text-gray-300">
-            {translations.driveEndTime}
+            {t('jobTicket.driveEndTime')}
           </label>
           <div className="mt-1">
             <input
               type="time"
               id="driveEndTime"
               name="driveEndTime"
-              className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
               readOnly={readOnly}
               {...register('driveEndTime')}
             />
           </div>
         </div>
-        
-        <div>
-          <label htmlFor="driveTotalHours" className="block text-sm font-medium text-gray-300">
-            {translations.driveTotalHours}
-          </label>
-          <div className="mt-1 flex items-center">
-            <input
-              type="number"
-              step="0.25"
-              id="driveTotalHours"
-              name="driveTotalHours"
-              className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-              readOnly={readOnly}
-              {...register('driveTotalHours')}
-            />
-          </div>
+      </div>
+      
+      {/* Total Drive Hours (calculated) */}
+      <div>
+        <label htmlFor="driveTotalHours" className="block text-sm font-medium text-gray-300">
+          {t('jobTicket.driveTotalHours')}
+        </label>
+        <div className="mt-1">
+          <input
+            type="text"
+            id="driveTotalHours"
+            name="driveTotalHours"
+            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+            readOnly={true}
+            {...register('driveTotalHours')}
+          />
         </div>
       </div>
       
       {/* Travel Type */}
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">
-          {translations.travelType}
+          {t('jobTicket.travelType')}
         </label>
         <div className="flex space-x-4">
           <Controller
@@ -356,7 +354,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
                     onChange={() => field.onChange('oneWay')}
                     checked={field.value === 'oneWay'}
                   />
-                  <span>{translations.oneWay}</span>
+                  <span>{t('jobTicket.oneWay')}</span>
                 </label>
                 
                 <label className={`
@@ -374,7 +372,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
                     onChange={() => field.onChange('roundTrip')}
                     checked={field.value === 'roundTrip'}
                   />
-                  <span>{translations.roundTrip}</span>
+                  <span>{t('jobTicket.roundTrip')}</span>
                 </label>
               </>
             )}
@@ -385,7 +383,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Parts Used Section */}
       <div className="max-w-3xl">
         <label className="block text-sm font-medium text-gray-300 mb-2">
-          {translations.partsUsed}
+          {t('jobTicket.partsUsed')}
         </label>
         
         {!readOnly && (
@@ -395,7 +393,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
               onChange={(e) => setSelectedPart(e.target.value)}
               className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
             >
-              <option value="">{translations.selectPartsPlaceholder}</option>
+              <option value="">{t('jobTicket.parts.placeholder')}</option>
               {getPartsList().map((part) => (
                 <option key={part.value} value={part.value}>
                   {part.label}
@@ -409,7 +407,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
               disabled={!selectedPart}
               className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50"
             >
-              {translations.addPart}
+              {t('jobTicket.addPart')}
             </button>
           </div>
         )}
@@ -437,7 +435,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Description of Work */}
       <div>
         <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
-          {translations.descriptionOfWork}
+          {t('jobTicket.descriptionOfWork')}
         </label>
         <div className="mt-1">
           <textarea
@@ -454,7 +452,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Submitted By */}
       <div>
         <label htmlFor="submittedBy" className="block text-sm font-medium text-gray-300">
-          {translations.submittedBy}
+          {t('jobTicket.submittedBy')}
         </label>
         <div className="mt-1">
           <input
@@ -471,15 +469,15 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Status Messages */}
       {showSuccessMessage && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <strong className="font-bold">{translations.success}!</strong>
-          <span className="block sm:inline"> {translations.jobTicketSubmitted}</span>
+          <strong className="font-bold">{t('common.success')}!</strong>
+          <span className="block sm:inline"> {t('jobTicket.submitted')}</span>
         </div>
       )}
       
       {showErrorMessage && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <strong className="font-bold">{translations.error}!</strong>
-          <span className="block sm:inline"> {translations.jobTicketSubmitError}</span>
+          <strong className="font-bold">{t('common.error')}!</strong>
+          <span className="block sm:inline"> {t('jobTicket.submitError')}</span>
         </div>
       )}
       
@@ -492,7 +490,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
               disabled={isSubmitting}
               className={`inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${isSubmitting ? 'bg-gray-500' : 'bg-orange-600 hover:bg-orange-700'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-200`}
             >
-              {isSubmitting ? translations.submitting : translations.submitJobTicket}
+              {isSubmitting ? t('common.submitting') : t('jobTicket.submit')}
               {isSubmitting && (
                 <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
