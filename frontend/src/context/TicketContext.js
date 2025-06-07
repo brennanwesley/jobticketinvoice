@@ -40,8 +40,7 @@ export const useTicket = () => {
   const ticketView = useTicketView();
   
   // Create a combined context value that matches the original API
-  // Return the legacy context if available, otherwise use the combined context
-  return context || useMemo(() => ({
+  const combinedContext = useMemo(() => ({
     // Combined context properties here
     // View state from TicketViewContext
     viewMode: ticketView.viewMode,
@@ -79,7 +78,8 @@ export const useTicket = () => {
     ticketSubmission
   ]);
   
-  // The return statement is now in the useMemo above
+  // Return the legacy context if available, otherwise use the combined context
+  return context || combinedContext;
 };
 
 export default TicketContext;
