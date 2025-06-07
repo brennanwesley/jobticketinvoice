@@ -46,7 +46,7 @@ class ErrorBoundary extends Component {
           <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-red-500 mb-2">Something went wrong</h2>
           <p className="text-gray-300 mb-4">
-            We're sorry, but there was an error loading this component.
+            We&apos;re sorry, but there was an error loading this component.
           </p>
           {process.env.NODE_ENV === 'development' && error && (
             <details className="text-left bg-gray-800 p-4 rounded-md mt-4 overflow-auto max-h-64">

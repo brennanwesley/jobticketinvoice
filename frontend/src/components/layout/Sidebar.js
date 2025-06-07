@@ -127,9 +127,9 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
         
         {/* Navigation */}
         <nav className="flex flex-1 flex-col">
-          <ul role="list" className="flex flex-1 flex-col gap-y-7">
+          <ul className="flex flex-1 flex-col gap-y-7">
             <li>
-              <ul role="list" className="-mx-2 space-y-1">
+              <ul className="-mx-2 space-y-1">
                 {/* Create Job Ticket Button */}
                 <li className="mb-6">
                   <Button
@@ -193,7 +193,7 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                     <div className="text-xs font-semibold leading-6 text-gray-400 px-2 mb-2">
                       Development Tools
                     </div>
-                    <ul role="list" className="-mx-2 space-y-1">
+                    <ul className="-mx-2 space-y-1">
                       <li>
                         <Link
                           to="/auth-test"

@@ -33,19 +33,16 @@ export const TicketProvider = ({ children }) => {
 export const useTicket = () => {
   const context = useContext(TicketContext);
   
-  if (context) {
-    // If we're within the legacy context provider, use it directly
-    return context;
-  }
-  
-  // Otherwise, combine the focused contexts
+  // Always call hooks at the top level, regardless of whether we use them
   const draftTickets = useDraftTickets();
   const ticketForm = useTicketForm();
   const ticketSubmission = useTicketSubmission();
   const ticketView = useTicketView();
   
   // Create a combined context value that matches the original API
-  const combinedContext = useMemo(() => ({
+  // Return the legacy context if available, otherwise use the combined context
+  return context || useMemo(() => ({
+    // Combined context properties here
     // View state from TicketViewContext
     viewMode: ticketView.viewMode,
     setViewMode: ticketView.navigateTo,
@@ -82,7 +79,7 @@ export const useTicket = () => {
     ticketSubmission
   ]);
   
-  return combinedContext;
+  // The return statement is now in the useMemo above
 };
 
 export default TicketContext;

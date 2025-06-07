@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useMemo, memo } from 'react';
 import { getToken, setToken as setAuthToken, removeToken, isAuthenticated, parseToken, isTokenExpired, authenticatedFetch } from '../utils/auth';
 import { useLocalStorage } from '../hooks';
 

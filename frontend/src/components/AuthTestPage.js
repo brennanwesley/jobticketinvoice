@@ -149,8 +149,9 @@ const AuthTestPage = () => {
               <h3 className="font-medium mb-2">{t('auth.loginTest')}</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Email</label>
+                  <label htmlFor="login-email" className="block text-sm text-gray-400 mb-1">Email</label>
                   <input
+                    id="login-email"
                     type="email"
                     name="email"
                     value={loginData.email}
@@ -159,8 +160,9 @@ const AuthTestPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Password</label>
+                  <label htmlFor="login-password" className="block text-sm text-gray-400 mb-1">Password</label>
                   <input
+                    id="login-password"
                     type="password"
                     name="password"
                     value={loginData.password}
@@ -183,8 +185,9 @@ const AuthTestPage = () => {
               <h3 className="font-medium mb-2">{t('auth.registerTest')}</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Name</label>
+                  <label htmlFor="register-name" className="block text-sm text-gray-400 mb-1">Name</label>
                   <input
+                    id="register-name"
                     type="text"
                     name="name"
                     value={registerData.name}
@@ -193,8 +196,9 @@ const AuthTestPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Email</label>
+                  <label htmlFor="register-email" className="block text-sm text-gray-400 mb-1">Email</label>
                   <input
+                    id="register-email"
                     type="email"
                     name="email"
                     value={registerData.email}
@@ -203,8 +207,9 @@ const AuthTestPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Password</label>
+                  <label htmlFor="register-password" className="block text-sm text-gray-400 mb-1">Password</label>
                   <input
+                    id="register-password"
                     type="password"
                     name="password"
                     value={registerData.password}
@@ -213,8 +218,9 @@ const AuthTestPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Role</label>
+                  <label htmlFor="register-role" className="block text-sm text-gray-400 mb-1">Role</label>
                   <select
+                    id="register-role"
                     name="role"
                     value={registerData.role}
                     onChange={handleRegisterInputChange}
@@ -226,8 +232,9 @@ const AuthTestPage = () => {
                 </div>
                 {registerData.role === 'tech' && (
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Job Type</label>
+                    <label htmlFor="register-job-type" className="block text-sm text-gray-400 mb-1">Job Type</label>
                     <select
+                      id="register-job-type"
                       name="job_type"
                       value={registerData.job_type}
                       onChange={handleRegisterInputChange}
@@ -244,8 +251,9 @@ const AuthTestPage = () => {
                 )}
                 {registerData.role === 'manager' && (
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">Company Name</label>
+                    <label htmlFor="register-company-name" className="block text-sm text-gray-400 mb-1">Company Name</label>
                     <input
+                      id="register-company-name"
                       type="text"
                       name="company_name"
                       value={registerData.company_name || ''}
