@@ -2,6 +2,7 @@
  * Enhanced state persistence utilities with encryption support
  * for secure storage of application state in localStorage/sessionStorage
  */
+import React, { useState } from 'react';
 import CryptoJS from 'crypto-js';
 
 // Secret key for encryption - in production, this should be loaded from environment variables
@@ -153,7 +154,7 @@ export const useStorage = (key, initialValue = null, options = {}) => {
   } = options;
   
   // Get from storage on initial render
-  const [storedValue, setStoredValue] = React.useState(() => {
+  const [storedValue, setStoredValue] = useState(() => {
     return getItem(key, { 
       encrypted: shouldEncrypt, 
       storageType, 

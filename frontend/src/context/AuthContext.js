@@ -120,7 +120,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setError, setToken, setUser]);
   
   // Register function - memoized to prevent unnecessary re-renders
   const register = useCallback(async (userData) => {
@@ -152,7 +152,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setLoading, setError, login]);
   
   // Upload logo function - memoized to prevent unnecessary re-renders
   const uploadLogo = useCallback(async (file) => {
@@ -235,6 +235,6 @@ export const useAuth = () => {
 };
 
 // Memoize the AuthProvider component to prevent unnecessary re-renders
-export const MemoizedAuthProvider = React.memo(AuthProvider);
+export const MemoizedAuthProvider = memo(AuthProvider);
 
 export default AuthContext;
