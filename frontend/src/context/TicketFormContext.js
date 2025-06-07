@@ -25,12 +25,12 @@ export const TicketFormProvider = ({ children }) => {
     equipment: '',
     workStartTime: '',
     workEndTime: '',
-    workTotalHours: '',
+    workTotalTime: '',
     driveStartTime: '',
     driveEndTime: '',
-    driveTotalHours: '',
+    driveTotalTime: '',
     travelType: 'roundTrip',
-    parts: [],
+    partsUsed: [],
     workDescription: '',
     submittedBy: '',
     customerSignature: '',
@@ -100,6 +100,9 @@ export const TicketFormProvider = ({ children }) => {
     }
   }, [formErrors]);
   
+  // Alias for updateFormField to maintain consistent API across components
+  const updateFormData = updateFormField;
+  
   /**
    * Handle form input change event
    * @param {Event} e - Change event
@@ -123,12 +126,12 @@ export const TicketFormProvider = ({ children }) => {
       equipment: '',
       workStartTime: '',
       workEndTime: '',
-      workTotalHours: '',
+      workTotalTime: '',
       driveStartTime: '',
       driveEndTime: '',
-      driveTotalHours: '',
+      driveTotalTime: '',
       travelType: 'roundTrip',
-      parts: [],
+      partsUsed: [],
       workDescription: '',
       submittedBy: '',
       customerSignature: '',
@@ -145,8 +148,8 @@ export const TicketFormProvider = ({ children }) => {
     if (!part) return;
     
     setFormData(prev => {
-      const updatedParts = [...(prev.parts || []), part];
-      return { ...prev, parts: updatedParts };
+      const updatedParts = [...(prev.partsUsed || []), part];
+      return { ...prev, partsUsed: updatedParts };
     });
     setIsFormDirty(true);
   }, []);
@@ -157,9 +160,9 @@ export const TicketFormProvider = ({ children }) => {
    */
   const removePart = useCallback((partIndex) => {
     setFormData(prev => {
-      const updatedParts = [...(prev.parts || [])];
+      const updatedParts = [...(prev.partsUsed || [])];
       updatedParts.splice(partIndex, 1);
-      return { ...prev, parts: updatedParts };
+      return { ...prev, partsUsed: updatedParts };
     });
     setIsFormDirty(true);
   }, []);
@@ -248,13 +251,14 @@ export const TicketFormProvider = ({ children }) => {
  * Custom hook to use the ticket form context
  * @returns {Object} Ticket form context value
  */
-export const useTicketForm = () => {
+export const useTicketForm = () => useContext(TicketFormContext);
+
+// Export context values for use in other components
+export const useTicketFormValues = () => {
   const context = useContext(TicketFormContext);
-  
   if (!context) {
-    throw new Error('useTicketForm must be used within a TicketFormProvider');
+    throw new Error('useTicketFormValues must be used within a TicketFormProvider');
   }
-  
   return context;
 };
 

@@ -53,7 +53,18 @@ export const jobTicketTranslations = {
       // Additional job ticket translations from existing file
       listening: 'Listening now...',
       voiceCaptured: 'Your Job Ticket has been captured — please review',
-      stopRecording: 'Stop Recording'
+      stopRecording: 'Stop Recording',
+      cancelRecording: 'Cancel Recording',
+      restartRecording: 'Restart Recording',
+      allDoneCreateJobTicket: 'All Done, Create Ticket',
+      processingAudio: 'Processing audio...',
+      goBack: 'Go Back',
+      speakJobTicketInfo: 'Speak your job ticket information',
+      extractedData: 'Extracted Information',
+      rawTranscription: 'Raw Voice Transcription',
+      recognitionQuality: 'Recognition Quality',
+      editForm: 'Edit Job Ticket Form',
+      noTranscriptionAvailable: 'No transcription available'
     }
   },
   
@@ -106,7 +117,18 @@ export const jobTicketTranslations = {
       // Additional job ticket translations from existing file
       listening: 'Escuchando ahora...',
       voiceCaptured: 'Su Boleta de Trabajo ha sido capturada — por favor revise',
-      stopRecording: 'Detener Grabación'
+      stopRecording: 'Detener Grabación',
+      cancelRecording: 'Cancelar Grabación',
+      restartRecording: 'Reiniciar Grabación',
+      allDoneCreateJobTicket: 'Listo, Crear Boleta',
+      processingAudio: 'Procesando audio...',
+      goBack: 'Volver',
+      speakJobTicketInfo: 'Hable la información de su boleta de trabajo',
+      extractedData: 'Información Extraída',
+      rawTranscription: 'Transcripción de Voz',
+      recognitionQuality: 'Calidad de Reconocimiento',
+      editForm: 'Editar Formulario de Boleta de Trabajo',
+      noTranscriptionAvailable: 'No hay transcripción disponible'
     }
   }
 };

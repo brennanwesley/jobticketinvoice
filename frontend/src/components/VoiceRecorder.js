@@ -1,16 +1,17 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { MicrophoneIcon, StopIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { ArrowLeftIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import { useLanguage } from '../context/LanguageContext';
 import { useVoice } from '../context/VoiceContext';
 import { useTicket } from '../context/TicketContext';
 import JobTicketForm from './JobTicketForm';
+import { parseJobTicketFromVoice } from '../utils/voiceParser';
 
 /**
  * Voice Recorder component for voice-based job ticket creation
  */
 const VoiceRecorder = () => {
-  const { translations } = useLanguage();
+  const { translations, t } = useLanguage();
   const { 
     voiceStatus, 
     transcribedText, 
@@ -24,8 +25,28 @@ const VoiceRecorder = () => {
     setTicketMode, 
     setViewMode, 
     saveJobTicketAsDraft, 
-    setSelectedDraftTicket 
+    setSelectedDraftTicket,
+    updateFormData
   } = useTicket();
+  
+  // State to store parsed job ticket data
+  const [parsedJobTicket, setParsedJobTicket] = useState({});
+  
+  // Parse transcribed text when it changes
+  useEffect(() => {
+    if (transcribedText && voiceStatus === 'captured') {
+      const extractedData = parseJobTicketFromVoice(transcribedText);
+      console.log('Parsed job ticket data:', extractedData);
+      setParsedJobTicket(extractedData);
+      
+      // Update form data with extracted values
+      Object.entries(extractedData).forEach(([field, value]) => {
+        if (value) {
+          updateFormData(field, value);
+        }
+      });
+    }
+  }, [transcribedText, voiceStatus, updateFormData]);
   
   // Handle back button click
   const handleBackClick = () => {
@@ -151,37 +172,136 @@ const VoiceRecorder = () => {
         </div>
       )}
       
-      {/* Captured state with form */}
+      {/* Captured state with transcription and options */}
       {voiceStatus === 'captured' && (
         <div>
-          <div className="flex justify-center mb-8">
-            <p className="text-xl font-medium">{translations.voiceCaptured}</p>
-            {/* Restart recording button */}
+          {/* Header with title and back button */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">{t('jobTicket.voiceCaptured')}</h2>
             <button 
-              onClick={startVoiceRecording}
-              className="ml-4 bg-orange-700 hover:bg-orange-800 text-white px-4 py-1 rounded-lg transition-colors flex items-center space-x-2"
+              onClick={handleBackClick}
+              className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2"
             >
-              <MicrophoneIcon className="h-5 w-5" />
-              <span>{translations.restartRecording}</span>
+              <ArrowLeftIcon className="h-5 w-5" />
+              <span>{t('jobTicket.goBack')}</span>
             </button>
           </div>
           
-          {/* Show form with prefilled data */}
-          <div className="w-full max-w-2xl mx-auto">
-            <JobTicketForm />
-            
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => {
-                  const newDraft = saveJobTicketAsDraft({ workDescription: transcribedText });
-                  setSelectedDraftTicket(newDraft);
-                  setViewMode('draft');
-                }}
-                className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                {translations.submit}
-              </button>
+          {/* Prominent transcription display - the main feature requested */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8 border-2 border-orange-500">
+            <h3 className="text-xl font-bold mb-3 text-orange-500">{t('jobTicket.rawTranscription')}</h3>
+            <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg max-h-60 overflow-y-auto">
+              <p className="text-gray-900 dark:text-gray-100 text-lg">{transcribedText || t('jobTicket.noTranscriptionAvailable')}</p>
             </div>
+          </div>
+          
+          {/* Action buttons - clearly separated and prominently displayed */}
+          <div className="flex flex-wrap gap-4 justify-center mb-8">
+            <button 
+              onClick={startVoiceRecording}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center space-x-2 text-lg"
+            >
+              <MicrophoneIcon className="h-6 w-6" />
+              <span>{t('jobTicket.restartRecording')}</span>
+            </button>
+            
+            <button
+              onClick={() => {
+                const newDraft = saveJobTicketAsDraft({ ...parsedJobTicket, workDescription: transcribedText });
+                setSelectedDraftTicket(newDraft);
+                setViewMode('draft');
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center space-x-2 text-lg"
+            >
+              <PencilSquareIcon className="h-6 w-6" />
+              <span>{t('jobTicket.submit')}</span>
+            </button>
+          </div>
+          
+          {/* Extracted data with collapsible section */}
+          <div className="bg-gray-800 rounded-lg p-4 mb-6 border border-gray-700">
+            <div className="flex justify-between items-center cursor-pointer" 
+                 onClick={() => {
+                   const detailsEl = document.getElementById('extractedDataDetails');
+                   if (detailsEl) detailsEl.open = !detailsEl.open;
+                 }}>
+              <h3 className="text-lg font-medium">{t('jobTicket.extractedData')}</h3>
+              <span className="text-sm text-gray-400">(Click to expand/collapse)</span>
+            </div>
+            
+            <details id="extractedDataDetails" className="mt-2">
+              <summary className="sr-only">Extracted Data Details</summary>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pl-4 border-l-2 border-gray-700">
+                {Object.entries(parsedJobTicket).map(([key, value]) => {
+                  // Skip empty values and arrays
+                  if (!value || (Array.isArray(value) && value.length === 0)) return null;
+                  
+                  // Format the key for display
+                  const formattedKey = key.replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, str => str.toUpperCase());
+                  
+                  // Format the value for display
+                  const formattedValue = Array.isArray(value) 
+                    ? value.join(', ')
+                    : value;
+                  
+                  return (
+                    <div key={key} className="flex">
+                      <span className="font-medium text-gray-400 mr-2">{formattedKey}:</span>
+                      <span className="text-white">{formattedValue}</span>
+                    </div>
+                  );
+                })}
+                
+                {/* Recognition quality indicator */}
+                <div className="col-span-2 mt-4 flex items-center">
+                  <span className="text-sm text-gray-400 mr-2">{t('jobTicket.recognitionQuality')}:</span>
+                  <div className="flex space-x-1">
+                    {Object.keys(parsedJobTicket).filter(key => !!parsedJobTicket[key]).length >= 5 ? (
+                      <>
+                        <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                        <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                        <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                        <span className="ml-2 text-green-500 text-xs">Good</span>
+                      </>
+                    ) : Object.keys(parsedJobTicket).filter(key => !!parsedJobTicket[key]).length >= 3 ? (
+                      <>
+                        <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+                        <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+                        <div className="h-2 w-2 rounded-full bg-gray-600"></div>
+                        <span className="ml-2 text-yellow-500 text-xs">Fair</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="h-2 w-2 rounded-full bg-red-500"></div>
+                        <div className="h-2 w-2 rounded-full bg-gray-600"></div>
+                        <div className="h-2 w-2 rounded-full bg-gray-600"></div>
+                        <span className="ml-2 text-red-500 text-xs">Poor</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+          
+          {/* Optional: Form with prefilled data (collapsed by default) */}
+          <div className="bg-gray-800 rounded-lg p-4 mb-6 border border-gray-700">
+            <div className="flex justify-between items-center cursor-pointer"
+                 onClick={() => {
+                   const formEl = document.getElementById('jobTicketFormDetails');
+                   if (formEl) formEl.open = !formEl.open;
+                 }}>
+              <h3 className="text-lg font-medium">{t('jobTicket.editForm')}</h3>
+              <span className="text-sm text-gray-400">(Click to expand/collapse)</span>
+            </div>
+            
+            <details id="jobTicketFormDetails" className="mt-2">
+              <summary className="sr-only">Job Ticket Form</summary>
+              <div className="mt-4">
+                <JobTicketForm />
+              </div>
+            </details>
           </div>
         </div>
       )}
