@@ -15,10 +15,10 @@
     "react-scripts": "5.0.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "test": "craco test",
-    "analyze": "ANALYZE=true craco build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "analyze": "ANALYZE=true react-scripts build",
     "eject": "react-scripts eject",
     "dev:auth": "node start-dev.js"
   },
