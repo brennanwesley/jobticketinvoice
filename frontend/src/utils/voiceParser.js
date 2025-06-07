@@ -324,7 +324,7 @@ const extractTravelType = (text) => {
  */
 const extractJobDate = (text) => {
   // Common date patterns
-  const datePattern = /(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/;
+  const datePattern = /(\d{1,2})[-./](\d{1,2})[-./](\d{2,4})/;
   const dateTextPattern = /(?:date|job date|on)[:\s]+([^.,]+)/i;
   
   // Check for date in format MM/DD/YYYY or similar
