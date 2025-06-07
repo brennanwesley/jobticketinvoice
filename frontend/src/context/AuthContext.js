@@ -1,5 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react';
 import { getToken, setToken as setAuthToken, removeToken, isAuthenticated, parseToken, isTokenExpired, authenticatedFetch } from '../utils/auth';
+import { useLocalStorage } from '../hooks';
 
 // Create the context
 const AuthContext = createContext();
@@ -10,8 +11,9 @@ const AuthContext = createContext();
  * @returns {React.Component} Provider component
  */
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(getToken() || null);
+  // Use localStorage for persistent user data across sessions
+  const [user, setUser] = useLocalStorage('auth_user', null);
+  const [token, setToken] = useLocalStorage('auth_token', getToken() || null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -50,8 +52,8 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [token]);
   
-  // Login function
-  const login = async (email, password) => {
+  // Login function - memoized to prevent unnecessary re-renders
+  const login = useCallback(async (email, password) => {
     setLoading(true);
     setError(null);
     
@@ -120,8 +122,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // Register function
-  const register = async (userData) => {
+  // Register function - memoized to prevent unnecessary re-renders
+  const register = useCallback(async (userData) => {
     setLoading(true);
     setError(null);
     
@@ -152,8 +154,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // Upload logo function (for manager users)
-  const uploadLogo = async (file) => {
+  // Upload logo function - memoized to prevent unnecessary re-renders
+  const uploadLogo = useCallback(async (file) => {
     if (!token) {
       setError('Not authenticated');
       return { success: false, error: 'Not authenticated' };
@@ -186,28 +188,31 @@ export const AuthProvider = ({ children }) => {
       setError('Network error during logo upload');
       return { success: false, error: 'Network error during logo upload' };
     }
-  };
+  }, [token, setUser, setError]);
   
-  // Logout function
-  const logout = () => {
+  // Logout function - memoized to prevent unnecessary re-renders
+  const logout = useCallback(() => {
     removeToken();
     setToken(null);
     setUser(null);
-  };
+  }, []);
   
-  // Context value
-  const contextValue = {
+  // Context value - memoized to prevent unnecessary re-renders
+  const contextValue = useMemo(() => ({
     user,
     token,
     loading,
     error,
-    isAuthenticated: !!user,
     login,
     register,
+    logout,
     uploadLogo,
-    logout
-  };
+    isAuthenticated: !!token,
+    isAdmin: user?.role === 'admin',
+    isManager: user?.role === 'manager' || user?.role === 'admin'
+  }), [user, token, loading, error, login, register, logout, uploadLogo]);
   
+  // Use React.memo to prevent unnecessary re-renders of children
   return (
     <AuthContext.Provider value={contextValue}>
       {children}
@@ -228,5 +233,8 @@ export const useAuth = () => {
   
   return context;
 };
+
+// Memoize the AuthProvider component to prevent unnecessary re-renders
+export const MemoizedAuthProvider = React.memo(AuthProvider);
 
 export default AuthContext;

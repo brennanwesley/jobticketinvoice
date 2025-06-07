@@ -3,14 +3,11 @@ import { Routes, Route } from 'react-router-dom';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { TicketProvider } from '../context/TicketContext';
 import { VoiceProvider } from '../context/VoiceContext';
-import Sidebar from './Sidebar';
+import Sidebar from './layout/Sidebar';
 import LanguageToggle from './LanguageToggle';
 import LandingPage from './LandingPage';
 import VoiceRecorder from './VoiceRecorder';
-import JobTicketFormSelector from './JobTicketFormSelector';
-import DraftTicketList from './DraftTicketList';
-import DraftTicketView from './DraftTicketView';
-import SubmittedTicketList from './SubmittedTicketList';
+import { JobTicketFormSelector, DraftTicketList, SubmittedTicketList, DraftTicketView } from './tickets';
 
 /**
  * AppDashboard component

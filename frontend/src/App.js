@@ -2,7 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
+import TicketProvider from './context/TicketProvider';
 import AppRoutes from './components/AppRoutes';
+import ErrorBoundary from './components/ErrorBoundary';
 
 /**
  * Main App component
@@ -10,13 +12,17 @@ import AppRoutes from './components/AppRoutes';
  */
 const App = () => {
   return (
-    <Router>
-      <LanguageProvider>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </LanguageProvider>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <LanguageProvider>
+          <AuthProvider>
+            <TicketProvider>
+              <AppRoutes />
+            </TicketProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </Router>
+    </ErrorBoundary>
   );
 };
 
