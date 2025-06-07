@@ -23,8 +23,8 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
   // Watch time fields to calculate totals
   const workStartTime = watch('workStartTime');
   const workEndTime = watch('workEndTime');
-  const driveStartTime = watch('driveStartTime');
-  const driveEndTime = watch('driveEndTime');
+  const travelStartTime = watch('travelStartTime');
+  const travelEndTime = watch('travelEndTime');
   
   // Update total hours when start/end times change
   useEffect(() => {
@@ -37,13 +37,13 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
   }, [workStartTime, workEndTime, setValue]);
   
   useEffect(() => {
-    if (driveStartTime && driveEndTime) {
-      const hours = calculateHoursBetween(driveStartTime, driveEndTime);
+    if (travelStartTime && travelEndTime) {
+      const hours = calculateHoursBetween(travelStartTime, travelEndTime);
       if (hours !== null) {
         setValue('driveTotalHours', hours);
       }
     }
-  }, [driveStartTime, driveEndTime, setValue]);
+  }, [travelStartTime, travelEndTime, setValue]);
   
   // Auto-save form data when fields change
   useEffect(() => {
@@ -72,17 +72,17 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
   const handleAddPart = () => {
     if (!selectedPart) return;
     
-    const currentParts = watch('parts') || [];
-    setValue('parts', [...currentParts, selectedPart]);
+    const currentParts = watch('partsUsed') || [];
+    setValue('partsUsed', [...currentParts, selectedPart]);
     setSelectedPart('');
   };
   
   // Handle removing a part
   const handleRemovePart = (index) => {
-    const currentParts = watch('parts') || [];
+    const currentParts = watch('partsUsed') || [];
     const updatedParts = [...currentParts];
     updatedParts.splice(index, 1);
-    setValue('parts', updatedParts);
+    setValue('partsUsed', updatedParts);
   };
   
   // Handle form submission
@@ -161,7 +161,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Customer Name */}
       <div>
         <label htmlFor="customerName" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.customerName')}
+          {t('jobTicket.customerName') || 'Customer Name'}
         </label>
         <div className="mt-1">
           <input
@@ -263,7 +263,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Total Work Hours (calculated) */}
       <div>
         <label htmlFor="workTotalHours" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.workTotalHours')}
+          {t('jobTicket.workTotalTime')}
         </label>
         <div className="mt-1">
           <input
@@ -277,11 +277,11 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         </div>
       </div>
       
-      {/* Drive Hours */}
+      {/* Travel Hours */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label htmlFor="driveStartTime" className="block text-sm font-medium text-gray-300">
-            {t('jobTicket.driveStartTime')}
+            {t('jobTicket.travelStartTime')}
           </label>
           <div className="mt-1">
             <input
@@ -296,7 +296,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         </div>
         <div>
           <label htmlFor="driveEndTime" className="block text-sm font-medium text-gray-300">
-            {t('jobTicket.driveEndTime')}
+            {t('jobTicket.travelEndTime')}
           </label>
           <div className="mt-1">
             <input
@@ -311,10 +311,10 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         </div>
       </div>
       
-      {/* Total Drive Hours (calculated) */}
+      {/* Total Travel Hours (calculated) */}
       <div>
         <label htmlFor="driveTotalHours" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.driveTotalHours')}
+          {t('jobTicket.travelTotalTime')}
         </label>
         <div className="mt-1">
           <input
@@ -383,7 +383,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Parts Used Section */}
       <div className="max-w-3xl">
         <label className="block text-sm font-medium text-gray-300 mb-2">
-          {t('jobTicket.partsUsed')}
+          {t('jobTicket.parts.title')}
         </label>
         
         {!readOnly && (
@@ -413,7 +413,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         )}
         
         <div className="mt-2 space-y-2">
-          {watch('parts')?.map((part, index) => (
+          {watch('partsUsed')?.map((part, index) => (
             <div key={index} className="flex items-center justify-between bg-gray-700 px-3 py-2 rounded-md">
               <span>{part}</span>
               {!readOnly && (
@@ -435,7 +435,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
       {/* Description of Work */}
       <div>
         <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.descriptionOfWork')}
+          {t('jobTicket.workDescription')}
         </label>
         <div className="mt-1">
           <textarea

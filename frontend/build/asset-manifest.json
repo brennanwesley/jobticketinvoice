@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ad1201c0.css",
+    "main.js": "/static/js/main.e07ff363.js",
+    "landing.js": "/static/js/landing.0b23e02e.chunk.js",
+    "auth.js": "/static/js/auth.f2dc8c86.chunk.js",
+    "profile.js": "/static/js/profile.d67f199a.chunk.js",
+    "dashboard.js": "/static/js/dashboard.d4fc2b44.chunk.js",
+    "auth-test.js": "/static/js/auth-test.51b1631a.chunk.js",
+    "static/js/949.376b0bdd.chunk.js": "/static/js/949.376b0bdd.chunk.js",
+    "static/js/167.38725c9f.chunk.js": "/static/js/167.38725c9f.chunk.js",
+    "index.html": "/index.html",
+    "main.ad1201c0.css.map": "/static/css/main.ad1201c0.css.map",
+    "main.e07ff363.js.map": "/static/js/main.e07ff363.js.map",
+    "landing.0b23e02e.chunk.js.map": "/static/js/landing.0b23e02e.chunk.js.map",
+    "auth.f2dc8c86.chunk.js.map": "/static/js/auth.f2dc8c86.chunk.js.map",
+    "profile.d67f199a.chunk.js.map": "/static/js/profile.d67f199a.chunk.js.map",
+    "dashboard.d4fc2b44.chunk.js.map": "/static/js/dashboard.d4fc2b44.chunk.js.map",
+    "auth-test.51b1631a.chunk.js.map": "/static/js/auth-test.51b1631a.chunk.js.map",
+    "949.376b0bdd.chunk.js.map": "/static/js/949.376b0bdd.chunk.js.map",
+    "167.38725c9f.chunk.js.map": "/static/js/167.38725c9f.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ad1201c0.css",
+    "static/js/main.e07ff363.js"
+  ]
+}
