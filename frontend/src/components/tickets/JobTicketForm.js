@@ -158,7 +158,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
             type="date"
             id="jobDate"
             name="jobDate"
-            label={t('jobDate')}
+            label={t('jobTicket.date')}
             register={register}
             rules={{ required: true }}
             error={errors.jobDate}
@@ -171,7 +171,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
             type="text"
             id="companyName"
             name="companyName"
-            label={t('companyName')}
+            label={t('jobTicket.companyName')}
             register={register}
             rules={{ required: true }}
             error={errors.companyName}
@@ -184,7 +184,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
             type="text"
             id="customerName"
             name="customerName"
-            label={t('customerName')}
+            label={t('jobTicket.customerName')}
             register={register}
             readOnly={readOnly}
           />
@@ -194,7 +194,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
             type="text"
             id="location"
             name="location"
-            label={t('location')}
+            label={t('jobTicket.location')}
             register={register}
             readOnly={readOnly}
           />
@@ -204,7 +204,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
             type="text"
             id="workType"
             name="workType"
-            label={t('workType')}
+            label={t('jobTicket.workType') || 'Work Type'}
             register={register}
             readOnly={readOnly}
           />
@@ -214,7 +214,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
             type="text"
             id="equipment"
             name="equipment"
-            label={t('equipment')}
+            label={t('jobTicket.equipment') || 'Equipment Serviced'}
             register={register}
             readOnly={readOnly}
           />
@@ -222,13 +222,13 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         
         {/* Work Hours Section */}
         <div className="mt-8">
-          <h3 className="text-lg font-medium text-gray-200 mb-4">{t('workTotalHours')}</h3>
+          <h3 className="text-lg font-medium text-gray-200 mb-4">{t('jobTicket.workTotalTime')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
               type="time"
               id="workStartTime"
               name="workStartTime"
-              label={t('workStartTime')}
+              label={t('jobTicket.workStartTime')}
               register={register}
               readOnly={readOnly}
             />
@@ -237,7 +237,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
               type="time"
               id="workEndTime"
               name="workEndTime"
-              label={t('workEndTime')}
+              label={t('jobTicket.workEndTime')}
               register={register}
               readOnly={readOnly}
             />
@@ -246,7 +246,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
               type="number"
               id="workTotalHours"
               name="workTotalHours"
-              label={t('workTotalHours')}
+              label={t('jobTicket.workTotalTime')}
               register={register}
               readOnly={true}
               step="0.01"
@@ -256,13 +256,13 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         
         {/* Drive Hours Section */}
         <div className="mt-8">
-          <h3 className="text-lg font-medium text-gray-200 mb-4">{t('driveTotalHours')}</h3>
+          <h3 className="text-lg font-medium text-gray-200 mb-4">{t('jobTicket.travelTotalTime')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
               type="time"
               id="driveStartTime"
               name="driveStartTime"
-              label={t('driveStartTime')}
+              label={t('jobTicket.travelStartTime')}
               register={register}
               readOnly={readOnly}
             />
@@ -271,7 +271,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
               type="time"
               id="driveEndTime"
               name="driveEndTime"
-              label={t('driveEndTime')}
+              label={t('jobTicket.travelEndTime')}
               register={register}
               readOnly={readOnly}
             />
@@ -280,7 +280,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
               type="number"
               id="driveTotalHours"
               name="driveTotalHours"
-              label={t('driveTotalHours')}
+              label={t('jobTicket.travelTotalTime')}
               register={register}
               readOnly={true}
               step="0.01"
@@ -290,7 +290,7 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         
         {/* Parts Section */}
         <div className="mt-8">
-          <h3 className="text-lg font-medium text-gray-200 mb-4">{t('partsUsed')}</h3>
+          <h3 className="text-lg font-medium text-gray-200 mb-4">{t('jobTicket.parts.title')}</h3>
           
           {!readOnly && (
             <div className="flex space-x-2 mb-4">
@@ -344,17 +344,18 @@ const JobTicketForm = ({ readOnly = false, draftData = null }) => {
         
         {/* Description */}
         <div className="mt-8">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-300">
-            {t('descriptionOfWork')}
+          <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
+            {t('jobTicket.workDescription')}
           </label>
           <div className="mt-1">
             <textarea
-              id="description"
-              name="description"
-              rows={4}
+              id="workDescription"
+              name="workDescription"
               className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+              rows={4}
+              placeholder={t('jobTicket.workDescription')}
+              {...register('workDescription')}
               readOnly={readOnly}
-              {...register('description')}
             />
           </div>
         </div>
