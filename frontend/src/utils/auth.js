@@ -1,6 +1,7 @@
 /**
  * Authentication utilities for working with JWT tokens and user data
  */
+import config from '../config';
 
 /**
  * Get the stored authentication token from localStorage
@@ -96,21 +97,37 @@ export const getAuthHeaders = () => {
 
 /**
  * Make an authenticated API request
- * @param {string} url - The API endpoint URL
+ * @param {string} endpoint - The API endpoint path (without base URL)
  * @param {Object} options - Fetch options
  * @returns {Promise} Fetch promise
  */
-export const authenticatedFetch = async (url, options = {}) => {
+export const authenticatedFetch = async (endpoint, options = {}) => {
   const token = getToken();
   
   if (!token) {
     throw new Error('No authentication token found');
   }
   
+  // Construct the full URL using the config
+  // If the endpoint already starts with http, assume it's a full URL
+  const url = endpoint.startsWith('http') ? endpoint : `${config.apiUrl}${endpoint}`;
+  
   const headers = {
     ...options.headers,
     'Authorization': `Bearer ${token}`
   };
   
-  return fetch(url, { ...options, headers });
+  try {
+    console.log(`Making API request to: ${url}`);
+    const response = await fetch(url, { ...options, headers });
+    return response;
+  } catch (error) {
+    console.error(`API request failed for ${url}:`, error);
+    // Return a mock response object to prevent undefined errors
+    return {
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'API request failed' })
+    };
+  }
 };

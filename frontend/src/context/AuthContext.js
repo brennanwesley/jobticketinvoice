@@ -30,19 +30,22 @@ export const AuthProvider = ({ children }) => {
         }
         
         try {
-          const response = await authenticatedFetch('/api/auth/me');
+          // Remove the leading slash since config.apiUrl already includes it
+          const response = await authenticatedFetch('/auth/me');
           
-          if (response.ok) {
+          if (response && response.ok) {
             const userData = await response.json();
             setUser(userData);
           } else {
-            // Token is invalid
+            // Token is invalid or API is unavailable
+            console.warn('Authentication check failed, API returned:', response?.status);
             removeToken();
             setToken(null);
           }
         } catch (err) {
           console.error('Error checking authentication:', err);
           setError('Error checking authentication');
+          // Don't clear token on network errors to allow offline usage
         }
       }
       
