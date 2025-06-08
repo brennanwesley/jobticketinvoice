@@ -53,7 +53,9 @@ export const commonTranslations = {
       authTest: 'Auth Test Page',
       logout: 'Logout',
       login: 'Login',
-      signup: 'Sign Up'
+      signup: 'Sign Up',
+      submitted: 'Submitted Tickets',
+      drafts: 'Draft Tickets'
     },
     
     // Public landing page
@@ -124,7 +126,9 @@ export const commonTranslations = {
       authTest: 'Página de Prueba de Autenticación',
       logout: 'Cerrar Sesión',
       login: 'Iniciar Sesión',
-      signup: 'Registrarse'
+      signup: 'Registrarse',
+      submitted: 'Boletas Enviadas',
+      drafts: 'Boletas Borrador'
     },
     
     // Public landing page
