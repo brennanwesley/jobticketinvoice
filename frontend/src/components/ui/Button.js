@@ -84,6 +84,14 @@ theme.colors.button.danger = theme.colors.button.danger || {
   border: '#ef4444'
 };
 
+theme.colors.button.success = theme.colors.button.success || {
+  background: '#10b981',
+  backgroundHover: '#059669',
+  backgroundActive: '#047857',
+  text: '#ffffff',
+  border: '#10b981'
+};
+
 /**
  * Button component - A reusable button component with various styles
  * 
@@ -139,6 +147,20 @@ const Button = ({
       },
       '&:focus': {
         ...focusRing(theme.colors.primary?.[300] || '#60a5fa'),
+      },
+    },
+    success: {
+      backgroundColor: theme.colors.button?.success?.background || '#10b981',
+      color: theme.colors.button?.success?.text || '#ffffff',
+      border: `1px solid ${theme.colors.button?.success?.border || '#10b981'}`,
+      '&:hover': {
+        backgroundColor: theme.colors.button?.success?.backgroundHover || '#059669',
+      },
+      '&:active': {
+        backgroundColor: theme.colors.button?.success?.backgroundActive || '#047857',
+      },
+      '&:focus': {
+        ...focusRing('#34d399'),
       },
     },
     secondary: {

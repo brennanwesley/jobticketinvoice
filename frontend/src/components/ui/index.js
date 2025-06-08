@@ -12,3 +12,4 @@ export { default as Form } from './Form';
 export { default as Image } from './Image';
 export { default as VirtualList } from './VirtualList';
 export { default as LoadingSpinner } from './LoadingSpinner';
+export { default as HelpButton } from './HelpButton';

@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import TicketProvider from './context/TicketProvider';
 import AppRoutes from './components/AppRoutes';
 import ErrorBoundary from './components/ErrorBoundary';
+import { MainLayout } from './components/layout';
 import { initializeStorageCleanup } from './utils/storageCleanup';
 
 /**
@@ -29,7 +30,9 @@ const App = () => {
         <LanguageProvider>
           <AuthProvider>
             <TicketProvider>
-              <AppRoutes />
+              <MainLayout>
+                <AppRoutes />
+              </MainLayout>
             </TicketProvider>
           </AuthProvider>
         </LanguageProvider>
