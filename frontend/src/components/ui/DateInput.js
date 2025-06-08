@@ -23,7 +23,7 @@ const DateInputField = ({
   return (
     <div>
       {label && (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-300">
+        <label htmlFor={id} className="block text-sm font-medium text-white mb-1">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -191,7 +191,7 @@ const DateInput = ({
   if (isMobile) {
     return (
       <div className="relative">
-        <label htmlFor={id} className="block text-sm font-medium text-gray-300">
+        <label htmlFor={id} className="block text-sm font-medium text-white mb-1">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>

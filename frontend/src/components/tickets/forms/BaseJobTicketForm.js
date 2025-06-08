@@ -4,7 +4,9 @@ import { useLanguage } from '../../../context/LanguageContext';
 import { useTicket } from '../../../context/TicketContext';
 import { useAuth } from '../../../context/AuthContext';
 import { calculateHoursBetween } from '../../../utils/validators';
-import { Card, Button, Input, Form, LoadingSpinner } from '../../ui';
+import { Card, Button, Form, LoadingSpinner } from '../../ui';
+import EnhancedInput from '../../ui/EnhancedInput';
+import EnhancedSelect from '../../ui/EnhancedSelect';
 import DateInput from '../../ui/DateInput';
 import { useDebounce } from '../../../hooks';
 
@@ -178,19 +180,19 @@ const BaseJobTicketForm = ({
       />
       
       {/* Company Name */}
-      <Input
+      <EnhancedInput
         label={t('jobTicket.companyName')}
         type="text"
         id="companyName"
         name="companyName"
         register={register}
-        rules={{ required: true }}
-        error={errors.companyName}
+        required={true}
+        error={errors.companyName && t('jobTicket.validation.companyRequired')}
         readOnly={readOnly}
       />
       
       {/* Customer Name */}
-      <Input
+      <EnhancedInput
         label={t('jobTicket.customerName')}
         type="text"
         id="customerName"
@@ -201,18 +203,19 @@ const BaseJobTicketForm = ({
       />
       
       {/* Location */}
-      <Input
+      <EnhancedInput
         label={t('jobTicket.location')}
         type="text"
         id="location"
         name="location"
         register={register}
-        error={errors.location}
+        required={true}
+        error={errors.location && t('jobTicket.validation.locationRequired')}
         readOnly={readOnly}
       />
       
       {/* Work Type */}
-      <Input
+      <EnhancedInput
         label={t('jobTicket.workType')}
         type="text"
         id="workType"
@@ -223,7 +226,7 @@ const BaseJobTicketForm = ({
       />
       
       {/* Equipment */}
-      <Input
+      <EnhancedInput
         label={t('jobTicket.equipment')}
         type="text"
         id="equipment"
@@ -234,44 +237,48 @@ const BaseJobTicketForm = ({
       />
       
       {/* Description of Work */}
-      <div>
-        <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
+      <div className="mb-4">
+        <label htmlFor="workDescription" className="block text-sm font-medium text-white mb-1">
           {t('jobTicket.workDescription')}
+          {<span className="text-red-500 ml-1">*</span>}
         </label>
         <div className="mt-1">
           <textarea
             id="workDescription"
             name="workDescription"
             rows={4}
-            className="bg-gray-800 block w-full max-w-2xl rounded-md border border-gray-500 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+            className="bg-gray-800 block w-full max-w-2xl rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
             placeholder="Enter your work description here..."
             readOnly={readOnly}
-            {...register('workDescription')}
+            {...register('workDescription', { required: true })}
           />
         </div>
+        {errors.workDescription && (
+          <p className="mt-1 text-xs text-red-500">{t('jobTicket.validation.workDescriptionRequired')}</p>
+        )}
       </div>
       
       {/* Work Hours */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Input
+        <EnhancedInput
           label={t('jobTicket.workStartTime')}
           type="time"
           id="workStartTime"
           name="workStartTime"
           register={register}
-          error={errors.workStartTime}
+          error={errors.workStartTime && t('jobTicket.validation.timeFormatInvalid')}
           readOnly={readOnly}
         />
-        <Input
+        <EnhancedInput
           label={t('jobTicket.workEndTime')}
           type="time"
           id="workEndTime"
           name="workEndTime"
           register={register}
-          error={errors.workEndTime}
+          error={errors.workEndTime && t('jobTicket.validation.timeFormatInvalid')}
           readOnly={readOnly}
         />
-        <Input
+        <EnhancedInput
           label={t('jobTicket.workTotalTime')}
           type="text"
           id="workTotalHours"
@@ -283,25 +290,25 @@ const BaseJobTicketForm = ({
       
       {/* Drive Hours */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Input
+        <EnhancedInput
           label={t('jobTicket.travelStartTime')}
           type="time"
           id="driveStartTime"
           name="driveStartTime"
           register={register}
-          error={errors.driveStartTime}
+          error={errors.driveStartTime && t('jobTicket.validation.timeFormatInvalid')}
           readOnly={readOnly}
         />
-        <Input
+        <EnhancedInput
           label={t('jobTicket.travelEndTime')}
           type="time"
           id="driveEndTime"
           name="driveEndTime"
           register={register}
-          error={errors.driveEndTime}
+          error={errors.driveEndTime && t('jobTicket.validation.timeFormatInvalid')}
           readOnly={readOnly}
         />
-        <Input
+        <EnhancedInput
           label={t('jobTicket.travelTotalTime')}
           type="text"
           id="driveTotalHours"
@@ -314,7 +321,7 @@ const BaseJobTicketForm = ({
 
       
       {/* Submitted By */}
-      <Input
+      <EnhancedInput
         label={t('jobTicket.submittedBy')}
         type="text"
         id="submittedBy"
