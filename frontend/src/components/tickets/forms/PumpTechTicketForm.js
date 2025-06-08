@@ -45,10 +45,18 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
   const handleAddPart = useCallback(() => {
     if (!selectedPart) return;
     
+    // Find the selected part's label
+    const selectedPartObj = partsList.find(part => part.value === selectedPart);
+    if (!selectedPartObj) return;
+    
+    // Store both value and label as an object
     const currentParts = watch('parts') || [];
-    setValue('parts', [...currentParts, selectedPart]);
+    setValue('parts', [...currentParts, {
+      value: selectedPart,
+      label: selectedPartObj.label
+    }]);
     setSelectedPart('');
-  }, [selectedPart, watch, setValue]);
+  }, [selectedPart, partsList, watch, setValue]);
   
   // Handle removing a part - memoized to prevent recreation on each render
   const handleRemovePart = useCallback((index) => {
@@ -60,8 +68,11 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
   
   // Handle part selection change - memoized to prevent recreation on each render
   const handlePartChange = useCallback((e) => {
-    setSelectedPart(e.target.value);
-  }, []);
+    // Store both the value and label when selecting a part
+    const selectedValue = e.target.value;
+    const selectedOption = partsList.find(part => part.value === selectedValue);
+    setSelectedPart(selectedOption ? selectedValue : '');
+  }, [partsList]);
   
   // Memoize the parts list rendering for better performance
   const partsListItems = useMemo(() => {
@@ -76,30 +87,9 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
     }
     
     return parts.map((part, index) => {
-      // Map part code to translation key
-      let partLabel;
-      switch(part) {
-        case 'partLubricant':
-          partLabel = t('parts.lubricant');
-          break;
-        case 'partPumpSeal':
-          partLabel = t('parts.pumpSeal');
-          break;
-        case 'partThrustChamber':
-          partLabel = t('parts.thrustChamber');
-          break;
-        case 'partVFDBreaker':
-          partLabel = t('parts.vfdBreaker');
-          break;
-        case 'partServiceKit':
-          partLabel = t('parts.serviceKit');
-          break;
-        case 'partOther':
-          partLabel = t('parts.other');
-          break;
-        default:
-          partLabel = part; // Fallback to the raw value if no match
-      }
+      // Get the label from the part object
+      // Handle both new format (object with value and label) and old format (string)
+      const partLabel = typeof part === 'object' && part.label ? part.label : t(`parts.${part.replace('part', '').toLowerCase()}`);
       
       return (
         <li key={index} className="flex items-center justify-between bg-gray-700 rounded px-3 py-2">
@@ -182,7 +172,7 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
               onClick={handleAddPart}
               disabled={!selectedPart}
             >
-              {t('common.add')}
+              Add Part
             </Button>
           </div>
         )}
