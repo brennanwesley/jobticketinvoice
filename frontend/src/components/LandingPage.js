@@ -56,7 +56,7 @@ const LandingPage = () => {
       {/* Main content */}
       <div className="relative z-10 w-full max-w-3xl mx-auto bg-gray-900 bg-opacity-60 backdrop-filter backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-800 p-8 sm:p-10">
         <div className="text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{t('createJobTicket')}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">{t('jobTicket.createNew')}</h2>
           <p className="text-gray-300 text-sm sm:text-base max-w-md mx-auto">
             {language === 'en' ? 
               'Select how you would like to create your job ticket' : 
@@ -69,12 +69,12 @@ const LandingPage = () => {
           <button
             onClick={handleManualClick}
             className="flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-700 hover:border-orange-500/30 w-full sm:w-1/2 group"
-            aria-label={t('byHand')}
+            aria-label={t('jobTicket.byHand')}
           >
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
               <PencilSquareIcon className="h-8 w-8 text-white" />
             </div>
-            <span className="text-lg font-medium">{t('byHand')}</span>
+            <span className="text-lg font-medium">{t('jobTicket.byHand')}</span>
             <span className="text-sm text-gray-400 mt-2">
               {language === 'en' ? 'Fill out form manually' : 'Llenar formulario manualmente'}
             </span>
@@ -84,12 +84,12 @@ const LandingPage = () => {
           <button
             onClick={handleVoiceClick}
             className="flex flex-col items-center justify-center p-6 sm:p-8 bg-gradient-to-br from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-700 hover:border-orange-500/30 w-full sm:w-1/2 group"
-            aria-label={t('byVoice')}
+            aria-label={t('jobTicket.byVoice')}
           >
             <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-4 rounded-full mb-4 group-hover:scale-110 transition-transform duration-300">
               <MicrophoneIcon className="h-8 w-8 text-white" />
             </div>
-            <span className="text-lg font-medium">{t('byVoice')}</span>
+            <span className="text-lg font-medium">{t('jobTicket.byVoice')}</span>
             <span className="text-sm text-gray-400 mt-2">
               {language === 'en' ? 'Create using voice commands' : 'Crear usando comandos de voz'}
             </span>

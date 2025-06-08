@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Bars3Icon } from '@heroicons/react/24/outline';
-import { TicketProvider } from '../context/TicketContext';
+import { TicketProvider, useTicket } from '../context/TicketContext';
 import { VoiceProvider } from '../context/VoiceContext';
 import Sidebar from './layout/Sidebar';
 import LanguageToggle from './LanguageToggle';
@@ -91,8 +91,8 @@ const AppDashboard = () => {
  * Renders the appropriate content based on the current view mode and ticket mode
  */
 const AppContent = () => {
-  // Use the useTicket hook instead of direct context access
-  const { viewMode, ticketMode } = require('../context/TicketContext').useTicket();
+  // Use the useTicket hook with proper import
+  const { viewMode, ticketMode } = useTicket();
   
   // Render content based on view mode and ticket mode
   return (

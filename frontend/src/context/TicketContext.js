@@ -46,7 +46,7 @@ export const useTicket = () => {
     // View state from TicketViewContext with fallbacks
     viewMode: ticketView.viewMode || 'landing',
     setViewMode: ticketView.navigateTo || (() => console.warn('navigateTo not available')),
-    ticketMode: ticketView.ticketMode || 'view',
+    ticketMode: ticketView.ticketMode || null, // Default to null to ensure LandingPage displays
     setTicketMode: ticketView.setTicketMode || (() => console.warn('setTicketMode not available')),
     
     // Form state from TicketFormContext
