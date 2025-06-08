@@ -1,6 +1,48 @@
 import React from 'react';
-import theme from '../../design/theme';
+import importedTheme from '../../design/theme';
 import { getVariantStyles, getSizeStyles, focusRing } from '../../design/utils';
+
+// Create a safe theme object with fallbacks to prevent rendering errors
+const theme = importedTheme || {};
+
+// Ensure all required theme properties exist
+theme.colors = theme.colors || {};
+theme.colors.primary = theme.colors.primary || {};
+theme.colors.primary[300] = theme.colors.primary[300] || '#60a5fa';
+
+// Button-specific theme properties
+theme.colors.button = theme.colors.button || {};
+theme.colors.button.primary = theme.colors.button.primary || {
+  background: '#3b82f6',
+  backgroundHover: '#2563eb',
+  backgroundActive: '#1d4ed8',
+  text: '#ffffff',
+  border: '#3b82f6'
+};
+
+theme.colors.button.secondary = theme.colors.button.secondary || {
+  background: '#f3f4f6',
+  backgroundHover: '#e5e7eb',
+  backgroundActive: '#d1d5db',
+  text: '#1f2937',
+  border: '#d1d5db'
+};
+
+theme.colors.button.outline = theme.colors.button.outline || {
+  background: 'transparent',
+  backgroundHover: '#f3f4f6',
+  backgroundActive: '#e5e7eb',
+  text: '#4b5563',
+  border: '#d1d5db'
+};
+
+theme.colors.button.danger = theme.colors.button.danger || {
+  background: '#ef4444',
+  backgroundHover: '#dc2626',
+  backgroundActive: '#b91c1c',
+  text: '#ffffff',
+  border: '#ef4444'
+};
 
 /**
  * Button component - A reusable button component with various styles
