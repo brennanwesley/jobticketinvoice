@@ -101,12 +101,12 @@ const LandingPage = () => {
       <div className="fixed bottom-4 right-4 z-20">
         <button
           onClick={handleHelpClick}
-          className="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-full transition-colors shadow-lg border border-gray-700"
-          aria-label="Need Help?"
+          className="flex items-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full transition-colors shadow-lg"
+          aria-label={t('needHelp') || "Need Help?"}
         >
-          <QuestionMarkCircleIcon className="h-5 w-5 text-orange-500" />
+          <QuestionMarkCircleIcon className="h-5 w-5 text-white" />
           <span className="text-sm">
-            {language === 'en' ? 'Need Help?' : '¿Necesita Ayuda?'}
+            {t('needHelp') || (language === 'en' ? 'Need Help?' : '¿Necesita Ayuda?')}
           </span>
         </button>
       </div>

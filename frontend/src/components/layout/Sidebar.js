@@ -138,7 +138,7 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                     className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded flex items-center justify-center gap-x-2 w-full transition-colors"
                   >
                     <PlusCircleIcon className="h-5 w-5" aria-hidden="true" />
-                    <span>+ {t('jobTicket.createNew')}</span>
+                    <span>{t('jobTicket.createNew')}</span>
                   </Link>
                 </li>
                 

@@ -12,9 +12,11 @@ const TicketViewContext = createContext();
  */
 export const TicketViewProvider = ({ children }) => {
   // View mode state: 'landing', 'form', 'draft', 'draftList', 'submittedList', 'submittedView'
+  // Default to landing to show the job ticket creation options
   const [viewMode, setViewMode] = useState('landing');
   
   // Ticket mode state: null, 'manual', 'voice'
+  // Default to null to ensure LandingPage is shown
   const [ticketMode, setTicketMode] = useState(null);
   
   // Navigation history for back button functionality

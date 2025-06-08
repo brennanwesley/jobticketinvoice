@@ -127,6 +127,8 @@ const translations = {
       view: 'View',
     },
     
+    needHelp: 'Need Help?',
+    
     nav: {
       jobTickets: 'Job Tickets',
       drafts: 'Draft Tickets',
@@ -356,6 +358,8 @@ const translations = {
       delete: 'Eliminar',
       view: 'Ver',
     },
+    
+    needHelp: '¿Necesita Ayuda?',
     
     nav: {
       jobTickets: 'Boletos de Trabajo',
