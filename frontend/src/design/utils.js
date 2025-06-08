@@ -5,7 +5,26 @@
  * These functions help with creating consistent styles and responsive designs.
  */
 
-import theme from './theme';
+// Import theme but add fallback mechanism to prevent rendering errors
+import importedTheme from './theme';
+
+// Create a safe theme object that always has the necessary properties
+// This prevents "Cannot read properties of undefined" errors
+const theme = importedTheme || {};
+theme.colors = theme.colors || {};
+theme.colors.neutral = theme.colors.neutral || {};
+theme.colors.neutral[200] = theme.colors.neutral[200] || '#e5e7eb';
+theme.colors.border = theme.colors.border || {};
+theme.colors.border.focus = theme.colors.border.focus || '#60a5fa';
+theme.breakpoints = theme.breakpoints || {};
+theme.breakpoints.sm = theme.breakpoints.sm || '640px';
+theme.breakpoints.md = theme.breakpoints.md || '768px';
+theme.breakpoints.lg = theme.breakpoints.lg || '1024px';
+theme.breakpoints.xl = theme.breakpoints.xl || '1280px';
+theme.zIndex = theme.zIndex || {};
+theme.zIndex.sticky = theme.zIndex.sticky || 10;
+theme.borderRadius = theme.borderRadius || {};
+theme.borderRadius.base = theme.borderRadius.base || '0.25rem';
 
 /**
  * Creates a responsive style object based on breakpoints
