@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { MicrophoneIcon, PencilSquareIcon, QuestionMarkCircleIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useTicket } from '../context/TicketContext';
-import { useVoice } from '../context/VoiceContext';
 
 /**
  * Landing Page component
@@ -13,7 +12,6 @@ import { useVoice } from '../context/VoiceContext';
 const LandingPage = () => {
   const { t, language } = useLanguage();
   const { setTicketMode, setViewMode } = useTicket();
-  const { startVoiceRecording } = useVoice();
   const navigate = useNavigate();
   
   // Handle manual job ticket creation
