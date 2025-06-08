@@ -66,6 +66,7 @@ const EnhancedInput = ({
           placeholder={placeholder}
           disabled={disabled}
           readOnly={readOnly}
+          autoComplete="off"
           {...(register && register(name))}
           {...rest}
         />

@@ -61,6 +61,7 @@ const EnhancedSelect = ({
             ${className}
           `}
           disabled={disabled}
+          autoComplete="off"
           {...(register && register(name))}
           {...rest}
         >

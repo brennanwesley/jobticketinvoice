@@ -166,7 +166,7 @@ const BaseJobTicketForm = ({
   }, [renderStart]);
   
   return (
-    <Form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8 max-w-3xl mx-auto">
+    <Form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8 max-w-3xl mx-auto" autoComplete="off">
       {/* Job Date */}
       <DateInput
         label={t('jobTicket.date')}
@@ -214,16 +214,7 @@ const BaseJobTicketForm = ({
         readOnly={readOnly}
       />
       
-      {/* Work Type */}
-      <EnhancedInput
-        label={t('jobTicket.workType')}
-        type="text"
-        id="workType"
-        name="workType"
-        register={register}
-        error={errors.workType}
-        readOnly={readOnly}
-      />
+      {/* Work Type field removed to eliminate duplication */}
       
       {/* Equipment */}
       <EnhancedInput
@@ -320,19 +311,23 @@ const BaseJobTicketForm = ({
       
 
       
-      {/* Submitted By */}
-      <EnhancedInput
-        label={t('jobTicket.submittedBy')}
-        type="text"
-        id="submittedBy"
-        name="submittedBy"
-        register={register}
-        error={errors.submittedBy}
-        readOnly={readOnly}
-      />
+      {/* Submitted By field moved to bottom of form */}
       
       {/* Render children (job-specific fields) */}
       {children}
+      
+      {/* Customer Signature (using original submittedBy field name for data consistency) */}
+      <div className="mt-6 mb-4">
+        <EnhancedInput
+          label={t('jobTicket.customerSignature')}
+          type="text"
+          id="submittedBy"
+          name="submittedBy"
+          register={register}
+          error={errors.submittedBy}
+          readOnly={readOnly}
+        />
+      </div>
       
       {/* Status Messages */}
       {showSuccessMessage && (

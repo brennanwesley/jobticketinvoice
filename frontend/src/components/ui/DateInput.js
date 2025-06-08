@@ -41,6 +41,7 @@ const DateInputField = ({
           onChange={onChange}
           onBlur={onBlur}
           onFocus={onFocus}
+          autoComplete="off"
           {...rest}
         />
         
@@ -203,6 +204,7 @@ const DateInput = ({
             className={`bg-gray-800 block w-full rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm ${error ? 'border-red-500' : ''}`}
             disabled={disabled}
             readOnly={readOnly}
+            autoComplete="off"
             onChange={(e) => {
               // Extract date components
               const dateValue = e.target.value;
