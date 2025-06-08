@@ -1,7 +1,64 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import Input from './Input';
 import { useLanguage } from '../../context/LanguageContext';
+
+// Create a simplified version of the Input component for date input
+const DateInputField = ({
+  id,
+  name,
+  label,
+  placeholder,
+  required = false,
+  disabled = false,
+  readOnly = false,
+  error,
+  value,
+  onChange,
+  onBlur,
+  onFocus,
+  suffix,
+  className = '',
+  ...rest
+}) => {
+  return (
+    <div>
+      {label && (
+        <label htmlFor={id} className="block text-sm font-medium text-gray-300">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
+      <div className="relative mt-1">
+        <input
+          id={id}
+          name={name}
+          type="text"
+          className={`bg-gray-800 block w-full rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm ${className} ${error ? 'border-red-500' : ''}`}
+          placeholder={placeholder}
+          disabled={disabled}
+          readOnly={readOnly}
+          value={value || ''}
+          onChange={onChange}
+          onBlur={onBlur}
+          onFocus={onFocus}
+          {...rest}
+        />
+        
+        {/* Suffix (calendar icon) */}
+        {suffix && (
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+            {suffix}
+          </div>
+        )}
+      </div>
+      
+      {/* Error message */}
+      {error && (
+        <p className="mt-1 text-xs text-red-500">{error}</p>
+      )}
+    </div>
+  );
+};
 
 /**
  * DateInput - A specialized input component for date selection
@@ -134,50 +191,57 @@ const DateInput = ({
   if (isMobile) {
     return (
       <div className="relative">
-        <Input
-          id={id}
-          name={name}
-          type="date"
-          label={label}
-          required={required}
-          disabled={disabled}
-          readOnly={readOnly}
-          error={error}
-          register={register}
-          suffix={calendarSuffix}
-          onChange={(e) => {
-            // Extract date components
-            const dateValue = e.target.value;
-            if (dateValue) {
-              // Force year to be 2025 for mobile
-              const [year, month, day] = dateValue.split('-');
-              const fixedDate = `2025-${month}-${day}`;
-              
-              // Update with fixed date
-              if (setValue) {
-                setValue(name, fixedDate, { shouldValidate: true });
+        <label htmlFor={id} className="block text-sm font-medium text-gray-300">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+        <div className="mt-1 relative">
+          <input
+            id={id}
+            name={name}
+            type="date"
+            className={`bg-gray-800 block w-full rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm ${error ? 'border-red-500' : ''}`}
+            disabled={disabled}
+            readOnly={readOnly}
+            onChange={(e) => {
+              // Extract date components
+              const dateValue = e.target.value;
+              if (dateValue) {
+                // Force year to be 2025 for mobile
+                const [year, month, day] = dateValue.split('-');
+                const fixedDate = `2025-${month}-${day}`;
+                
+                // Update with fixed date
+                if (setValue) {
+                  setValue(name, fixedDate, { shouldValidate: true });
+                }
+                
+                setSelectedDate(fixedDate);
+                
+                // Format for display
+                const formattedDate = `${month}/${day}/2025`;
+                setInputValue(formattedDate);
+                
+                // Call custom onChange if provided
+                if (onChange) {
+                  const modifiedEvent = {
+                    target: {
+                      name,
+                      value: fixedDate
+                    }
+                  };
+                  onChange(modifiedEvent);
+                }
               }
-              
-              setSelectedDate(fixedDate);
-              
-              // Format for display
-              const formattedDate = `${month}/${day}/2025`;
-              setInputValue(formattedDate);
-              
-              // Call custom onChange if provided
-              if (onChange) {
-                const modifiedEvent = {
-                  target: {
-                    name,
-                    value: fixedDate
-                  }
-                };
-                onChange(modifiedEvent);
-              }
-            }
-          }}
-          {...rest}
-        />
+            }}
+            {...(register && register(name))}
+            {...rest}
+          />
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+            {calendarSuffix}
+          </div>
+        </div>
+        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
       </div>
     );
   }
@@ -185,20 +249,19 @@ const DateInput = ({
   // For desktop, show calendar popup
   return (
     <div className="relative">
-      <Input
+      <DateInputField
         id={id}
         name={name}
-        type="text"
         label={label}
         required={required}
         disabled={disabled}
         readOnly={readOnly}
         error={error}
-        ref={inputRef}
         value={inputValue}
         onChange={handleInputChange}
         suffix={calendarSuffix}
         placeholder="MM/DD/YYYY"
+        {...(register && { ...register(name) })}
         {...rest}
       />
       
