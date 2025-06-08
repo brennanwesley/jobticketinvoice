@@ -1,14 +1,14 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { useTicket } from '../context/TicketContext';
 import { LoadingSpinner } from './ui';
 
-// Lazy load the job ticket form components
-const JobTicketForm = lazy(() => import('./tickets/JobTicketForm'));
-const PumpTechTicketForm = lazy(() => import('./tickets/forms/PumpTechTicketForm'));
-const DriverTicketForm = lazy(() => import('./tickets/forms/DriverTicketForm'));
+// Static imports instead of lazy loading to avoid CSP issues
+import JobTicketForm from './tickets/JobTicketForm';
+import PumpTechTicketForm from './tickets/forms/PumpTechTicketForm';
+import DriverTicketForm from './tickets/forms/DriverTicketForm';
 
 /**
  * JobTicketFormPage component
@@ -64,16 +64,14 @@ const JobTicketFormPage = () => {
         <h1 className="text-2xl font-bold">{t('jobTicket.createNew')}</h1>
       </div>
       
-      {/* Form container with error boundary */}
+      {/* Form container */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
             <LoadingSpinner size="lg" />
           </div>
         ) : (
-          <Suspense fallback={<LoadingSpinner />}>
-            <FormComponent draftData={draftData} />
-          </Suspense>
+          <FormComponent draftData={draftData} />
         )}
       </div>
     </div>
