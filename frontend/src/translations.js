@@ -36,6 +36,22 @@ const translations = {
       logout: 'Logout',
     },
     
+    // Signup Page translations
+    signup: {
+      title: 'Create Your Account',
+      description: 'Choose your role to get started with our platform.',
+      selectRole: 'Select Your Role',
+      roleDescription: 'Choose the role that best describes your position.',
+      techRole: 'Field Technician',
+      techDescription: 'Create job tickets in the field, track hours, and submit work details.',
+      managerRole: 'Manager / Admin',
+      managerDescription: 'Review job tickets, generate invoices, and manage company settings.',
+      techSignup: 'Technician Registration',
+      managerSignup: 'Manager Registration',
+      alreadyHaveAccount: 'Already have an account?',
+      loginInstead: 'Login instead'
+    },
+    
     // Public Landing Page translations
     publicLanding: {
       title: 'Streamline Your Job Tickets and Invoices',
@@ -115,6 +131,22 @@ const translations = {
       loggedInAs: 'Conectado como',
       viewProfile: 'Ver Perfil',
       logout: 'Cerrar sesión',
+    },
+    
+    // Signup Page translations
+    signup: {
+      title: 'Crear Su Cuenta',
+      description: 'Elija su rol para comenzar con nuestra plataforma.',
+      selectRole: 'Seleccione Su Rol',
+      roleDescription: 'Elija el rol que mejor describa su posición.',
+      techRole: 'Técnico de Campo',
+      techDescription: 'Cree boletas de trabajo en el campo, registre horas y envíe detalles del trabajo.',
+      managerRole: 'Gerente / Administrador',
+      managerDescription: 'Revise boletas de trabajo, genere facturas y administre la configuración de la empresa.',
+      techSignup: 'Registro de Técnico',
+      managerSignup: 'Registro de Gerente',
+      alreadyHaveAccount: '¿Ya tiene una cuenta?',
+      loginInstead: 'Iniciar sesión en su lugar'
     },
     
     // Public Landing Page translations
