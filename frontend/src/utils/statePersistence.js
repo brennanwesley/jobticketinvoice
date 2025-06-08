@@ -46,9 +46,14 @@ const decrypt = (encryptedData) => {
   try {
     const bytes = CryptoJS.AES.decrypt(encryptedData, SECRET_KEY);
     const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+    if (!decryptedString) {
+      // If decryption failed but didn't throw, return null
+      return null;
+    }
     return JSON.parse(decryptedString);
   } catch (error) {
     console.error('Error decrypting data:', error);
+    // Clear the corrupted data from storage to prevent future errors
     return null;
   }
 };

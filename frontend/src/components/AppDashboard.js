@@ -91,7 +91,8 @@ const AppDashboard = () => {
  * Renders the appropriate content based on the current view mode and ticket mode
  */
 const AppContent = () => {
-  const { viewMode, ticketMode } = React.useContext(require('../context/TicketContext').default);
+  // Use the useTicket hook instead of direct context access
+  const { viewMode, ticketMode } = require('../context/TicketContext').useTicket();
   
   // Render content based on view mode and ticket mode
   return (

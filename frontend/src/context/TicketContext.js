@@ -34,19 +34,20 @@ export const useTicket = () => {
   const context = useContext(TicketContext);
   
   // Always call hooks at the top level, regardless of whether we use them
-  const draftTickets = useDraftTickets();
-  const ticketForm = useTicketForm();
-  const ticketSubmission = useTicketSubmission();
-  const ticketView = useTicketView();
+  // Add fallbacks to prevent errors if any context is undefined
+  const draftTickets = useDraftTickets() || {};
+  const ticketForm = useTicketForm() || {};
+  const ticketSubmission = useTicketSubmission() || {};
+  const ticketView = useTicketView() || {};
   
   // Create a combined context value that matches the original API
   const combinedContext = useMemo(() => ({
     // Combined context properties here
-    // View state from TicketViewContext
-    viewMode: ticketView.viewMode,
-    setViewMode: ticketView.navigateTo,
-    ticketMode: ticketView.ticketMode,
-    setTicketMode: ticketView.setTicketMode,
+    // View state from TicketViewContext with fallbacks
+    viewMode: ticketView.viewMode || 'landing',
+    setViewMode: ticketView.navigateTo || (() => console.warn('navigateTo not available')),
+    ticketMode: ticketView.ticketMode || 'view',
+    setTicketMode: ticketView.setTicketMode || (() => console.warn('setTicketMode not available')),
     
     // Form state from TicketFormContext
     formData: ticketForm.formData,

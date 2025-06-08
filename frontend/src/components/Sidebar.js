@@ -16,15 +16,16 @@ const classNames = (...classes) => {
  * Sidebar component for navigation
  */
 const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
-  const { translations, t } = useLanguage();
+  // Add fallbacks to prevent null reference errors
+  const { translations, t = key => key } = useLanguage() || {};
   const { 
-    viewMode, 
-    setViewMode, 
-    draftTickets, 
-    selectedDraftTicket, 
-    setSelectedDraftTicket 
-  } = useTicket();
-  const { user, isAuthenticated, logout } = useAuth();
+    viewMode = 'landing', 
+    setViewMode = () => {}, 
+    draftTickets = [], 
+    selectedDraftTicket = null, 
+    setSelectedDraftTicket = () => {} 
+  } = useTicket() || {};
+  const { user = null, isAuthenticated = false, logout = () => {} } = useAuth() || {};
   
   // Handle navigation item click
   const handleCreateTicketClick = () => {

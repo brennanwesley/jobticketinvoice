@@ -44,7 +44,18 @@ export const parseToken = (token) => {
   
   try {
     // JWT tokens are in format: header.payload.signature
-    const base64Url = token.split('.')[1];
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      console.warn('Invalid token format: token does not have three parts');
+      return null;
+    }
+    
+    const base64Url = parts[1];
+    if (!base64Url) {
+      console.warn('Invalid token format: missing payload part');
+      return null;
+    }
+    
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
       atob(base64)

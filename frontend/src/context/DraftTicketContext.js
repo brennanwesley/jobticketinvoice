@@ -27,19 +27,34 @@ export const DraftTicketProvider = ({ children }) => {
     const loadDrafts = () => {
       setIsLoading(true);
       try {
-        const loadedDrafts = getItem(DRAFTS_LIST_KEY, { 
-          encrypted: true, 
-          defaultValue: [] 
-        });
-        setDraftTickets(loadedDrafts);
+        // Try to load drafts, but handle potential decryption errors
+        try {
+          const loadedDrafts = getItem(DRAFTS_LIST_KEY, { 
+            encrypted: true, 
+            defaultValue: [] 
+          });
+          // Ensure we always have a valid array
+          setDraftTickets(Array.isArray(loadedDrafts) ? loadedDrafts : []);
+        } catch (decryptError) {
+          console.error('Error loading draft list, using empty array:', decryptError);
+          setDraftTickets([]);
+          // Clear corrupted data
+          removeItem(DRAFTS_LIST_KEY);
+        }
         
-        // Check for current draft
-        const currentDraft = getItem(DRAFT_KEY, { encrypted: true });
-        if (currentDraft) {
-          setSelectedDraftTicket(currentDraft);
+        // Check for current draft with separate try/catch
+        try {
+          const currentDraft = getItem(DRAFT_KEY, { encrypted: true });
+          if (currentDraft) {
+            setSelectedDraftTicket(currentDraft);
+          }
+        } catch (draftError) {
+          console.error('Error loading current draft:', draftError);
+          // Clear corrupted data
+          removeItem(DRAFT_KEY);
         }
       } catch (error) {
-        console.error('Error loading drafts:', error);
+        console.error('Error in draft loading process:', error);
       } finally {
         setIsLoading(false);
       }
