@@ -33,7 +33,8 @@ export const jobTicketTranslations = {
         thrustChamber: 'Thrust Chamber',
         vfdBreakerSwitch: 'VFD Breaker/Switch',
         serviceKit: 'Service/Safety Maintenance Kit',
-        other: 'Other'
+        other: 'Other',
+        noParts: 'No parts added yet'
       },
       submit: 'Submit Job Ticket',
       draft: 'Save as Draft',
@@ -97,7 +98,8 @@ export const jobTicketTranslations = {
         thrustChamber: 'Cámara de Empuje',
         vfdBreakerSwitch: 'Interruptor/Disyuntor VFD',
         serviceKit: 'Kit de Mantenimiento de Servicio/Seguridad',
-        other: 'Otro'
+        other: 'Otro',
+        noParts: 'Aún no se han agregado piezas'
       },
       submit: 'Enviar Boleta de Trabajo',
       draft: 'Guardar como Borrador',

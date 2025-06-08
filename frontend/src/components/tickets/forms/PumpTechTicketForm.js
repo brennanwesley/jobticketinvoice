@@ -77,11 +77,12 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
   // Memoize the parts list rendering for better performance
   const partsListItems = useMemo(() => {
     const parts = watch('parts') || [];
+    console.log('Current parts:', parts); // Debug log to see what parts are available
     
-    if (parts.length === 0) {
+    if (!parts || parts.length === 0) {
       return (
         <li className="text-gray-500 text-center py-2">
-          {t('jobTicket.noParts')}
+          {t('jobTicket.parts.noParts')}
         </li>
       );
     }
@@ -93,10 +94,9 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
       if (typeof part === 'object' && part.label) {
         partLabel = part.label;
       } else if (typeof part === 'string') {
-        // Handle old format where part is just a string like 'partLubricant'
-        // Extract the part name by removing 'part' prefix and convert first letter to lowercase
+        // Handle old format where part is just a string
         const partName = part.replace(/^part/, '').charAt(0).toLowerCase() + part.replace(/^part/, '').slice(1);
-        partLabel = t(`parts.${partName}`);
+        partLabel = t(`jobTicket.parts.${partName}`);
       } else {
         // Fallback
         partLabel = String(part);
@@ -104,7 +104,7 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
       
       return (
         <li key={index} className="flex items-center justify-between bg-gray-700 rounded px-3 py-2">
-          <span>{partLabel}</span>
+          <span className="text-white">{partLabel}</span>
           {!readOnly && (
             <Button
               variant="danger"
@@ -156,7 +156,7 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
       
       {/* Parts Used */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-base font-medium text-gray-300 mb-2 text-lg">
           {t('jobTicket.partsUsed')}
         </label>
         
@@ -166,7 +166,7 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
               <select
                 value={selectedPart}
                 onChange={handlePartChange}
-                className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                className="bg-gray-800 block w-full rounded-md border-2 border-orange-500 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
               >
                 <option value="">{t('common.select')}</option>
                 {partsList.map((part) => (
@@ -178,10 +178,11 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
             </div>
             <Button
               type="button"
-              variant="primary"
+              variant="custom"
               size="md"
               onClick={handleAddPart}
               disabled={!selectedPart}
+              className="bg-orange-500 hover:bg-orange-600 text-black font-medium"
             >
               {t('jobTicket.addPart')}
             </Button>
