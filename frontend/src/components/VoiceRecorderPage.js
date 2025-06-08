@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useVoice } from '../context/VoiceContext';
-import VoiceRecorder from './voice/VoiceRecorder';
+import VoiceRecorder from './VoiceRecorder';
 
 /**
  * VoiceRecorderPage component

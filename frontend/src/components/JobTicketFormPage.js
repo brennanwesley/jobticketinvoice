@@ -7,8 +7,8 @@ import { LoadingSpinner } from './ui';
 
 // Lazy load the job ticket form components
 const JobTicketForm = lazy(() => import('./tickets/JobTicketForm'));
-const PumpTechTicketForm = lazy(() => import('./tickets/PumpTechTicketForm'));
-const DriverTicketForm = lazy(() => import('./tickets/DriverTicketForm'));
+const PumpTechTicketForm = lazy(() => import('./tickets/forms/PumpTechTicketForm'));
+const DriverTicketForm = lazy(() => import('./tickets/forms/DriverTicketForm'));
 
 /**
  * JobTicketFormPage component
