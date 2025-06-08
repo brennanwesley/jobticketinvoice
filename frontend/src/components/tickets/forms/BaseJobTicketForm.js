@@ -5,6 +5,7 @@ import { useTicket } from '../../../context/TicketContext';
 import { useAuth } from '../../../context/AuthContext';
 import { calculateHoursBetween } from '../../../utils/validators';
 import { Card, Button, Input, Form, LoadingSpinner } from '../../ui';
+import DateInput from '../../ui/DateInput';
 import { useDebounce } from '../../../hooks';
 
 /**
@@ -165,14 +166,14 @@ const BaseJobTicketForm = ({
   return (
     <Form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8 max-w-3xl mx-auto">
       {/* Job Date */}
-      <Input
+      <DateInput
         label={t('jobTicket.date')}
-        type="date"
         id="jobDate"
         name="jobDate"
         register={register}
+        setValue={setValue}
         rules={{ required: true }}
-        error={errors.jobDate}
+        error={errors.jobDate ? t('validation.required') : undefined}
         readOnly={readOnly}
       />
       
