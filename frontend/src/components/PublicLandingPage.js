@@ -42,16 +42,16 @@ const PublicLandingPage = () => {
             </div>
           </div>
           <div className="md:w-1/2">
-            <img 
-              src="/images/job-ticket-hero.svg" 
-              alt="Job Ticket Invoice Platform" 
-              className="w-full max-w-md mx-auto"
-              onError={(e) => {
-                e.target.onerror = null;
-                // Use a data URI instead of an external placeholder service to prevent network errors
-                e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400" preserveAspectRatio="none"%3E%3Crect fill="%23CCCCCC" width="600" height="400" /%3E%3Ctext fill="%23999999" font-family="Arial,sans-serif" font-size="24" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3EJob Ticket Platform%3C/text%3E%3C/svg%3E';
-              }}
-            />
+            {/* Replace the SVG placeholder with an attractive gradient card */}
+            <div className="w-full max-w-md mx-auto bg-gradient-to-br from-orange-500 to-blue-600 rounded-lg shadow-lg p-8 text-white">
+              <div className="flex flex-col items-center justify-center h-64">
+                <svg className="w-24 h-24 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <h2 className="text-2xl font-bold mb-2 text-center">Job Ticket Platform</h2>
+                <p className="text-center opacity-80">Streamline your oilfield service operations</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

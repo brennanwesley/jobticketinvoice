@@ -2,13 +2,53 @@ import React from 'react';
 import importedTheme from '../../design/theme';
 import { getVariantStyles, getSizeStyles, focusRing } from '../../design/utils';
 
-// Create a safe theme object with fallbacks to prevent rendering errors
+// Create a safe theme object with comprehensive fallbacks to prevent rendering errors
 const theme = importedTheme || {};
 
-// Ensure all required theme properties exist
+// Ensure all required theme properties exist with complete fallback structure
 theme.colors = theme.colors || {};
 theme.colors.primary = theme.colors.primary || {};
 theme.colors.primary[300] = theme.colors.primary[300] || '#60a5fa';
+theme.colors.error = theme.colors.error || {};
+theme.colors.error[300] = theme.colors.error[300] || '#f87171';
+theme.colors.text = theme.colors.text || {};
+theme.colors.text.primary = theme.colors.text.primary || '#111827';
+theme.colors.neutral = theme.colors.neutral || {};
+theme.colors.neutral[50] = theme.colors.neutral[50] || '#f9fafb';
+theme.colors.neutral[100] = theme.colors.neutral[100] || '#f3f4f6';
+theme.colors.border = theme.colors.border || {};
+theme.colors.border.primary = theme.colors.border.primary || '#d1d5db';
+
+// Ensure typography properties exist
+theme.typography = theme.typography || {};
+theme.typography.button = theme.typography.button || {};
+theme.typography.button.fontFamily = theme.typography.button.fontFamily || "'Inter', sans-serif";
+theme.typography.button.fontSize = theme.typography.button.fontSize || '0.875rem';
+theme.typography.button.fontWeight = theme.typography.button.fontWeight || 500;
+theme.typography.button.lineHeight = theme.typography.button.lineHeight || 1;
+theme.typography.button.letterSpacing = theme.typography.button.letterSpacing || '0.025em';
+
+// Ensure component properties exist
+theme.components = theme.components || {};
+theme.components.button = theme.components.button || {};
+theme.components.button.borderRadius = theme.components.button.borderRadius || '0.25rem';
+theme.components.button.transition = theme.components.button.transition || 'all 150ms ease-in-out';
+theme.components.button.sizes = theme.components.button.sizes || {};
+theme.components.button.sizes.sm = theme.components.button.sizes.sm || {
+  paddingX: '0.5rem',
+  paddingY: '0.25rem',
+  fontSize: '0.75rem'
+};
+theme.components.button.sizes.md = theme.components.button.sizes.md || {
+  paddingX: '0.75rem',
+  paddingY: '0.5rem',
+  fontSize: '0.875rem'
+};
+theme.components.button.sizes.lg = theme.components.button.sizes.lg || {
+  paddingX: '1rem',
+  paddingY: '0.75rem',
+  fontSize: '1rem'
+};
 
 // Button-specific theme properties
 theme.colors.button = theme.colors.button || {};
@@ -85,88 +125,88 @@ const Button = ({
     outline: 'none',
   };
   
-  // Variant styles from theme
+  // Variant styles from theme with safe access patterns
   const variantStyles = {
     primary: {
-      backgroundColor: theme.colors.button.primary.background,
-      color: theme.colors.button.primary.text,
-      border: `1px solid ${theme.colors.button.primary.border}`,
+      backgroundColor: theme.colors.button?.primary?.background || '#3b82f6',
+      color: theme.colors.button?.primary?.text || '#ffffff',
+      border: `1px solid ${theme.colors.button?.primary?.border || '#3b82f6'}`,
       '&:hover': {
-        backgroundColor: theme.colors.button.primary.backgroundHover,
+        backgroundColor: theme.colors.button?.primary?.backgroundHover || '#2563eb',
       },
       '&:active': {
-        backgroundColor: theme.colors.button.primary.backgroundActive,
+        backgroundColor: theme.colors.button?.primary?.backgroundActive || '#1d4ed8',
       },
       '&:focus': {
-        ...focusRing(theme.colors.primary[300]),
+        ...focusRing(theme.colors.primary?.[300] || '#60a5fa'),
       },
     },
     secondary: {
-      backgroundColor: theme.colors.button.secondary.background,
-      color: theme.colors.button.secondary.text,
-      border: `1px solid ${theme.colors.button.secondary.border}`,
+      backgroundColor: theme.colors.button?.secondary?.background || '#f3f4f6',
+      color: theme.colors.button?.secondary?.text || '#1f2937',
+      border: `1px solid ${theme.colors.button?.secondary?.border || '#d1d5db'}`,
       '&:hover': {
-        backgroundColor: theme.colors.button.secondary.backgroundHover,
+        backgroundColor: theme.colors.button?.secondary?.backgroundHover || '#e5e7eb',
       },
       '&:active': {
-        backgroundColor: theme.colors.button.secondary.backgroundActive,
+        backgroundColor: theme.colors.button?.secondary?.backgroundActive || '#d1d5db',
       },
       '&:focus': {
-        ...focusRing(theme.colors.primary[300]),
+        ...focusRing(theme.colors.primary?.[300] || '#60a5fa'),
       },
     },
     outline: {
       backgroundColor: 'transparent',
-      color: theme.colors.text.primary,
-      border: `1px solid ${theme.colors.border.primary}`,
+      color: theme.colors.text?.primary || '#4b5563',
+      border: `1px solid ${theme.colors.border?.primary || '#d1d5db'}`,
       '&:hover': {
-        backgroundColor: theme.colors.neutral[50],
+        backgroundColor: theme.colors.neutral?.[50] || '#f9fafb',
       },
       '&:active': {
-        backgroundColor: theme.colors.neutral[100],
+        backgroundColor: theme.colors.neutral?.[100] || '#f3f4f6',
       },
       '&:focus': {
-        ...focusRing(theme.colors.primary[300]),
+        ...focusRing(theme.colors.primary?.[300] || '#60a5fa'),
       },
     },
     danger: {
-      backgroundColor: theme.colors.button.danger.background,
-      color: theme.colors.button.danger.text,
-      border: `1px solid ${theme.colors.button.danger.border}`,
+      backgroundColor: theme.colors.button?.danger?.background || '#ef4444',
+      color: theme.colors.button?.danger?.text || '#ffffff',
+      border: `1px solid ${theme.colors.button?.danger?.border || '#ef4444'}`,
       '&:hover': {
-        backgroundColor: theme.colors.button.danger.backgroundHover,
+        backgroundColor: theme.colors.button?.danger?.backgroundHover || '#dc2626',
       },
       '&:active': {
-        backgroundColor: theme.colors.button.danger.backgroundActive,
+        backgroundColor: theme.colors.button?.danger?.backgroundActive || '#b91c1c',
       },
       '&:focus': {
-        ...focusRing(theme.colors.error[300]),
+        ...focusRing(theme.colors.error?.[300] || '#f87171'),
       },
     },
   };
   
-  // Size styles from theme
+  // Size styles from theme with safe access patterns
   const sizeStyles = {
     sm: {
-      paddingLeft: theme.components.button.sizes.sm.paddingX,
-      paddingRight: theme.components.button.sizes.sm.paddingX,
-      paddingTop: theme.components.button.sizes.sm.paddingY,
-      paddingBottom: theme.components.button.sizes.sm.paddingY,
-      fontSize: theme.components.button.sizes.sm.fontSize,
+      paddingLeft: theme.components?.button?.sizes?.sm?.paddingX || '0.5rem',
+      paddingRight: theme.components?.button?.sizes?.sm?.paddingX || '0.5rem',
+      paddingTop: theme.components?.button?.sizes?.sm?.paddingY || '0.25rem',
+      paddingBottom: theme.components?.button?.sizes?.sm?.paddingY || '0.25rem',
+      fontSize: theme.components?.button?.sizes?.sm?.fontSize || '0.75rem',
     },
     md: {
-      paddingLeft: theme.components.button.sizes.md.paddingX,
-      paddingRight: theme.components.button.sizes.md.paddingX,
-      paddingTop: theme.components.button.sizes.md.paddingY,
-      paddingBottom: theme.components.button.sizes.md.paddingY,
-      fontSize: theme.components.button.sizes.md.fontSize,
+      paddingLeft: theme.components?.button?.sizes?.md?.paddingX || '0.75rem',
+      paddingRight: theme.components?.button?.sizes?.md?.paddingX || '0.75rem',
+      paddingTop: theme.components?.button?.sizes?.md?.paddingY || '0.5rem',
+      paddingBottom: theme.components?.button?.sizes?.md?.paddingY || '0.5rem',
+      fontSize: theme.components?.button?.sizes?.md?.fontSize || '0.875rem',
     },
     lg: {
-      paddingLeft: theme.components.button.sizes.lg.paddingX,
-      paddingRight: theme.components.button.sizes.lg.paddingX,
-      paddingTop: theme.components.button.sizes.lg.paddingY,
-      paddingBottom: theme.components.button.sizes.lg.paddingY,
-      fontSize: theme.components.button.sizes.lg.fontSize,
+      paddingLeft: theme.components?.button?.sizes?.lg?.paddingX || '1rem',
+      paddingRight: theme.components?.button?.sizes?.lg?.paddingX || '1rem',
+      paddingTop: theme.components?.button?.sizes?.lg?.paddingY || '0.75rem',
+      paddingBottom: theme.components?.button?.sizes?.lg?.paddingY || '0.75rem',
+      fontSize: theme.components?.button?.sizes?.lg?.fontSize || '1rem',
     },
   };
   
