@@ -232,24 +232,6 @@ const BaseJobTicketForm = ({
         readOnly={readOnly}
       />
       
-      {/* Description of Work */}
-      <div>
-        <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.workDescription')}
-        </label>
-        <div className="mt-1">
-          <textarea
-            id="workDescription"
-            name="workDescription"
-            rows={4}
-            className="bg-gray-800 block w-full max-w-2xl rounded-md border border-gray-500 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            placeholder="Enter your work description here..."
-            readOnly={readOnly}
-            {...register('workDescription')}
-          />
-        </div>
-      </div>
-      
       {/* Work Hours */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Input
@@ -270,6 +252,25 @@ const BaseJobTicketForm = ({
           error={errors.workEndTime}
           readOnly={readOnly}
         />
+        
+        {/* Description of Work */}
+        <div className="md:col-span-3">
+          <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
+            {t('jobTicket.workDescription')}
+          </label>
+          <div className="mt-1">
+            <textarea
+              id="workDescription"
+              name="workDescription"
+              rows={4}
+              className="bg-gray-800 block w-full max-w-2xl rounded-md border border-gray-500 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+              placeholder="Enter your work description here..."
+              readOnly={readOnly}
+              {...register('workDescription')}
+            />
+          </div>
+        </div>
+        
         <Input
           label={t('jobTicket.workTotalTime')}
           type="text"
