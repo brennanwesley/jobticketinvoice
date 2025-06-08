@@ -183,7 +183,7 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
               onClick={handleAddPart}
               disabled={!selectedPart}
             >
-              Add Part
+              {t('jobTicket.addPart')}
             </Button>
           </div>
         )}
