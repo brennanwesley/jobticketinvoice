@@ -49,7 +49,19 @@ const translations = {
       techSignup: 'Technician Registration',
       managerSignup: 'Manager Registration',
       alreadyHaveAccount: 'Already have an account?',
-      loginInstead: 'Login instead'
+      loginInstead: 'Login instead',
+      // Form fields
+      name: 'Full Name',
+      email: 'Email Address',
+      jobType: 'Job Type',
+      selectJobType: 'Select your job type',
+      password: 'Password',
+      confirmPassword: 'Confirm Password',
+      company: 'Company Name',
+      phone: 'Phone Number',
+      address: 'Address',
+      submit: 'Create Account',
+      termsAgree: 'I agree to the Terms and Conditions'
     },
     
     // Public Landing Page translations
@@ -100,6 +112,39 @@ const translations = {
       cancel: 'Cancel',
       confirm: 'Confirm',
       loggedInAs: 'Logged in as'
+    },
+    
+    // Job Types translations
+    jobTypes: {
+      pumpTech: 'Pump Service Technician',
+      roustabout: 'Roustabout',
+      electrician: 'Electrician',
+      pipeline: 'Pipeline Operator',
+      truckDriver: 'Truck Driver',
+      other: 'Other'
+    },
+    
+    // Validation messages
+    validation: {
+      nameRequired: 'Name is required',
+      emailRequired: 'Email is required',
+      emailInvalid: 'Please enter a valid email address',
+      passwordRequired: 'Password is required',
+      passwordLength: 'Password must be at least 8 characters',
+      passwordsDoNotMatch: 'Passwords do not match',
+      jobTypeRequired: 'Please select a job type',
+      companyRequired: 'Company name is required',
+      phoneRequired: 'Phone number is required',
+      addressRequired: 'Address is required'
+    },
+    
+    // Error messages
+    errors: {
+      registrationFailed: 'Registration failed. Please try again.',
+      fetchFailed: 'Failed to fetch data. Please check your connection.',
+      serverError: 'Server error. Please try again later.',
+      invalidCredentials: 'Invalid email or password',
+      emailInUse: 'This email is already in use'
     }
   },
   
@@ -146,7 +191,19 @@ const translations = {
       techSignup: 'Registro de Técnico',
       managerSignup: 'Registro de Gerente',
       alreadyHaveAccount: '¿Ya tiene una cuenta?',
-      loginInstead: 'Iniciar sesión en su lugar'
+      loginInstead: 'Iniciar sesión en su lugar',
+      // Form fields
+      name: 'Nombre Completo',
+      email: 'Correo Electrónico',
+      jobType: 'Tipo de Trabajo',
+      selectJobType: 'Seleccione su tipo de trabajo',
+      password: 'Contraseña',
+      confirmPassword: 'Confirmar Contraseña',
+      company: 'Nombre de la Empresa',
+      phone: 'Número de Teléfono',
+      address: 'Dirección',
+      submit: 'Crear Cuenta',
+      termsAgree: 'Acepto los Términos y Condiciones'
     },
     
     // Public Landing Page translations
@@ -197,6 +254,39 @@ const translations = {
       cancel: 'Cancelar',
       confirm: 'Confirmar',
       loggedInAs: 'Conectado como'
+    },
+    
+    // Job Types translations
+    jobTypes: {
+      pumpTech: 'Técnico de Servicio de Bombas',
+      roustabout: 'Obrero Petrolero',
+      electrician: 'Electricista',
+      pipeline: 'Operador de Oleoducto',
+      truckDriver: 'Conductor de Camión',
+      other: 'Otro'
+    },
+    
+    // Validation messages
+    validation: {
+      nameRequired: 'El nombre es obligatorio',
+      emailRequired: 'El correo electrónico es obligatorio',
+      emailInvalid: 'Por favor, introduzca una dirección de correo electrónico válida',
+      passwordRequired: 'La contraseña es obligatoria',
+      passwordLength: 'La contraseña debe tener al menos 8 caracteres',
+      passwordsDoNotMatch: 'Las contraseñas no coinciden',
+      jobTypeRequired: 'Por favor, seleccione un tipo de trabajo',
+      companyRequired: 'El nombre de la empresa es obligatorio',
+      phoneRequired: 'El número de teléfono es obligatorio',
+      addressRequired: 'La dirección es obligatoria'
+    },
+    
+    // Error messages
+    errors: {
+      registrationFailed: 'El registro falló. Por favor, inténtelo de nuevo.',
+      fetchFailed: 'Error al obtener datos. Por favor, compruebe su conexión.',
+      serverError: 'Error del servidor. Por favor, inténtelo más tarde.',
+      invalidCredentials: 'Correo electrónico o contraseña inválidos',
+      emailInUse: 'Este correo electrónico ya está en uso'
     }
   }
 };
