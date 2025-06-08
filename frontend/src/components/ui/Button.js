@@ -260,6 +260,7 @@ const Button = ({
     secondary: 'text-blue-700 bg-white border border-blue-500 hover:bg-blue-50 focus:ring-blue-500',
     outline: 'text-gray-700 bg-transparent border border-gray-300 hover:bg-gray-50 focus:ring-blue-500',
     danger: 'text-white bg-red-600 hover:bg-red-700 focus:ring-red-500',
+    success: 'text-white bg-green-600 hover:bg-green-700 focus:ring-green-500',
   };
   
   // Size classes based on our design system
