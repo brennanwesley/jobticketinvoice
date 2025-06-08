@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useLanguage } from '../../../context/LanguageContext';
 import BaseJobTicketForm from './BaseJobTicketForm';
@@ -24,12 +24,14 @@ import { Button, Input, Card } from '../../ui';
  */
 const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
   const { t } = useLanguage();
-  const { control, register, watch, setValue } = useForm({
-    defaultValues: draftData || {}
+  const { control, register, watch, setValue, formState } = useForm({
+    defaultValues: draftData || {parts: []}
   });
   
   // State for selected part in dropdown
   const [selectedPart, setSelectedPart] = useState('');
+  // Local state to track parts (for immediate UI updates)
+  const [partsArray, setPartsArray] = useState([]);
   
   // Get parts list based on current language - memoized to prevent recreation on each render
   const partsList = useMemo(() => [
@@ -41,6 +43,13 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
     { value: 'partOther', label: t('parts.other') },
   ], [t]);
   
+  // Initialize parts array from draft data if available
+  useEffect(() => {
+    if (draftData && draftData.parts) {
+      setPartsArray(draftData.parts);
+    }
+  }, [draftData]);
+
   // Handle adding a part - memoized to prevent recreation on each render
   const handleAddPart = useCallback(() => {
     if (!selectedPart) return;
@@ -49,21 +58,42 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
     const selectedPartObj = partsList.find(part => part.value === selectedPart);
     if (!selectedPartObj) return;
     
-    // Store both value and label as an object
-    const currentParts = watch('parts') || [];
-    setValue('parts', [...currentParts, {
+    // Create new part object
+    const newPart = {
       value: selectedPart,
       label: selectedPartObj.label
-    }]);
+    };
+    
+    // Update local state for immediate UI update
+    setPartsArray(prevParts => [...prevParts, newPart]);
+    
+    // Update form state
+    const currentParts = watch('parts') || [];
+    setValue('parts', [...currentParts, newPart]);
+    
+    // Reset selected part
     setSelectedPart('');
+    
+    console.log('Part added:', newPart);
+    console.log('Current parts array:', [...currentParts, newPart]);
   }, [selectedPart, partsList, watch, setValue]);
   
   // Handle removing a part - memoized to prevent recreation on each render
   const handleRemovePart = useCallback((index) => {
+    // Update local state for immediate UI update
+    setPartsArray(prevParts => {
+      const updatedParts = [...prevParts];
+      updatedParts.splice(index, 1);
+      return updatedParts;
+    });
+    
+    // Update form state
     const currentParts = watch('parts') || [];
-    const updatedParts = [...currentParts];
-    updatedParts.splice(index, 1);
-    setValue('parts', updatedParts);
+    const updatedFormParts = [...currentParts];
+    updatedFormParts.splice(index, 1);
+    setValue('parts', updatedFormParts);
+    
+    console.log('Part removed at index:', index);
   }, [watch, setValue]);
   
   // Handle part selection change - memoized to prevent recreation on each render
@@ -76,10 +106,9 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
   
   // Memoize the parts list rendering for better performance
   const partsListItems = useMemo(() => {
-    const parts = watch('parts') || [];
-    console.log('Current parts:', parts); // Debug log to see what parts are available
+    console.log('Rendering parts list with:', partsArray); // Debug log to see what parts are available
     
-    if (!parts || parts.length === 0) {
+    if (!partsArray || partsArray.length === 0) {
       return (
         <li className="text-gray-500 text-center py-2">
           {t('jobTicket.parts.noParts')}
@@ -87,7 +116,7 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
       );
     }
     
-    return parts.map((part, index) => {
+    return partsArray.map((part, index) => {
       // Get the label from the part object
       // Handle both new format (object with value and label) and old format (string)
       let partLabel;
@@ -117,7 +146,7 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
         </li>
       );
     });
-  }, [watch, t, readOnly, handleRemovePart]);
+  }, [partsArray, t, readOnly, handleRemovePart]);
   
   return (
     <BaseJobTicketForm readOnly={readOnly} draftData={draftData}>
