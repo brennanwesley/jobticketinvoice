@@ -18,7 +18,7 @@ const classNames = (...classes) => {
 // Define routes for prefetching
 const routes = {
   '/profile': React.lazy(() => import('../profile/ProfilePage')),
-  '/': React.lazy(() => import('../tickets/forms/GenericJobTicketForm')),
+  '/job-ticket-form': React.lazy(() => import('../JobTicketFormPage')),
   '/submitted': React.lazy(() => import('../tickets/SubmittedTicketList')),
   '/drafts': React.lazy(() => import('../tickets/DraftTicketList'))
 };
@@ -133,7 +133,7 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                 {/* Create Job Ticket Button */}
                 <li className="mb-6">
                   <Link
-                    to="/"
+                    to="/job-ticket-form"
                     onClick={handleCreateTicketClick}
                     className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded flex items-center justify-center gap-x-2 w-full transition-colors"
                   >
