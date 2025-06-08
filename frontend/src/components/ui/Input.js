@@ -149,17 +149,17 @@ const Input = forwardRef(({
   const sizeStyles = {
     sm: {
       padding: `${theme.spacing[1]} ${theme.spacing[2]}`,
-      fontSize: theme.typography.fontSize.xs,
+      fontSize: '0.75rem', // xs size
       height: '2rem',
     },
     md: {
       padding: `${theme.spacing[2]} ${theme.spacing[3]}`,
-      fontSize: theme.typography.fontSize.sm,
+      fontSize: '0.875rem', // sm size
       height: '2.5rem',
     },
     lg: {
       padding: `${theme.spacing[2.5]} ${theme.spacing[4]}`,
-      fontSize: theme.typography.fontSize.base,
+      fontSize: '1rem', // base size
       height: '3rem',
     },
   }[size];
@@ -258,29 +258,29 @@ const Input = forwardRef(({
   const labelStyles = {
     display: 'block',
     marginBottom: theme.spacing[1],
-    fontSize: theme.typography.fontSize.sm,
-    fontWeight: theme.typography.fontWeight.medium,
-    color: theme.colors.text.label,
+    fontSize: '0.875rem', // sm size
+    fontWeight: 500, // medium weight
+    color: theme.colors.text.secondary,
   };
   
   // Helper text styles
   const helperTextStyles = {
     marginTop: theme.spacing[1],
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: '0.75rem', // xs size
     color: theme.colors.text.secondary,
   };
   
   // Error text styles
   const errorTextStyles = {
     marginTop: theme.spacing[1],
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: '0.75rem', // xs size
     color: theme.colors.error[500],
   };
   
   // Success text styles
   const successTextStyles = {
     marginTop: theme.spacing[1],
-    fontSize: theme.typography.fontSize.xs,
+    fontSize: '0.75rem', // xs size
     color: theme.colors.success[500],
   };
   
@@ -297,7 +297,7 @@ const Input = forwardRef(({
         {prefix && (
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             {typeof prefix === 'string' ? (
-              <span style={{ color: theme.colors.text.secondary, fontSize: theme.typography.fontSize.sm }}>
+              <span style={{ color: theme.colors.text.secondary, fontSize: '0.875rem' }}>
                 {prefix}
               </span>
             ) : prefix}
@@ -333,7 +333,7 @@ const Input = forwardRef(({
         {suffix && !renderValidationIcon() && (
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
             {typeof suffix === 'string' ? (
-              <span style={{ color: theme.colors.text.secondary, fontSize: theme.typography.fontSize.sm }}>
+              <span style={{ color: theme.colors.text.secondary, fontSize: '0.875rem' }}>
                 {suffix}
               </span>
             ) : suffix}
