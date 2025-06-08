@@ -166,7 +166,7 @@ const BaseJobTicketForm = ({
   }, [renderStart]);
   
   return (
-    <Form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8 max-w-3xl mx-auto" autoComplete="off">
+    <Form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8 max-w-3xl mx-auto" autoComplete="off" hideSubmitButton={true}>
       {/* Job Date */}
       <DateInput
         label={t('jobTicket.date')}

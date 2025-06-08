@@ -56,6 +56,8 @@ const AppDashboard = enhancedLazy(() => import(/* webpackChunkName: "dashboard" 
 const JobTicketFormPage = enhancedLazy(() => import(/* webpackChunkName: "job-ticket-form" */ './JobTicketFormPage'), 'job-ticket-form');
 const VoiceRecorderPage = enhancedLazy(() => import(/* webpackChunkName: "voice-recorder" */ './VoiceRecorderPage'), 'voice-recorder');
 const AuthTestPage = enhancedLazy(() => import(/* webpackChunkName: "auth-test" */ './AuthTestPage'), 'auth-test');
+const SubmittedTicketList = enhancedLazy(() => import(/* webpackChunkName: "submitted-tickets" */ './tickets/SubmittedTicketList'), 'submitted-tickets');
+const DraftTicketList = enhancedLazy(() => import(/* webpackChunkName: "draft-tickets" */ './tickets/DraftTicketList'), 'draft-tickets');
 
 /**
  * Route configuration for prefetching and organization
@@ -68,7 +70,9 @@ const routeConfig = {
   '/dashboard': AppDashboard,
   '/profile': UserProfilePage,
   '/job-ticket-form': JobTicketFormPage,
-  '/voice-recorder': VoiceRecorderPage
+  '/voice-recorder': VoiceRecorderPage,
+  '/submitted': SubmittedTicketList,
+  '/drafts': DraftTicketList
 };
 
 /**
@@ -117,6 +121,8 @@ const AppRoutes = () => {
           <Route path="/profile" element={<UserProfilePage />} />
           <Route path="/job-ticket-form" element={<JobTicketFormPage />} />
           <Route path="/voice-recorder" element={<VoiceRecorderPage />} />
+          <Route path="/submitted" element={<SubmittedTicketList />} />
+          <Route path="/drafts" element={<DraftTicketList />} />
         </Route>
         
         {/* Redirect any unknown routes to home */}

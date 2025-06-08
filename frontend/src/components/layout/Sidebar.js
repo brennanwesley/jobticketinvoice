@@ -151,7 +151,8 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                 
                 {/* Submitted Job Tickets section */}
                 <li>
-                  <button
+                  <Link
+                    to="/submitted"
                     onClick={handleSubmittedTicketsClick}
                     className={classNames(
                       viewMode === 'submittedList'
@@ -162,12 +163,13 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                   >
                     <DocumentCheckIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
                     {t('nav.submitted')}
-                  </button>
+                  </Link>
                 </li>
                 
                 {/* Draft Job Tickets section */}
                 <li>
-                  <button
+                  <Link
+                    to="/drafts"
                     onClick={handleDraftTicketsClick}
                     className={classNames(
                       viewMode === 'draftList'
@@ -183,7 +185,7 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                         {draftTickets.length}
                       </span>
                     )}
-                  </button>
+                  </Link>
                 </li>
                 
                 {/* Development Tools section - only visible in development mode */}
