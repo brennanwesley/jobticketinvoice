@@ -89,7 +89,18 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
     return parts.map((part, index) => {
       // Get the label from the part object
       // Handle both new format (object with value and label) and old format (string)
-      const partLabel = typeof part === 'object' && part.label ? part.label : t(`parts.${part.replace('part', '').toLowerCase()}`);
+      let partLabel;
+      if (typeof part === 'object' && part.label) {
+        partLabel = part.label;
+      } else if (typeof part === 'string') {
+        // Handle old format where part is just a string like 'partLubricant'
+        // Extract the part name by removing 'part' prefix and convert first letter to lowercase
+        const partName = part.replace(/^part/, '').charAt(0).toLowerCase() + part.replace(/^part/, '').slice(1);
+        partLabel = t(`parts.${partName}`);
+      } else {
+        // Fallback
+        partLabel = String(part);
+      }
       
       return (
         <li key={index} className="flex items-center justify-between bg-gray-700 rounded px-3 py-2">
