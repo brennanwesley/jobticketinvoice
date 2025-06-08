@@ -1,8 +1,10 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useLanguage } from '../../../context/LanguageContext';
+import { Card, Button } from '../../ui';
+import EnhancedInput from '../../ui/EnhancedInput';
+import EnhancedSelect from '../../ui/EnhancedSelect';
 import BaseJobTicketForm from './BaseJobTicketForm';
-import { Button, Input, Card } from '../../ui';
 
 /**
  * PumpTechTicketForm - Job ticket form specialized for Pump Service Technicians
@@ -151,29 +153,22 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
   return (
     <BaseJobTicketForm readOnly={readOnly} draftData={draftData}>
       {/* Pump-specific fields */}
-      <div>
-        <label htmlFor="workType" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.workType')}
-        </label>
-        <div className="mt-1">
-          <select
-            id="workType"
-            name="workType"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            disabled={readOnly}
-            {...register('workType')}
-          >
-            <option value="">{t('common.select')}</option>
-            <option value="maintenance">{t('workTypes.maintenance')}</option>
-            <option value="repair">{t('workTypes.repair')}</option>
-            <option value="installation">{t('workTypes.installation')}</option>
-            <option value="inspection">{t('workTypes.inspection')}</option>
-          </select>
-        </div>
-      </div>
+      <EnhancedSelect
+        id="workType"
+        name="workType"
+        label={t('jobTicket.workType')}
+        register={register}
+        disabled={readOnly}
+      >
+        <option value="">{t('common.select')}</option>
+        <option value="maintenance">{t('workTypes.maintenance')}</option>
+        <option value="repair">{t('workTypes.repair')}</option>
+        <option value="installation">{t('workTypes.installation')}</option>
+        <option value="inspection">{t('workTypes.inspection')}</option>
+      </EnhancedSelect>
       
       {/* Equipment */}
-      <Input
+      <EnhancedInput
         label={t('jobTicket.equipment')}
         type="text"
         id="equipment"
@@ -184,26 +179,27 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
       />
       
       {/* Parts Used */}
-      <div>
-        <label className="block text-base font-medium text-gray-300 mb-2 text-lg">
-          {t('jobTicket.partsUsed')}
+      <div className="mb-4">
+        <label className="block text-base font-medium text-white mb-2 text-lg">
+          {t('jobTicket.parts.title')}
         </label>
         
         {!readOnly && (
           <div className="flex items-end space-x-2 mb-3">
             <div className="flex-grow">
-              <select
+              <EnhancedSelect
+                id="partSelect"
+                name="partSelect"
                 value={selectedPart}
                 onChange={handlePartChange}
-                className="bg-gray-800 block w-full rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
               >
-                <option value="">{t('common.select')}</option>
+                <option value="">{t('jobTicket.parts.placeholder')}</option>
                 {partsList.map((part) => (
                   <option key={part.value} value={part.value}>
                     {part.label}
                   </option>
                 ))}
-              </select>
+              </EnhancedSelect>
             </div>
             <Button
               type="button"
