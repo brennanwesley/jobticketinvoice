@@ -132,15 +132,14 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
               <ul className="-mx-2 space-y-1">
                 {/* Create Job Ticket Button */}
                 <li className="mb-6">
-                  <Button
+                  <Link
+                    to="/"
                     onClick={handleCreateTicketClick}
-                    variant="success"
-                    fullWidth
-                    className="flex items-center justify-center gap-x-2"
+                    className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded flex items-center justify-center gap-x-2 w-full transition-colors"
                   >
                     <PlusCircleIcon className="h-5 w-5" aria-hidden="true" />
-                    <span>{t('jobTicket.createNew')}</span>
-                  </Button>
+                    <span>+ {t('jobTicket.createNew')}</span>
+                  </Link>
                 </li>
                 
                 {/* Job Tickets Header */}
