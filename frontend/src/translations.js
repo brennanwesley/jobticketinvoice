@@ -69,6 +69,10 @@ const translations = {
       createAccount: 'Create an account',
       forgotPassword: 'Forgot password?',
     },
+    featureCard: {
+      title: 'Job Ticket Platform',
+      description: 'Streamline your oilfield service operations',
+    },
     profile: {
       title: 'User Profile',
       description: 'View your account information.',
@@ -286,14 +290,18 @@ const translations = {
       selectFile: 'Seleccionar Archivo',
     },
     login: {
-      title: 'Iniciar Sesión en Su Cuenta',
-      description: '¡Bienvenido de nuevo! Por favor, ingrese sus credenciales para continuar.',
-      email: 'Correo Electrónico',
+      title: 'Iniciar Sesión en su Cuenta',
+      description: 'Bienvenido de nuevo! Por favor, ingrese sus credenciales para continuar.',
+      email: 'Dirección de Correo Electrónico',
       password: 'Contraseña',
       signIn: 'Iniciar Sesión',
       noAccount: '¿No tiene una cuenta?',
       createAccount: 'Crear una cuenta',
       forgotPassword: '¿Olvidó su contraseña?',
+    },
+    featureCard: {
+      title: 'Plataforma de Boletas de Trabajo',
+      description: 'Optimice sus operaciones de servicios petroleros',
     },
     profile: {
       title: 'Perfil de Usuario',

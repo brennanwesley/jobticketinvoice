@@ -20,7 +20,7 @@ const LanguageToggle = () => {
       title={`${instructionText} ${targetLanguage}`}
       tabIndex={0}
     >
-      <span className="text-xs italic text-gray-400 mr-1">{instructionText}</span>
+      <span className="text-xs italic text-white mr-1">{instructionText}</span>
       <span>{targetLanguage}</span>
     </button>
   );
