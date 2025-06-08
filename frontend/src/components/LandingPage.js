@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MicrophoneIcon, PencilSquareIcon, QuestionMarkCircleIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { useTicket } from '../context/TicketContext';
@@ -13,18 +14,19 @@ const LandingPage = () => {
   const { t, language } = useLanguage();
   const { setTicketMode, setViewMode } = useTicket();
   const { startVoiceRecording } = useVoice();
+  const navigate = useNavigate();
   
   // Handle manual job ticket creation
   const handleManualClick = () => {
-    setTicketMode('manual');
-    setViewMode('form');
+    // Navigate to the dedicated job ticket form page instead of changing context state
+    navigate('/job-ticket-form');
   };
   
   // Handle voice job ticket creation
   const handleVoiceClick = () => {
-    setTicketMode('voice');
-    setViewMode('form');
-    startVoiceRecording();
+    // Navigate to the dedicated voice recorder page instead of changing context state
+    navigate('/voice-recorder');
+    // Voice recording will be started in the VoiceRecorderPage component
   };
   
   // Handle help button click (placeholder for future functionality)
