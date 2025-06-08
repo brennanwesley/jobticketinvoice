@@ -274,14 +274,14 @@ const Input = forwardRef(({
   const errorTextStyles = {
     marginTop: theme.spacing[1],
     fontSize: '0.75rem', // xs size
-    color: theme.colors.error[500],
+    color: theme.colors?.error?.[500] || '#f44336', // Fallback to standard red
   };
   
   // Success text styles
   const successTextStyles = {
     marginTop: theme.spacing[1],
     fontSize: '0.75rem', // xs size
-    color: theme.colors.success[500],
+    color: theme.colors?.success?.[500] || '#4caf50', // Fallback to standard green
   };
   
   return (
@@ -289,7 +289,7 @@ const Input = forwardRef(({
       {label && (
         <label htmlFor={id} style={labelStyles}>
           {label}
-          {required && <span style={{ color: theme.colors.error[500], marginLeft: theme.spacing[1] }}>*</span>}
+          {required && <span style={{ color: theme.colors?.error?.[500] || '#f44336', marginLeft: theme.spacing[1] }}>*</span>}
         </label>
       )}
       <div style={{ position: 'relative', marginTop: theme.spacing[1] }}>
