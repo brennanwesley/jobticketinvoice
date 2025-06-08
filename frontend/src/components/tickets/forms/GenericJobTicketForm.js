@@ -150,7 +150,7 @@ const GenericJobTicketForm = ({ readOnly = false, draftData = null }) => {
           <select
             id="workType"
             name="workType"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+            className="bg-gray-800 block w-full max-w-md rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
             disabled={readOnly}
             {...register('workType')}
           >
@@ -176,7 +176,7 @@ const GenericJobTicketForm = ({ readOnly = false, draftData = null }) => {
               <select
                 value={selectedPart}
                 onChange={handlePartChange}
-                className="bg-gray-800 block w-full rounded-md border-2 border-orange-500 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                className="bg-gray-800 block w-full rounded-md border-2 border-orange-400 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
               >
                 <option value="">{t('common.select')}</option>
                 {partsList.map((part) => (
@@ -192,7 +192,7 @@ const GenericJobTicketForm = ({ readOnly = false, draftData = null }) => {
               size="md"
               onClick={handleAddPart}
               disabled={!selectedPart}
-              className="bg-orange-500 hover:bg-orange-600 text-black font-medium"
+              className="bg-orange-600 hover:bg-orange-700 text-black font-medium"
             >
               {t('jobTicket.addPart')}
             </Button>

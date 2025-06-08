@@ -47,8 +47,8 @@ const HelpButton = () => {
               {language === 'en' ? 'Support Contact:' : 'Contacto de soporte:'}
             </p>
             <p className="mt-2">
-              <span className="block">📞 (555) 123-4567</span>
-              <span className="block">✉️ support@example.com</span>
+              <span className="block">📞 (432) 640-7688</span>
+              <span className="block">✉️ feedbacklooploop@gmail.com</span>
             </p>
           </div>
           
