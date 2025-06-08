@@ -33,12 +33,12 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
   
   // Get parts list based on current language - memoized to prevent recreation on each render
   const partsList = useMemo(() => [
-    { value: t('parts.lubricant'), label: t('parts.lubricant') },
-    { value: t('parts.pumpSeal'), label: t('parts.pumpSeal') },
-    { value: t('parts.thrustChamber'), label: t('parts.thrustChamber') },
-    { value: t('parts.vfdBreaker'), label: t('parts.vfdBreaker') },
-    { value: t('parts.serviceKit'), label: t('parts.serviceKit') },
-    { value: t('parts.other'), label: t('parts.other') },
+    { value: 'partLubricant', label: t('parts.lubricant') },
+    { value: 'partPumpSeal', label: t('parts.pumpSeal') },
+    { value: 'partThrustChamber', label: t('parts.thrustChamber') },
+    { value: 'partVFDBreaker', label: t('parts.vfdBreaker') },
+    { value: 'partServiceKit', label: t('parts.serviceKit') },
+    { value: 'partOther', label: t('parts.other') },
   ], [t]);
   
   // Handle adding a part - memoized to prevent recreation on each render
@@ -75,20 +75,47 @@ const PumpTechTicketForm = ({ readOnly = false, draftData = null }) => {
       );
     }
     
-    return parts.map((part, index) => (
-      <li key={index} className="flex items-center justify-between bg-gray-700 rounded px-3 py-2">
-        <span>{part}</span>
-        {!readOnly && (
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() => handleRemovePart(index)}
-          >
-            {t('common.remove')}
-          </Button>
-        )}
-      </li>
-    ));
+    return parts.map((part, index) => {
+      // Map part code to translation key
+      let partLabel;
+      switch(part) {
+        case 'partLubricant':
+          partLabel = t('parts.lubricant');
+          break;
+        case 'partPumpSeal':
+          partLabel = t('parts.pumpSeal');
+          break;
+        case 'partThrustChamber':
+          partLabel = t('parts.thrustChamber');
+          break;
+        case 'partVFDBreaker':
+          partLabel = t('parts.vfdBreaker');
+          break;
+        case 'partServiceKit':
+          partLabel = t('parts.serviceKit');
+          break;
+        case 'partOther':
+          partLabel = t('parts.other');
+          break;
+        default:
+          partLabel = part; // Fallback to the raw value if no match
+      }
+      
+      return (
+        <li key={index} className="flex items-center justify-between bg-gray-700 rounded px-3 py-2">
+          <span>{partLabel}</span>
+          {!readOnly && (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => handleRemovePart(index)}
+            >
+              {t('common.remove')}
+            </Button>
+          )}
+        </li>
+      );
+    });
   }, [watch, t, readOnly, handleRemovePart]);
   
   return (

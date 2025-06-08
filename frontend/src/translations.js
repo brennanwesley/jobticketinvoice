@@ -23,10 +23,53 @@ const translations = {
       drafts: 'Draft Tickets',
       date: 'Date',
       company: 'Company',
+      companyName: 'Company Name',
+      customer: 'Customer',
+      customerName: 'Customer Name',
+      location: 'Location',
       workType: 'Work Type',
       description: 'Description',
+      workDescription: 'Work Description',
       hours: 'Hours',
-      actions: 'Actions'
+      actions: 'Actions',
+      equipment: 'Equipment Serviced',
+      equipmentPlaceholder: 'e.g., Pump Model XYZ, Serial #12345',
+      partsUsed: 'Parts Used',
+      noParts: 'No parts added yet',
+      noItems: 'No items added yet',
+      noLoads: 'No loads added yet',
+      workStartTime: 'Work Start Time',
+      workEndTime: 'Work End Time',
+      workTotalTime: 'Work Total Time',
+      travelStartTime: 'Travel Start Time',
+      travelEndTime: 'Travel End Time',
+      travelTotalTime: 'Travel Total Time',
+      customJobType: 'Job Type',
+      customJobTypePlaceholder: 'Enter your job type',
+      materialsEquipmentUsed: 'Materials/Equipment Used',
+      itemNamePlaceholder: 'Enter item name',
+      qty: 'Qty',
+      additionalNotes: 'Additional Notes',
+      additionalNotesPlaceholder: 'Enter any additional notes or observations',
+      vehicleId: 'Vehicle ID',
+      vehicleType: 'Vehicle Type',
+      startingMileage: 'Starting Mileage',
+      endingMileage: 'Ending Mileage',
+      totalMileage: 'Total Mileage',
+      loadDetails: 'Load Details',
+      loadDescription: 'Load Description',
+      loadDescriptionPlaceholder: 'Describe the load',
+      weight: 'Weight',
+      destination: 'Destination',
+      destinationPlaceholder: 'Delivery location',
+      vehicleInspection: 'Vehicle Inspection',
+      fuelChecked: 'Fuel Level Checked',
+      tiresChecked: 'Tires Checked',
+      oilChecked: 'Oil Level Checked',
+      lightsChecked: 'Lights Checked',
+      quantity: 'Quantity',
+      submittedBy: 'Submitted By',
+      submitError: 'There was an error submitting your job ticket. Please try again.'
     },
     
     // Auth and User related translations
@@ -112,7 +155,12 @@ const translations = {
       back: 'Back',
       cancel: 'Cancel',
       confirm: 'Confirm',
-      loggedInAs: 'Logged in as'
+      loggedInAs: 'Logged in as',
+      select: 'Select an option',
+      add: 'Add',
+      remove: 'Remove',
+      success: 'Success',
+      error: 'Error'
     },
     
     // Job Types translations
@@ -123,6 +171,31 @@ const translations = {
       pipeline: 'Pipeline Operator',
       truckDriver: 'Truck Driver',
       other: 'Other'
+    },
+    
+    // Work Types translations
+    workTypes: {
+      maintenance: 'Maintenance',
+      repair: 'Repair',
+      installation: 'Installation',
+      inspection: 'Inspection',
+      delivery: 'Delivery',
+      pickup: 'Pickup',
+      transport: 'Transport',
+      equipment: 'Equipment Transport',
+      supplies: 'Supplies Transport',
+      other: 'Other'
+    },
+    
+    // Parts translations
+    parts: {
+      title: 'Parts',
+      lubricant: 'Lubricant',
+      pumpSeal: 'Pump Seal',
+      thrustChamber: 'Thrust Chamber',
+      vfdBreaker: 'VFD Breaker',
+      serviceKit: 'Service Kit',
+      other: 'Other Part'
     },
     
     // Validation messages
@@ -166,10 +239,53 @@ const translations = {
       drafts: 'Boletas en Borrador',
       date: 'Fecha',
       company: 'Empresa',
+      companyName: 'Nombre de la Empresa',
+      customer: 'Cliente',
+      customerName: 'Nombre del Cliente',
+      location: 'Ubicación',
       workType: 'Tipo de Trabajo',
       description: 'Descripción',
+      workDescription: 'Descripción del Trabajo',
       hours: 'Horas',
-      actions: 'Acciones'
+      actions: 'Acciones',
+      equipment: 'Equipo Reparado',
+      equipmentPlaceholder: 'ej., Bomba Modelo XYZ, Serie #12345',
+      partsUsed: 'Piezas Utilizadas',
+      noParts: 'No hay piezas agregadas todavía',
+      noItems: 'No hay artículos agregados todavía',
+      noLoads: 'No hay cargas agregadas todavía',
+      workStartTime: 'Hora de Inicio del Trabajo',
+      workEndTime: 'Hora de Finalización del Trabajo',
+      workTotalTime: 'Tiempo Total de Trabajo',
+      travelStartTime: 'Hora de Inicio del Viaje',
+      travelEndTime: 'Hora de Finalización del Viaje',
+      travelTotalTime: 'Tiempo Total de Viaje',
+      customJobType: 'Tipo de Trabajo',
+      customJobTypePlaceholder: 'Ingrese su tipo de trabajo',
+      materialsEquipmentUsed: 'Materiales/Equipos Utilizados',
+      itemNamePlaceholder: 'Ingrese nombre del artículo',
+      qty: 'Cant',
+      additionalNotes: 'Notas Adicionales',
+      additionalNotesPlaceholder: 'Ingrese notas o observaciones adicionales',
+      vehicleId: 'ID del Vehículo',
+      vehicleType: 'Tipo de Vehículo',
+      startingMileage: 'Kilometraje Inicial',
+      endingMileage: 'Kilometraje Final',
+      totalMileage: 'Kilometraje Total',
+      loadDetails: 'Detalles de la Carga',
+      loadDescription: 'Descripción de la Carga',
+      loadDescriptionPlaceholder: 'Describa la carga',
+      weight: 'Peso',
+      destination: 'Destino',
+      destinationPlaceholder: 'Lugar de entrega',
+      vehicleInspection: 'Inspección del Vehículo',
+      fuelChecked: 'Nivel de Combustible Verificado',
+      tiresChecked: 'Neumáticos Verificados',
+      oilChecked: 'Nivel de Aceite Verificado',
+      lightsChecked: 'Luces Verificadas',
+      quantity: 'Cantidad',
+      submittedBy: 'Enviado Por',
+      submitError: 'Hubo un error al enviar su boleta de trabajo. Por favor, inténtelo de nuevo.'
     },
     
     // Auth and User related translations
@@ -255,7 +371,12 @@ const translations = {
       back: 'Atrás',
       cancel: 'Cancelar',
       confirm: 'Confirmar',
-      loggedInAs: 'Conectado como'
+      loggedInAs: 'Conectado como',
+      select: 'Seleccione una opción',
+      add: 'Agregar',
+      remove: 'Eliminar',
+      success: 'Éxito',
+      error: 'Error'
     },
     
     // Job Types translations
@@ -266,6 +387,31 @@ const translations = {
       pipeline: 'Operador de Oleoducto',
       truckDriver: 'Conductor de Camión',
       other: 'Otro'
+    },
+    
+    // Work Types translations
+    workTypes: {
+      maintenance: 'Mantenimiento',
+      repair: 'Reparación',
+      installation: 'Instalación',
+      inspection: 'Inspección',
+      delivery: 'Entrega',
+      pickup: 'Recogida',
+      transport: 'Transporte',
+      equipment: 'Transporte de Equipo',
+      supplies: 'Transporte de Suministros',
+      other: 'Otro'
+    },
+    
+    // Parts translations
+    parts: {
+      title: 'Piezas',
+      lubricant: 'Lubricante',
+      pumpSeal: 'Sello de Bomba',
+      thrustChamber: 'Cámara de Empuje',
+      vfdBreaker: 'Interruptor VFD',
+      serviceKit: 'Kit de Servicio',
+      other: 'Otra Pieza'
     },
     
     // Validation messages

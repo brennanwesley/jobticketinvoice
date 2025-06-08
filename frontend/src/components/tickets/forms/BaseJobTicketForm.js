@@ -253,7 +253,7 @@ const BaseJobTicketForm = ({
           readOnly={readOnly}
         />
         <Input
-          label={t('jobTicket.workTotalHours')}
+          label={t('jobTicket.workTotalTime')}
           type="text"
           id="workTotalHours"
           name="workTotalHours"
@@ -265,7 +265,7 @@ const BaseJobTicketForm = ({
       {/* Drive Hours */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Input
-          label={t('jobTicket.driveStartTime')}
+          label={t('jobTicket.travelStartTime')}
           type="time"
           id="driveStartTime"
           name="driveStartTime"
@@ -274,7 +274,7 @@ const BaseJobTicketForm = ({
           readOnly={readOnly}
         />
         <Input
-          label={t('jobTicket.driveEndTime')}
+          label={t('jobTicket.travelEndTime')}
           type="time"
           id="driveEndTime"
           name="driveEndTime"
@@ -283,7 +283,7 @@ const BaseJobTicketForm = ({
           readOnly={readOnly}
         />
         <Input
-          label={t('jobTicket.driveTotalHours')}
+          label={t('jobTicket.travelTotalTime')}
           type="text"
           id="driveTotalHours"
           name="driveTotalHours"
@@ -295,7 +295,7 @@ const BaseJobTicketForm = ({
       {/* Description of Work */}
       <div>
         <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.descriptionOfWork')}
+          {t('jobTicket.workDescription')}
         </label>
         <div className="mt-1">
           <textarea
@@ -350,10 +350,10 @@ const BaseJobTicketForm = ({
             >
               {isSubmitting ? (
                 <div className="flex items-center">
-                  {t('common.submitting')}
+                  {t('jobTicket.submitting')}
                   <LoadingSpinner size="sm" className="ml-2" />
                 </div>
-              ) : t('jobTicket.submit')}
+              ) : t('jobTicket.submitTicket')}
             </Button>
           </div>
         </div>
