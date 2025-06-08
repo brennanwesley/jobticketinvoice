@@ -18,7 +18,7 @@ const classNames = (...classes) => {
 // Define routes for prefetching
 const routes = {
   '/profile': React.lazy(() => import('../profile/ProfilePage')),
-  '/': React.lazy(() => import('../tickets/JobTicketForm')),
+  '/': React.lazy(() => import('../tickets/forms/GenericJobTicketForm')),
   '/submitted': React.lazy(() => import('../tickets/SubmittedTicketList')),
   '/drafts': React.lazy(() => import('../tickets/DraftTicketList'))
 };

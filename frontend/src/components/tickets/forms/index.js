@@ -5,6 +5,7 @@
  */
 
 export { default as BaseJobTicketForm } from './BaseJobTicketForm';
+export { default as GenericJobTicketForm } from './GenericJobTicketForm';
 export { default as PumpTechTicketForm } from './PumpTechTicketForm';
 export { default as DriverTicketForm } from './DriverTicketForm';
 export { default as RoustaboutTicketForm } from './RoustaboutTicketForm';

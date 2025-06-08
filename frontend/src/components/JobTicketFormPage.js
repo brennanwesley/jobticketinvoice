@@ -9,8 +9,8 @@ import Sidebar from './layout/Sidebar';
 import LanguageToggle from './LanguageToggle';
 
 // Import all form components from the forms directory
-import JobTicketForm from './tickets/JobTicketForm';
 import {
+  GenericJobTicketForm,
   PumpTechTicketForm,
   DriverTicketForm,
   RoustaboutTicketForm,
@@ -46,11 +46,11 @@ const JobTicketFormPage = () => {
     'pipeline_operator': PipelineOperatorTicketForm,
     'truck_driver': TruckDriverTicketForm,
     'other': OtherTicketForm,
-    'manual': JobTicketForm, // Fallback for manual selection or admin users
+    'manual': GenericJobTicketForm, // Fallback for manual selection or admin users
   };
   
   // Select the appropriate form component based on job type
-  const FormComponent = jobTypeForms[jobType] || JobTicketForm;
+  const FormComponent = jobTypeForms[jobType] || GenericJobTicketForm;
   
   // Simulate loading to ensure all components are ready
   useEffect(() => {

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { useLanguage } from '../context/LanguageContext';
 import { useTicket } from '../context/TicketContext';
-import JobTicketForm from './JobTicketForm';
+import { GenericJobTicketForm } from './tickets/forms';
 
 /**
  * Manual Form component
@@ -41,7 +41,7 @@ const ManualForm = () => {
       </button>
       
       <div className="pt-4">
-        <JobTicketForm onSave={handleSave} />
+        <GenericJobTicketForm onSave={handleSave} />
       </div>
     </div>
   );

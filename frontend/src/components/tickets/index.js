@@ -7,5 +7,5 @@
 export { default as DraftTicketList } from './DraftTicketList';
 export { default as SubmittedTicketList } from './SubmittedTicketList';
 export { default as JobTicketFormSelector } from './JobTicketFormSelector';
-export { default as JobTicketForm } from './JobTicketForm';
+export { GenericJobTicketForm } from './forms';
 export { default as DraftTicketView } from './DraftTicketView';

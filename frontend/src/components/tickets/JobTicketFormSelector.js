@@ -5,8 +5,7 @@ import { useTicket } from '../../context/TicketContext';
 import { Card, LoadingSpinner } from '../ui';
 
 // Import job type specific forms
-import { PumpTechTicketForm, DriverTicketForm } from './forms';
-import JobTicketForm from './JobTicketForm'; // Manual "by hand" form
+import { GenericJobTicketForm, PumpTechTicketForm, DriverTicketForm } from './forms';
 
 /**
  * Job Ticket Form Selector Component
@@ -21,7 +20,7 @@ const JobTicketFormSelector = () => {
   const jobTypeForms = useMemo(() => ({
     'pump_tech': PumpTechTicketForm,
     'driver': DriverTicketForm,
-    'manual': JobTicketForm,
+    'manual': GenericJobTicketForm,
     // Add more job types here as they are implemented
   }), []);
   

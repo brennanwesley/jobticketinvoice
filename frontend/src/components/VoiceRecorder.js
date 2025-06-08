@@ -4,7 +4,7 @@ import { ArrowLeftIcon, ExclamationCircleIcon } from '@heroicons/react/24/solid'
 import { useLanguage } from '../context/LanguageContext';
 import { useVoice } from '../context/VoiceContext';
 import { useTicket } from '../context/TicketContext';
-import JobTicketForm from './JobTicketForm';
+import { GenericJobTicketForm } from './tickets/forms';
 import { parseJobTicketFromVoice } from '../utils/voiceParser';
 
 /**
@@ -299,7 +299,7 @@ const VoiceRecorder = () => {
             <details id="jobTicketFormDetails" className="mt-2">
               <summary className="sr-only">Job Ticket Form</summary>
               <div className="mt-4">
-                <JobTicketForm />
+                <GenericJobTicketForm />
               </div>
             </details>
           </div>
