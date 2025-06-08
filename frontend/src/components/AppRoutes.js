@@ -58,6 +58,7 @@ const VoiceRecorderPage = enhancedLazy(() => import(/* webpackChunkName: "voice-
 const AuthTestPage = enhancedLazy(() => import(/* webpackChunkName: "auth-test" */ './AuthTestPage'), 'auth-test');
 const SubmittedTicketList = enhancedLazy(() => import(/* webpackChunkName: "submitted-tickets" */ './tickets/SubmittedTicketList'), 'submitted-tickets');
 const DraftTicketList = enhancedLazy(() => import(/* webpackChunkName: "draft-tickets" */ './tickets/DraftTicketList'), 'draft-tickets');
+const LandingPage = enhancedLazy(() => import(/* webpackChunkName: "landing-page" */ './LandingPage'), 'landing-page');
 
 /**
  * Route configuration for prefetching and organization
@@ -72,7 +73,8 @@ const routeConfig = {
   '/job-ticket-form': JobTicketFormPage,
   '/voice-recorder': VoiceRecorderPage,
   '/submitted': SubmittedTicketList,
-  '/drafts': DraftTicketList
+  '/drafts': DraftTicketList,
+  '/landing': LandingPage
 };
 
 /**
@@ -123,6 +125,7 @@ const AppRoutes = () => {
           <Route path="/voice-recorder" element={<VoiceRecorderPage />} />
           <Route path="/submitted" element={<SubmittedTicketList />} />
           <Route path="/drafts" element={<DraftTicketList />} />
+          <Route path="/landing" element={<LandingPage />} />
         </Route>
         
         {/* Redirect any unknown routes to home */}
