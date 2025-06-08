@@ -1,5 +1,7 @@
 # JobTicketInvoice Frontend Documentation
 
+*Last deployment: June 7, 2025 - API URL configuration updated*
+
 ## Overview
 This document serves as a reference guide for the JobTicketInvoice frontend application. It contains important information about the codebase, architecture decisions, and development guidelines.
 
