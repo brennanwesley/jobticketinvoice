@@ -8,10 +8,17 @@ import { LoadingSpinner } from './ui';
 import Sidebar from './layout/Sidebar';
 import LanguageToggle from './LanguageToggle';
 
-// Static imports instead of lazy loading to avoid CSP issues
+// Import all form components from the forms directory
 import JobTicketForm from './tickets/JobTicketForm';
-import PumpTechTicketForm from './tickets/forms/PumpTechTicketForm';
-import DriverTicketForm from './tickets/forms/DriverTicketForm';
+import {
+  PumpTechTicketForm,
+  DriverTicketForm,
+  RoustaboutTicketForm,
+  ElectricianTicketForm,
+  PipelineOperatorTicketForm,
+  TruckDriverTicketForm,
+  OtherTicketForm
+} from './tickets/forms';
 
 /**
  * JobTicketFormPage component
@@ -34,7 +41,12 @@ const JobTicketFormPage = () => {
   const jobTypeForms = {
     'pump_tech': PumpTechTicketForm,
     'driver': DriverTicketForm,
-    'manual': JobTicketForm,
+    'roustabout': RoustaboutTicketForm,
+    'electrician': ElectricianTicketForm,
+    'pipeline_operator': PipelineOperatorTicketForm,
+    'truck_driver': TruckDriverTicketForm,
+    'other': OtherTicketForm,
+    'manual': JobTicketForm, // Fallback for manual selection or admin users
   };
   
   // Select the appropriate form component based on job type
