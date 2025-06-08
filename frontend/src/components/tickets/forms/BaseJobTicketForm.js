@@ -319,7 +319,7 @@ const BaseJobTicketForm = ({
       {/* Customer Signature (using original submittedBy field name for data consistency) */}
       <div className="mt-6 mb-4">
         <EnhancedInput
-          label={t('jobTicket.customerSignature')}
+          label="Customer Signature"
           type="text"
           id="submittedBy"
           name="submittedBy"
