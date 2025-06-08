@@ -61,6 +61,7 @@ const translations = {
       phone: 'Phone Number',
       address: 'Address',
       submit: 'Create Account',
+      createAccount: 'Create Account',
       termsAgree: 'I agree to the Terms and Conditions'
     },
     
@@ -203,6 +204,7 @@ const translations = {
       phone: 'Número de Teléfono',
       address: 'Dirección',
       submit: 'Crear Cuenta',
+      createAccount: 'Crear Cuenta',
       termsAgree: 'Acepto los Términos y Condiciones'
     },
     

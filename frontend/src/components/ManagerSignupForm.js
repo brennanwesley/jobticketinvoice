@@ -217,7 +217,7 @@ const ManagerSignupForm = () => {
         {/* Company Name Field */}
         <div>
           <label htmlFor="company_name" className="block text-sm font-medium text-gray-300 mb-1">
-            {t('signup.companyName')} *
+            {t('signup.company')} *
           </label>
           <input
             type="text"
@@ -322,12 +322,12 @@ const ManagerSignupForm = () => {
           disabled={isSubmitting}
           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? t('common.submitting') : t('signup.createAccount')}
+          {isSubmitting ? t('common.submitting') : 'Create Account'}
         </button>
       </form>
       
       <div className="mt-6 text-center">
-        <Link to="/signup" className="text-orange-500 hover:text-orange-400 font-medium">
+        <Link to="/signup/role" className="text-orange-500 hover:text-orange-400 font-medium">
           &larr; {t('common.back')}
         </Link>
       </div>

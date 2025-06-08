@@ -17,6 +17,7 @@ const TechSignupForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    company_name: '',
     password: '',
     confirmPassword: '',
     job_type: '',
@@ -66,6 +67,11 @@ const TechSignupForm = () => {
       newErrors.confirmPassword = t('validation.passwordsDoNotMatch');
     }
     
+    // Company name validation
+    if (!formData.company_name.trim()) {
+      newErrors.company_name = t('validation.companyRequired');
+    }
+    
     // Job type validation
     if (!formData.job_type) {
       newErrors.job_type = t('validation.jobTypeRequired');
@@ -92,6 +98,7 @@ const TechSignupForm = () => {
       const result = await register({
         name: formData.name,
         email: formData.email,
+        company_name: formData.company_name,
         password: formData.password,
         role: 'tech',
         job_type: formData.job_type
@@ -156,6 +163,22 @@ const TechSignupForm = () => {
           {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
         </div>
         
+        {/* Company Name Field */}
+        <div>
+          <label htmlFor="company_name" className="block text-sm font-medium text-gray-300 mb-1">
+            {t('signup.company')} *
+          </label>
+          <input
+            type="text"
+            id="company_name"
+            name="company_name"
+            value={formData.company_name}
+            onChange={handleChange}
+            className={`w-full px-4 py-2 bg-slate-700 border ${errors.company_name ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+          />
+          {errors.company_name && <p className="mt-1 text-sm text-red-500">{errors.company_name}</p>}
+        </div>
+        
         {/* Job Type Field */}
         <div>
           <label htmlFor="job_type" className="block text-sm font-medium text-gray-300 mb-1">
@@ -217,12 +240,12 @@ const TechSignupForm = () => {
           disabled={isSubmitting}
           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? t('common.submitting') : t('signup.createAccount')}
+          {isSubmitting ? t('common.submitting') : 'Create Account'}
         </button>
       </form>
       
       <div className="mt-6 text-center">
-        <Link to="/signup" className="text-orange-500 hover:text-orange-400 font-medium">
+        <Link to="/signup/role" className="text-orange-500 hover:text-orange-400 font-medium">
           &larr; {t('common.back')}
         </Link>
       </div>
