@@ -13,31 +13,42 @@
 import apiService from './apiService';
 
 /**
- * Format a job ticket for API submission
- * @param {Object} formData - Raw form data
- * @returns {Object} Formatted API data
+ * Format ticket data for API submission
+ * @param {Object} ticketData - The ticket data to format
+ * @returns {Object} Formatted ticket data
  */
-export const formatTicketForApi = (formData) => {
-  // Map form field names to API field names
-  return {
-    customer_name: formData.customerName,
-    company_name: formData.companyName,
-    location: formData.location,
-    job_date: formData.date,
-    work_type: formData.workType || 'byHand',
-    equipment: formData.equipment || '',
-    work_start_time: formData.workStartTime,
-    work_end_time: formData.workEndTime,
-    work_total_hours: parseFloat(formData.workTotalHours) || 0,
-    travel_start_time: formData.driveStartTime,
-    travel_end_time: formData.driveEndTime,
-    travel_total_hours: parseFloat(formData.driveTotalHours) || 0,
-    travel_type: formData.travelType || 'drive',
-    parts_used: Array.isArray(formData.parts) ? JSON.stringify(formData.parts) : '[]',
-    description: formData.workDescription,
-    submitted_by: formData.submittedBy,
-    status: formData.status || 'submitted'
+export const formatTicketForApi = (ticketData) => {
+  console.log('Original ticket data for API:', ticketData);
+  
+  // Remove any fields that shouldn't be sent to the API
+  const {
+    id,
+    lastUpdated,
+    ...apiData
+  } = ticketData;
+  
+  // Map fields to match the backend JobTicketSubmit schema
+  const formattedData = {
+    ...apiData,
+    // The backend expects 'description' instead of 'workDescription'
+    description: apiData.workDescription,
+    // Map drive fields to travel fields as expected by the backend
+    travel_start_time: apiData.driveStartTime,
+    travel_end_time: apiData.driveEndTime,
+    travel_total_hours: parseFloat(apiData.driveTotalHours) || 0,
+    travel_type: apiData.travelType || 'drive',
+    // Ensure submitted_by is present as it's required
+    submitted_by: apiData.submittedBy || 'Unknown',
+    // Format work hours
+    work_total_hours: parseFloat(apiData.workTotalHours) || 0,
+    // Format parts used as JSON string
+    parts_used: Array.isArray(apiData.parts) ? JSON.stringify(apiData.parts) : '[]',
+    // Set status
+    status: apiData.status || 'submitted'
   };
+  
+  console.log('Formatted API data for submission:', formattedData);
+  return formattedData;
 };
 
 /**
