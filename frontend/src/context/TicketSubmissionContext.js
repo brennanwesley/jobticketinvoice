@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useCallback, useMemo } from 'react';
-import apiService from '../services/apiService';
+import jobTicketService from '../services/jobTicketService';
 import { useDraftTickets } from './DraftTicketContext';
 
 // Create the context
@@ -22,30 +22,17 @@ export const TicketSubmissionProvider = ({ children }) => {
   const [lastSubmittedTicket, setLastSubmittedTicket] = useState(null);
   
   /**
-   * Format ticket data for API submission
-   * @param {Object} ticketData - Raw ticket data from form
-   * @returns {Object} Formatted data for API
+   * Track submission progress
+   * @param {number} progress - Progress percentage (0-100)
    */
-  const formatTicketForApi = useCallback((ticketData) => {
-    return {
-      customer_name: ticketData.customerName,
-      company_name: ticketData.companyName,
-      location: ticketData.location,
-      job_date: ticketData.jobDate,
-      work_type: ticketData.workType,
-      equipment: ticketData.equipment,
-      work_start_time: ticketData.workStartTime,
-      work_end_time: ticketData.workEndTime,
-      work_total_hours: parseFloat(ticketData.workTotalHours) || 0,
-      travel_start_time: ticketData.driveStartTime,
-      travel_end_time: ticketData.driveEndTime,
-      travel_total_hours: parseFloat(ticketData.driveTotalHours) || 0,
-      travel_type: ticketData.travelType,
-      parts_used: JSON.stringify(ticketData.parts || []),
-      description: ticketData.workDescription,
-      submitted_by: ticketData.submittedBy,
-      status: 'submitted'
-    };
+  const [submissionProgress, setSubmissionProgress] = useState(0);
+  
+  /**
+   * Handle submission progress updates
+   * @param {number} progress - Progress percentage (0-100)
+   */
+  const handleProgress = useCallback((progress) => {
+    setSubmissionProgress(progress);
   }, []);
   
   /**
@@ -57,21 +44,33 @@ export const TicketSubmissionProvider = ({ children }) => {
     setIsSubmitting(true);
     setSubmitError(null);
     setSubmitSuccess(false);
+    setSubmissionProgress(0);
     
     try {
-      // Format data for API
-      const apiTicketData = formatTicketForApi(ticketData);
+      // Validate ticket data
+      const validation = jobTicketService.validateJobTicket(ticketData);
+      if (!validation.isValid) {
+        const errorMessage = Object.values(validation.errors).join(', ');
+        throw new Error(`Validation failed: ${errorMessage}`);
+      }
       
-      // Submit to API
-      const response = await apiService.jobTickets.submitTicket(apiTicketData);
+      // Submit to API with progress tracking
+      const result = await jobTicketService.submitJobTicket(ticketData, handleProgress);
       
-      // Mark as submitted in local storage
-      const updatedTicket = markDraftAsSubmitted(ticketData, response.id);
-      
-      setSubmitSuccess(true);
-      setLastSubmittedTicket(updatedTicket);
-      
-      return response;
+      if (result.success) {
+        // Mark as submitted in local storage
+        const updatedTicket = markDraftAsSubmitted(ticketData, result.id);
+        
+        setSubmitSuccess(true);
+        setLastSubmittedTicket({
+          ...updatedTicket,
+          ticketNumber: result.ticketNumber
+        });
+        
+        return result;
+      } else {
+        throw new Error(result.message || 'Failed to submit job ticket');
+      }
     } catch (error) {
       const errorMessage = error.message || 'Failed to submit job ticket';
       setSubmitError(errorMessage);
@@ -79,7 +78,7 @@ export const TicketSubmissionProvider = ({ children }) => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formatTicketForApi, markDraftAsSubmitted]);
+  }, [handleProgress, markDraftAsSubmitted]);
   
   /**
    * Reset submission state
@@ -95,6 +94,7 @@ export const TicketSubmissionProvider = ({ children }) => {
     isSubmitting,
     submitError,
     submitSuccess,
+    submissionProgress,
     lastSubmittedTicket,
     submitJobTicket,
     resetSubmissionState
@@ -102,6 +102,7 @@ export const TicketSubmissionProvider = ({ children }) => {
     isSubmitting,
     submitError,
     submitSuccess,
+    submissionProgress,
     lastSubmittedTicket,
     submitJobTicket,
     resetSubmissionState

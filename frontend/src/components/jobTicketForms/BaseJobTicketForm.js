@@ -2,8 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTicket } from '../../context/TicketContext';
+import { useDraftTickets } from '../../context/DraftTicketContext';
+import { useTicketSubmission } from '../../context/TicketSubmissionContext';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { calculateHoursBetween } from '../../utils/validators';
+import { Toast } from '../ui/Toast';
+import { Modal } from '../ui/Modal';
+import DraftTicketSelector from './DraftTicketSelector';
+import TicketSubmissionHandler from './TicketSubmissionHandler';
 
 /**
  * BaseJobTicketForm - Core form component that centralizes common job ticket functionality
@@ -31,14 +38,27 @@ const BaseJobTicketForm = ({
   children, 
   onSubmit, 
   readOnly = false, 
-  draftData = null 
+  draftData = null,
+  workType = 'byHand', // Default work type
+  redirectAfterSubmit = '/dashboard/submitted'
 }) => {
   const { t } = useLanguage();
-  const { formData, updateFormData, saveJobTicketAsDraft, submitJobTicket, isSubmitting, submitError, submitSuccess } = useTicket();
+  const navigate = useNavigate();
+  const { formData, updateFormData } = useTicket();
+  const { saveDraft, selectedDraftTicket } = useDraftTickets();
+  const { submitJobTicket, isSubmitting, submitError, submitSuccess, submissionProgress, lastSubmittedTicket } = useTicketSubmission();
+  const { user } = useAuth();
   
-  // Setup React Hook Form
-  const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm({
-    defaultValues: draftData || formData
+  // Toast state
+  const [toast, setToast] = useState({ show: false, type: 'info', message: '' });
+  
+  // Confirmation modal state
+  const [confirmModal, setConfirmModal] = useState({ show: false, title: '', message: '', onConfirm: null });
+  
+  // Setup React Hook Form with validation
+  const { register, handleSubmit, control, setValue, watch, formState: { errors }, reset, trigger } = useForm({
+    defaultValues: draftData || formData,
+    mode: 'onChange' // Validate on change for immediate feedback
   });
   
   // Watch time fields to calculate totals
@@ -77,273 +97,493 @@ const BaseJobTicketForm = ({
     return () => subscription.unsubscribe();
   }, [watch, updateFormData]);
   
-  // Handle success and error messages
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  
+  // Handle success and redirect after submission
   useEffect(() => {
-    if (submitSuccess) {
-      setShowSuccessMessage(true);
-      setTimeout(() => setShowSuccessMessage(false), 5000);
+    if (submitSuccess && lastSubmittedTicket) {
+      // Show success toast
+      setToast({
+        show: true,
+        type: 'success',
+        message: t('jobTicket.submitSuccess', { ticketNumber: lastSubmittedTicket.ticket_number })
+      });
+      
+      // Redirect to landing page after a short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     }
-  }, [submitSuccess]);
+  }, [submitSuccess, lastSubmittedTicket, t, navigate]);
   
+  // Handle submission errors
   useEffect(() => {
     if (submitError) {
-      setShowErrorMessage(true);
-      setTimeout(() => setShowErrorMessage(false), 5000);
+      setToast({
+        show: true,
+        type: 'error',
+        message: submitError || t('jobTicket.submitError')
+      });
     }
-  }, [submitError]);
+  }, [submitError, t]);
   
-  // Handle form submission
+  // Handle form submission with validation
   const handleFormSubmit = async (data) => {
     try {
-      // Save to local storage first
-      const savedDraft = saveJobTicketAsDraft(data);
+      // Add submitter information and metadata
+      data.submittedBy = user?.username || data.submittedBy || 'Unknown';
+      data.status = 'submitted';
+      data.workType = workType;
+      data.lastUpdated = new Date().toISOString();
+      
+      // Ensure we have an ID (either from existing draft or generate new one)
+      if (!data.id) {
+        data.id = `draft-${Date.now()}`;
+      }
+      
+      // Save to local storage first to prevent data loss
+      const savedDraft = saveDraft(data);
       
       // Then submit to API
       await submitJobTicket(savedDraft);
     } catch (error) {
       console.error('Error submitting job ticket:', error);
+      setToast({
+        show: true,
+        type: 'error',
+        message: error.message || t('jobTicket.submitError')
+      });
     }
   };
   
   // Handle save as draft
   const handleSaveAsDraft = () => {
-    const data = watch();
-    saveJobTicketAsDraft(data);
-    setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    try {
+      const data = watch();
+      
+      // Add metadata
+      data.status = 'draft';
+      data.workType = workType;
+      data.lastUpdated = new Date().toISOString();
+      
+      // Ensure we have an ID (either from existing draft or generate new one)
+      if (!data.id) {
+        data.id = `draft-${Date.now()}`;
+      }
+      
+      // Save draft
+      saveDraft(data);
+      
+      setToast({
+        show: true,
+        type: 'success',
+        message: t('jobTicket.draftSaved')
+      });
+    } catch (error) {
+      console.error('Error saving draft:', error);
+      setToast({
+        show: true,
+        type: 'error',
+        message: error.message || t('jobTicket.draftSaveError')
+      });
+    }
   };
   
+  // Handle loading a draft
+  const handleDraftSelected = (draft) => {
+    try {
+      // Reset form with draft data
+      reset(draft);
+      
+      setToast({
+        show: true,
+        type: 'info',
+        message: t('jobTicket.draftLoaded')
+      });
+    } catch (error) {
+      console.error('Error loading draft:', error);
+      setToast({
+        show: true,
+        type: 'error',
+        message: error.message || t('jobTicket.draftLoadError')
+      });
+    }
+  };
+  
+  // Validate form before submission
+  const validateAndSubmit = async () => {
+    const isValid = await trigger();
+    
+    if (!isValid) {
+      setToast({
+        show: true,
+        type: 'error',
+        message: t('validation.fixErrors')
+      });
+      return;
+    }
+    
+    // Show confirmation modal
+    setConfirmModal({
+      show: true,
+      title: t('jobTicket.confirmSubmit'),
+      message: t('jobTicket.confirmSubmitMessage'),
+      onConfirm: handleSubmit(handleFormSubmit)
+    });
+  };
+  
+  // Close toast
+  const closeToast = () => setToast({ ...toast, show: false });
+  
+  // Close modal
+  const closeModal = () => setConfirmModal({ ...confirmModal, show: false });
+  
+  // Confirm modal action
+  const confirmModalAction = () => {
+    if (confirmModal.onConfirm) {
+      confirmModal.onConfirm();
+    }
+    closeModal();
+  };
+  
+  // Reset form
+  const handleResetForm = () => {
+    reset(formData);
+  };
+  
+  // Initialize form from selected draft if available
+  useEffect(() => {
+    if (selectedDraftTicket && !readOnly) {
+      reset(selectedDraftTicket);
+    }
+  }, [selectedDraftTicket, reset, readOnly]);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit || handleFormSubmit)} className="space-y-8 max-w-3xl mx-auto">
-      {/* Common form fields */}
-      <div>
-        <label htmlFor="jobDate" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.jobDate')}
-        </label>
-        <div className="mt-1">
-          <input
-            type="date"
-            id="jobDate"
-            name="jobDate"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            readOnly={readOnly}
-            {...register('jobDate', { required: true })}
-          />
-          {errors.jobDate && <p className="mt-1 text-sm text-red-500">{t('validation.required')}</p>}
-        </div>
-      </div>
-      
-      {/* Company Name */}
-      <div>
-        <label htmlFor="companyName" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.companyName')}
-        </label>
-        <div className="mt-1">
-          <input
-            type="text"
-            id="companyName"
-            name="companyName"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            readOnly={readOnly}
-            {...register('companyName', { required: true })}
-          />
-          {errors.companyName && <p className="mt-1 text-sm text-red-500">{t('validation.required')}</p>}
-        </div>
-      </div>
-      
-      {/* Customer Name */}
-      <div>
-        <label htmlFor="customerName" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.customerName')}
-        </label>
-        <div className="mt-1">
-          <input
-            type="text"
-            id="customerName"
-            name="customerName"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            readOnly={readOnly}
-            {...register('customerName')}
-          />
-        </div>
-      </div>
-      
-      {/* Location */}
-      <div>
-        <label htmlFor="location" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.location')}
-        </label>
-        <div className="mt-1">
-          <input
-            type="text"
-            id="location"
-            name="location"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            readOnly={readOnly}
-            {...register('location')}
-          />
-        </div>
-      </div>
-      
-      {/* Job-specific form fields rendered as children */}
-      {children}
-      
-      {/* Work Hours */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="workStartTime" className="block text-sm font-medium text-gray-300">
-            {t('jobTicket.workStartTime')}
+    <TicketSubmissionHandler
+      onSubmitStart={(data) => {
+        console.log('Starting submission for ticket:', data);
+      }}
+      onSubmitComplete={(result) => {
+        console.log('Ticket submitted successfully:', result);
+        // Show success toast with ticket number
+        setToast({
+          show: true,
+          type: 'success',
+          message: t('jobTicket.submitSuccess', { ticketNumber: result.ticketNumber })
+        });
+      }}
+      onSubmitError={(error) => {
+        console.error('Error submitting ticket:', error);
+        // Show error toast
+        setToast({
+          show: true,
+          type: 'error',
+          message: error.message || t('jobTicket.submitError')
+        });
+      }}
+      redirectPath={redirectAfterSubmit}
+    >
+      <div className="space-y-6">
+        {/* Draft selector */}
+        {!readOnly && (
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-white">
+              {t('jobTicket.createJobTicket')}
+            </h2>
+            <DraftTicketSelector onDraftSelected={handleDraftSelected} />
+          </div>
+        )}
+        
+        {/* Form fields */}
+        <form className="space-y-4">
+        {/* Date */}
+        <div className="form-group">
+          <label htmlFor="date" className="block text-sm font-medium text-gray-300">
+            {t('jobTicket.date')} <span className="text-red-500">*</span>
           </label>
           <div className="mt-1">
-            <input
-              type="time"
-              id="workStartTime"
-              name="workStartTime"
-              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-              readOnly={readOnly}
-              {...register('workStartTime')}
+            <input 
+              type="date" 
+              id="date" 
+              className={`bg-gray-800 block w-full rounded-md ${errors.date ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+              {...register('date', { 
+                required: t('validation.required') 
+              })} 
+              disabled={readOnly}
             />
+            {errors.date && (
+              <p className="mt-1 text-sm text-red-500">{errors.date.message}</p>
+            )}
           </div>
         </div>
-        <div>
-          <label htmlFor="workEndTime" className="block text-sm font-medium text-gray-300">
-            {t('jobTicket.workEndTime')}
+        
+        {/* Company */}
+        <div className="form-group">
+          <label htmlFor="companyName" className="block text-sm font-medium text-gray-300">
+            {t('jobTicket.companyName')} <span className="text-red-500">*</span>
           </label>
           <div className="mt-1">
-            <input
-              type="time"
-              id="workEndTime"
-              name="workEndTime"
-              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-              readOnly={readOnly}
-              {...register('workEndTime')}
+            <input 
+              type="text" 
+              id="companyName" 
+              className={`bg-gray-800 block w-full rounded-md ${errors.companyName ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+              {...register('companyName', { 
+                required: t('validation.required') 
+              })} 
+              disabled={readOnly}
             />
+            {errors.companyName && (
+              <p className="mt-1 text-sm text-red-500">{errors.companyName.message}</p>
+            )}
           </div>
         </div>
-      </div>
-      
-      {/* Total Work Hours (calculated) */}
-      <div>
-        <label htmlFor="workTotalHours" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.workTotalHours')}
-        </label>
-        <div className="mt-1">
-          <input
-            type="text"
-            id="workTotalHours"
-            name="workTotalHours"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            readOnly={true}
-            {...register('workTotalHours')}
-          />
-        </div>
-      </div>
-      
-      {/* Drive Hours */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="driveStartTime" className="block text-sm font-medium text-gray-300">
-            {t('jobTicket.driveStartTime')}
+        
+        {/* Customer */}
+        <div className="form-group">
+          <label htmlFor="customerName" className="block text-sm font-medium text-gray-300">
+            {t('jobTicket.customerName')}
           </label>
           <div className="mt-1">
-            <input
-              type="time"
-              id="driveStartTime"
-              name="driveStartTime"
-              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-              readOnly={readOnly}
-              {...register('driveStartTime')}
+            <input 
+              type="text" 
+              id="customerName" 
+              className={`bg-gray-800 block w-full rounded-md ${errors.customerName ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+              {...register('customerName')} 
+              disabled={readOnly}
             />
+            {errors.customerName && (
+              <p className="mt-1 text-sm text-red-500">{errors.customerName.message}</p>
+            )}
           </div>
         </div>
-        <div>
-          <label htmlFor="driveEndTime" className="block text-sm font-medium text-gray-300">
-            {t('jobTicket.driveEndTime')}
+        
+        {/* Location */}
+        <div className="form-group">
+          <label htmlFor="location" className="block text-sm font-medium text-gray-300">
+            {t('jobTicket.location')} <span className="text-red-500">*</span>
           </label>
           <div className="mt-1">
-            <input
-              type="time"
-              id="driveEndTime"
-              name="driveEndTime"
-              className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-              readOnly={readOnly}
-              {...register('driveEndTime')}
+            <input 
+              type="text" 
+              id="location" 
+              className={`bg-gray-800 block w-full rounded-md ${errors.location ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+              {...register('location', { 
+                required: t('validation.required') 
+              })} 
+              disabled={readOnly}
             />
+            {errors.location && (
+              <p className="mt-1 text-sm text-red-500">{errors.location.message}</p>
+            )}
           </div>
         </div>
-      </div>
-      
-      {/* Total Drive Hours (calculated) */}
-      <div>
-        <label htmlFor="driveTotalHours" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.driveTotalHours')}
-        </label>
-        <div className="mt-1">
-          <input
-            type="text"
-            id="driveTotalHours"
-            name="driveTotalHours"
-            className="bg-gray-800 block w-full max-w-md rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            readOnly={true}
-            {...register('driveTotalHours')}
-          />
-        </div>
-      </div>
-      
-      {/* Work Description */}
-      <div>
-        <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
-          {t('jobTicket.workDescription')}
-        </label>
-        <div className="mt-1">
-          <textarea
-            id="workDescription"
-            name="workDescription"
-            rows={4}
-            className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
-            readOnly={readOnly}
-            {...register('workDescription')}
-          />
-        </div>
-      </div>
-      
-      {/* Success and Error Messages */}
-      {showSuccessMessage && (
-        <div className="bg-green-500 bg-opacity-20 border border-green-500 text-green-500 px-4 py-3 rounded">
-          {submitSuccess ? t('jobTicket.submitSuccess') : t('jobTicket.draftSaved')}
-        </div>
-      )}
-      
-      {showErrorMessage && (
-        <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-500 px-4 py-3 rounded">
-          {submitError}
-        </div>
-      )}
-      
-      {/* Form Buttons */}
-      {!readOnly && (
-        <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full sm:w-auto px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-center"
-          >
-            {isSubmitting ? t('common.submitting') : t('jobTicket.submitTicket')}
-          </button>
+        
+        {/* Work Hours */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="form-group">
+            <label htmlFor="workStartTime" className="block text-sm font-medium text-gray-300">
+              {t('jobTicket.workStartTime')} <span className="text-red-500">*</span>
+            </label>
+            <div className="mt-1">
+              <input 
+                type="time" 
+                id="workStartTime" 
+                className={`bg-gray-800 block w-full rounded-md ${errors.workStartTime ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+                {...register('workStartTime', { 
+                  required: t('validation.required') 
+                })} 
+                disabled={readOnly}
+              />
+              {errors.workStartTime && (
+                <p className="mt-1 text-sm text-red-500">{errors.workStartTime.message}</p>
+              )}
+            </div>
+          </div>
           
-          <button
-            type="button"
-            onClick={handleSaveAsDraft}
-            className="w-full sm:w-auto px-8 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-md transition-colors text-center"
-          >
-            {t('jobTicket.saveForLater')}
-          </button>
+          <div className="form-group">
+            <label htmlFor="workEndTime" className="block text-sm font-medium text-gray-300">
+              {t('jobTicket.workEndTime')} <span className="text-red-500">*</span>
+            </label>
+            <div className="mt-1">
+              <input 
+                type="time" 
+                id="workEndTime" 
+                className={`bg-gray-800 block w-full rounded-md ${errors.workEndTime ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+                {...register('workEndTime', { 
+                  required: t('validation.required') 
+                })} 
+                disabled={readOnly}
+              />
+              {errors.workEndTime && (
+                <p className="mt-1 text-sm text-red-500">{errors.workEndTime.message}</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="workTotalHours" className="block text-sm font-medium text-gray-300">
+              {t('jobTicket.workTotalHours')}
+            </label>
+            <div className="mt-1">
+              <input 
+                type="number" 
+                id="workTotalHours" 
+                className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                step="0.25"
+                {...register('workTotalHours')} 
+                disabled={true} // Always calculated
+              />
+            </div>
+          </div>
         </div>
+        
+        {/* Drive Hours */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="form-group">
+            <label htmlFor="driveStartTime" className="block text-sm font-medium text-gray-300">
+              {t('jobTicket.driveStartTime')}
+            </label>
+            <div className="mt-1">
+              <input 
+                type="time" 
+                id="driveStartTime" 
+                className={`bg-gray-800 block w-full rounded-md ${errors.driveStartTime ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+                {...register('driveStartTime')} 
+                disabled={readOnly}
+              />
+              {errors.driveStartTime && (
+                <p className="mt-1 text-sm text-red-500">{errors.driveStartTime.message}</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="driveEndTime" className="block text-sm font-medium text-gray-300">
+              {t('jobTicket.driveEndTime')}
+            </label>
+            <div className="mt-1">
+              <input 
+                type="time" 
+                id="driveEndTime" 
+                className={`bg-gray-800 block w-full rounded-md ${errors.driveEndTime ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+                {...register('driveEndTime')} 
+                disabled={readOnly}
+              />
+              {errors.driveEndTime && (
+                <p className="mt-1 text-sm text-red-500">{errors.driveEndTime.message}</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="driveTotalHours" className="block text-sm font-medium text-gray-300">
+              {t('jobTicket.driveTotalHours')}
+            </label>
+            <div className="mt-1">
+              <input 
+                type="number" 
+                id="driveTotalHours" 
+                className="bg-gray-800 block w-full rounded-md border-gray-700 text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
+                step="0.25"
+                {...register('driveTotalHours')} 
+                disabled={true} // Always calculated
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Work Description */}
+        <div className="form-group">
+          <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300">
+            {t('jobTicket.workDescription')} <span className="text-red-500">*</span>
+          </label>
+          <div className="mt-1">
+            <textarea 
+              id="workDescription" 
+              rows={4}
+              className={`bg-gray-800 block w-full rounded-md ${errors.workDescription ? 'border-red-500' : 'border-gray-700'} text-white shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
+              {...register('workDescription', { 
+                required: t('validation.required') 
+              })} 
+              disabled={readOnly}
+            />
+            {errors.workDescription && (
+              <p className="mt-1 text-sm text-red-500">{errors.workDescription.message}</p>
+            )}
+          </div>
+        </div>
+        
+        {/* Child form fields */}
+        {children}
+        
+        {/* Form actions */}
+        {!readOnly && (
+          <div className="flex justify-between mt-6">
+            <button 
+              type="button" 
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
+              onClick={handleSaveAsDraft}
+            >
+              {t('jobTicket.saveForLater')}
+            </button>
+            
+            <div className="space-x-2">
+              <button
+                type="button"
+                className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white font-medium rounded-md transition-colors"
+                onClick={handleResetForm}
+              >
+                {t('common.reset')}
+              </button>
+              
+              <button 
+                type="button" 
+                className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
+                onClick={validateAndSubmit}
+              >
+                {isSubmitting ? t('common.submitting') : t('jobTicket.submitJobTicket')}
+              </button>
+            </div>
+          </div>
+        )}
+      </form>
+      
+      {/* Toast notification */}
+      {toast.show && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          show={toast.show}
+          onClose={closeToast}
+        />
       )}
-    </form>
+      
+      {/* Confirmation modal */}
+      <Modal
+        isOpen={confirmModal.show}
+        onClose={closeModal}
+        title={confirmModal.title}
+        size="md"
+        footer={
+          <div className="flex justify-end space-x-2">
+            <button
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors"
+              onClick={closeModal}
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-md transition-colors"
+              onClick={confirmModalAction}
+            >
+              {t('common.confirm')}
+            </button>
+          </div>
+        }
+      >
+        <p>{confirmModal.message}</p>
+      </Modal>
+    </div>
+  </TicketSubmissionHandler>
   );
 };
 

@@ -72,6 +72,9 @@ const SubmittedTicketList = () => {
             <thead>
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-24 sm:w-auto">
+                  {t('jobTicket.ticketNumber')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-24 sm:w-auto">
                   {t('jobTicket.date')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-48 sm:w-1/4">
@@ -112,6 +115,9 @@ const SubmittedTicketList = () => {
               ) : (
                 tickets.map((ticket) => (
                   <tr key={ticket.id} className="hover:bg-gray-700">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-orange-500">
+                      {ticket.ticket_number || '-'}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       {formatDate(ticket.job_date)}
                     </td>

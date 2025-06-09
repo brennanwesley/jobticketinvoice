@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, UniqueConstraint
 from sqlalchemy.sql import func
 import enum
 from database import Base
@@ -17,8 +17,12 @@ class JobTicket(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     job_number = Column(String, index=True)
+    ticket_number = Column(String(8), index=True, unique=True)
     company_name = Column(String, nullable=False)
     customer_name = Column(String)
+    
+    # Add a unique constraint to ensure ticket_number is unique
+    __table_args__ = (UniqueConstraint('ticket_number', name='uix_ticket_number'),)
     
     # Encrypted fields
     _encrypted_location = Column("location", String)

@@ -7,6 +7,7 @@ from models.user import User
 from models.job_ticket import JobTicket
 from schemas.job_ticket import JobTicketCreate, JobTicketUpdate, JobTicketResponse, JobTicketList, JobTicketSubmit
 from utils.jwt import get_current_user, get_manager_or_admin_user
+from utils.ticket_number import generate_ticket_number
 
 router = APIRouter(
     prefix="/job-tickets",
@@ -24,6 +25,9 @@ async def submit_job_ticket(
     # Set status explicitly
     ticket_data["status"] = "submitted"
     
+    # Generate a unique ticket number
+    ticket_data["ticket_number"] = generate_ticket_number(db)
+    
     db_job_ticket = JobTicket(**ticket_data)
     
     # Save job ticket to database
@@ -40,9 +44,16 @@ async def create_job_ticket(
     db: Session = Depends(get_db)
 ):
     """Create a new job ticket"""
-    # Create new job ticket
+    # Create new job ticket with data from request
+    ticket_data = job_ticket.dict()
+    
+    # Only generate a ticket number if the status is 'submitted'
+    # For drafts, we'll generate the ticket number when they're submitted
+    if ticket_data.get("status") == "submitted":
+        ticket_data["ticket_number"] = generate_ticket_number(db)
+    
     db_job_ticket = JobTicket(
-        **job_ticket.dict(),
+        **ticket_data,
         user_id=current_user.id
     )
     
@@ -136,6 +147,15 @@ async def update_job_ticket(
     
     # Update job ticket
     update_data = job_ticket_update.dict(exclude_unset=True)
+    
+    # If status is changing from draft to submitted, generate a ticket number if it doesn't exist
+    old_status = db_job_ticket.status
+    new_status = update_data.get("status", old_status)
+    
+    if old_status == "draft" and new_status == "submitted" and not db_job_ticket.ticket_number:
+        db_job_ticket.ticket_number = generate_ticket_number(db)
+    
+    # Apply updates
     for key, value in update_data.items():
         setattr(db_job_ticket, key, value)
     
