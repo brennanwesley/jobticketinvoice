@@ -7,6 +7,9 @@ import Sidebar from './layout/Sidebar';
 import LanguageToggle from './LanguageToggle';
 import LandingPage from './LandingPage';
 import VoiceRecorder from './VoiceRecorder';
+import JobTicketFormPage from './JobTicketFormPage';
+import VoiceRecorderPage from './VoiceRecorderPage';
+import UserProfilePage from './profile/ProfilePage';
 import { JobTicketFormSelector, DraftTicketList, SubmittedTicketList, DraftTicketView } from './tickets';
 
 /**
