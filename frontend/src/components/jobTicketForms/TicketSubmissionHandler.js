@@ -217,14 +217,21 @@ const TicketSubmissionHandler = ({
   return (
     <>
       {/* Pass submission handlers to children */}
-      {React.Children.map(children, child => 
-        React.cloneElement(child, {
-          onSubmit: confirmSubmit,
+      {React.Children.map(children, child => {
+        // Check if the child already has an onSubmit handler
+        const childOnSubmit = child.props.onSubmit;
+        
+        return React.cloneElement(child, {
+          onSubmit: (data) => {
+            console.log('TicketSubmissionHandler received form data:', data);
+            // Call confirmSubmit to show confirmation dialog
+            confirmSubmit(data);
+          },
           isSubmitting,
           submitProgress,
           submitResult
-        })
-      )}
+        });
+      })}
       
       {/* Submission progress indicator */}
       {isSubmitting && (

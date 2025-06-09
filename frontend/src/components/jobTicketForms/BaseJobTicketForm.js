@@ -128,6 +128,8 @@ const BaseJobTicketForm = ({
   // Handle form submission with validation
   const handleFormSubmit = async (data) => {
     try {
+      console.log('Form submitted with data:', data);
+      
       // Add submitter information and metadata
       data.submittedBy = user?.username || data.submittedBy || 'Unknown';
       data.status = 'submitted';
@@ -139,11 +141,19 @@ const BaseJobTicketForm = ({
         data.id = `draft-${Date.now()}`;
       }
       
-      // Save to local storage first to prevent data loss
-      const savedDraft = saveDraft(data);
-      
-      // Then submit to API
-      await submitJobTicket(savedDraft);
+      // If we're using the TicketSubmissionHandler, it will handle the submission
+      // Otherwise, use the direct submitJobTicket method
+      if (onSubmit) {
+        console.log('Using provided onSubmit handler');
+        onSubmit(data);
+      } else {
+        console.log('Using direct submitJobTicket method');
+        // Save to local storage first to prevent data loss
+        const savedDraft = saveDraft(data);
+        
+        // Then submit to API
+        await submitJobTicket(savedDraft);
+      }
     } catch (error) {
       console.error('Error submitting job ticket:', error);
       setToast({
@@ -258,26 +268,12 @@ const BaseJobTicketForm = ({
 
   return (
     <TicketSubmissionHandler
-      onSubmitStart={(data) => {
-        console.log('Starting submission for ticket:', data);
-      }}
+      onSubmitStart={(data) => console.log('Submission started:', data)}
       onSubmitComplete={(result) => {
-        console.log('Ticket submitted successfully:', result);
-        // Show success toast with ticket number
-        setToast({
-          show: true,
-          type: 'success',
-          message: t('jobTicket.submitSuccess', { ticketNumber: result.ticketNumber })
-        });
+        showToast('success', t('jobTicket.submitSuccess', { ticketNumber: result.ticketNumber }));
       }}
       onSubmitError={(error) => {
-        console.error('Error submitting ticket:', error);
-        // Show error toast
-        setToast({
-          show: true,
-          type: 'error',
-          message: error.message || t('jobTicket.submitError')
-        });
+        showToast('error', error.message || t('jobTicket.submitError'));
       }}
       redirectPath={redirectAfterSubmit}
     >
@@ -293,7 +289,7 @@ const BaseJobTicketForm = ({
         )}
         
         {/* Form fields */}
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         {/* Date */}
         <div className="form-group">
           <label htmlFor="date" className="block text-sm font-medium text-gray-300">
