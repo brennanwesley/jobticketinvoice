@@ -81,6 +81,12 @@ const routeConfig = {
 /**
  * AppRoutes component
  * Manages all application routes and their access control with performance optimizations
+ * 
+ * LAYOUT STRUCTURE:
+ * - Public routes are rendered directly without the dashboard layout
+ * - All protected routes that need the sidebar and dashboard layout are nested under /dashboard/*
+ * - Routes like /landing, /job-ticket-form, etc. are redirected to their /dashboard/* equivalents
+ *   to ensure they always render with the sidebar and correct background
  */
 const AppRoutes = () => {
   const location = useLocation();
@@ -120,19 +126,20 @@ const AppRoutes = () => {
         
         {/* Protected routes - All routes that require authentication */}
         <Route element={<ProtectedRoute />}>
-          {/* Dashboard and main navigation */}
+          {/* Dashboard with sidebar layout - All authenticated pages should be nested here */}
           <Route path="/dashboard/*" element={<AppDashboard />} />
-          <Route path="/profile" element={<UserProfilePage />} />
           
-          {/* Job Ticket Creation Routes */}
-          <Route path="/landing" element={<LandingPage />} /> {/* Landing page with options to create by hand or voice */}
+          {/* These routes should be rendered within the dashboard layout */}
+          {/* We'll move these inside the AppDashboard component's Routes */}
+          <Route path="/profile" element={<UserProfilePage />} />
           <Route path="/job-ticket-form" element={<JobTicketFormPage />} /> {/* Manual form entry */}
           <Route path="/job-ticket-selector" element={<JobTicketFormSelector />} /> {/* Form selector based on job type */}
           <Route path="/voice-recorder" element={<VoiceRecorderPage />} /> {/* Voice recording entry */}
-          
-          {/* Ticket List Routes */}
           <Route path="/submitted" element={<SubmittedTicketList />} /> {/* Submitted tickets list */}
           <Route path="/drafts" element={<DraftTicketList />} /> {/* Draft tickets list */}
+          
+          {/* Landing page should also be within the dashboard layout */}
+          <Route path="/landing" element={<Navigate to="/dashboard/landing" replace />} />
         </Route>
         
         {/* Redirect any unknown routes to home */}

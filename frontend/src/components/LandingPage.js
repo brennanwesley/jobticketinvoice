@@ -18,16 +18,16 @@ const LandingPage = () => {
   const handleManualClick = () => {
     // Set ticket mode to manual before navigating
     setTicketMode('manual');
-    // Navigate to the job ticket form page
-    navigate('/job-ticket-form');
+    // Navigate to the job ticket form page within the dashboard layout
+    navigate('/dashboard/job-ticket-form');
   };
   
   // Handle voice job ticket creation
   const handleVoiceClick = () => {
     // Set ticket mode to voice before navigating
     setTicketMode('voice');
-    // Navigate to the dedicated voice recorder page
-    navigate('/voice-recorder');
+    // Navigate to the dedicated voice recorder page within the dashboard layout
+    navigate('/dashboard/voice-recorder');
     // Voice recording will be started in the VoiceRecorderPage component
   };
   

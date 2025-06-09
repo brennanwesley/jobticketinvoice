@@ -138,7 +138,7 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                 {/* Create Job Ticket Button */}
                 <li className="mb-6">
                   <Link
-                    to="/landing"
+                    to="/dashboard/landing"
                     onClick={handleCreateTicketClick}
                     className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded flex items-center justify-center gap-x-2 w-full transition-colors"
                     aria-label={t('jobTicket.createNew')}
@@ -155,10 +155,10 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                   </div>
                 </li>
                 
-                {/* Submitted Job Tickets section */}
+                {/* Navigation Links */}
                 <li>
                   <Link
-                    to="/submitted"
+                    to="/dashboard/submitted"
                     onClick={handleSubmittedTicketsClick}
                     className={classNames(
                       viewMode === 'submittedList'
@@ -175,7 +175,7 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                 {/* Draft Job Tickets section */}
                 <li>
                   <Link
-                    to="/drafts"
+                    to="/dashboard/drafts"
                     onClick={handleDraftTicketsClick}
                     className={classNames(
                       viewMode === 'draftList'

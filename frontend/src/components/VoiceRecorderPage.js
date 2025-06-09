@@ -26,7 +26,7 @@ const VoiceRecorderPage = () => {
   
   // Handle back button click
   const handleBackClick = () => {
-    navigate('/dashboard');
+    navigate('/dashboard/landing');
   };
   
   return (

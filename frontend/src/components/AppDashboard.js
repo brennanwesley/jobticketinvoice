@@ -74,7 +74,19 @@ const AppDashboard = () => {
               <div className="mt-2 md:mt-0 pl-14 md:pl-0 md:ml-64">
                 <div className="max-w-4xl mx-auto">
                   <Routes>
+                    {/* Default dashboard content */}
                     <Route path="/" element={<AppContent />} />
+                    
+                    {/* Landing page with options to create by hand or voice */}
+                    <Route path="/landing" element={<LandingPage />} />
+                    
+                    {/* Other routes that should be within the dashboard layout */}
+                    <Route path="/profile" element={<UserProfilePage />} />
+                    <Route path="/job-ticket-form" element={<JobTicketFormPage />} />
+                    <Route path="/job-ticket-selector" element={<JobTicketFormSelector />} />
+                    <Route path="/voice-recorder" element={<VoiceRecorderPage />} />
+                    <Route path="/submitted" element={<SubmittedTicketList />} />
+                    <Route path="/drafts" element={<DraftTicketList />} />
                   </Routes>
                 </div>
               </div>
