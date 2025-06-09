@@ -20,6 +20,8 @@ const routes = {
   '/profile': React.lazy(() => import('../profile/ProfilePage')),
   '/landing': React.lazy(() => import('../LandingPage')),
   '/job-ticket-form': React.lazy(() => import('../JobTicketFormPage')),
+  '/job-ticket-selector': React.lazy(() => import('../tickets/JobTicketFormSelector')),
+  '/voice-recorder': React.lazy(() => import('../VoiceRecorderPage')),
   '/submitted': React.lazy(() => import('../tickets/SubmittedTicketList')),
   '/drafts': React.lazy(() => import('../tickets/DraftTicketList'))
 };
@@ -46,13 +48,15 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
   // Use prefetch hook to preload routes
   usePrefetchRoute(routes);
   
-  // Handle navigation item click - memoized to prevent recreation on each render
+  // Handle create ticket button click
   const handleCreateTicketClick = useCallback(() => {
-    // Set ticket mode to manual to ensure form loads properly
-    setTicketMode('manual');
-    // Change view mode to form to load the appropriate form component
-    setViewMode('form');
-  }, [setTicketMode, setViewMode]);
+    // Reset any selected draft ticket
+    setSelectedDraftTicket(null);
+    
+    // We don't need to set view mode or ticket mode here
+    // as the LandingPage will handle navigation to the appropriate form
+    // The user will choose between manual and voice input on the landing page
+  }, [setSelectedDraftTicket]);
   
   const handleSubmittedTicketsClick = useCallback(() => {
     setViewMode('submittedList');
@@ -137,6 +141,7 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                     to="/landing"
                     onClick={handleCreateTicketClick}
                     className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded flex items-center justify-center gap-x-2 w-full transition-colors"
+                    aria-label={t('jobTicket.createNew')}
                   >
                     <PlusCircleIcon className="h-5 w-5" aria-hidden="true" />
                     <span>{t('jobTicket.createNew')}</span>

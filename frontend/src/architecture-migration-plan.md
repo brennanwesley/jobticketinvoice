@@ -48,6 +48,47 @@ Create new shared UI components:
 - Modal.js
 - Form.js
 
+## Navigation Structure and Page-Component Mapping
+
+### Core Navigation Flows
+
+1. **Create New Job Ticket Flow**
+   - Entry Point: Sidebar "Create New Job Ticket" button
+   - Landing Page (`/landing`, `LandingPage.js`): Presents options for "By Hand" or "By Voice"
+   - Manual Form (`/job-ticket-form`, `JobTicketFormPage.js`): For manual ticket creation
+   - Voice Recorder (`/voice-recorder`, `VoiceRecorderPage.js`): For voice-based ticket creation
+
+2. **Submitted Tickets Flow**
+   - Entry Point: Sidebar "Submitted Tickets" link
+   - List Page (`/submitted`, `tickets/SubmittedTicketList.js`): Displays all submitted tickets
+   - API Integration: Fetches from `/api/job-tickets?status=submitted`
+
+3. **Draft Tickets Flow**
+   - Entry Point: Sidebar "Draft Tickets" link
+   - List Page (`/drafts`, `tickets/DraftTicketList.js`): Displays all draft tickets
+   - Data Source: Uses `draftTickets` from TicketContext
+
+### Form Selection Logic
+
+The application uses `JobTicketFormSelector.js` to dynamically select the appropriate form based on:
+- User's job type (from AuthContext)
+- Ticket mode (manual vs. voice)
+- Selected draft ticket (when editing)
+
+Forms are organized by job type in the `tickets/forms` directory with specialized forms for different roles.
+
+### Protected Routes
+
+All ticket-related routes are protected and require authentication:
+- `/landing`
+- `/job-ticket-form`
+- `/job-ticket-selector`
+- `/voice-recorder`
+- `/submitted`
+- `/drafts`
+
+See `AppRoutes.js` for the complete route configuration.
+
 ## Implementation Steps
 
 1. Create all necessary directories

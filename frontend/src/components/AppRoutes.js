@@ -51,14 +51,15 @@ const enhancedLazy = (importFn, chunkName) => {
 const PublicLandingPage = enhancedLazy(() => import(/* webpackChunkName: "landing" */ './PublicLandingPage'), 'landing');
 const SignupPage = enhancedLazy(() => import(/* webpackChunkName: "auth" */ './SignupPage'), 'auth');
 const LoginPage = enhancedLazy(() => import(/* webpackChunkName: "auth" */ './LoginPage'), 'auth');
-const UserProfilePage = enhancedLazy(() => import(/* webpackChunkName: "profile" */ './UserProfilePage'), 'profile');
+const AuthTestPage = enhancedLazy(() => import(/* webpackChunkName: "auth-test" */ './AuthTestPage'), 'auth-test');
 const AppDashboard = enhancedLazy(() => import(/* webpackChunkName: "dashboard" */ './AppDashboard'), 'dashboard');
+const UserProfilePage = enhancedLazy(() => import(/* webpackChunkName: "profile" */ './profile/ProfilePage'), 'profile');
 const JobTicketFormPage = enhancedLazy(() => import(/* webpackChunkName: "job-ticket-form" */ './JobTicketFormPage'), 'job-ticket-form');
 const VoiceRecorderPage = enhancedLazy(() => import(/* webpackChunkName: "voice-recorder" */ './VoiceRecorderPage'), 'voice-recorder');
-const AuthTestPage = enhancedLazy(() => import(/* webpackChunkName: "auth-test" */ './AuthTestPage'), 'auth-test');
 const SubmittedTicketList = enhancedLazy(() => import(/* webpackChunkName: "submitted-tickets" */ './tickets/SubmittedTicketList'), 'submitted-tickets');
 const DraftTicketList = enhancedLazy(() => import(/* webpackChunkName: "draft-tickets" */ './tickets/DraftTicketList'), 'draft-tickets');
-const LandingPage = enhancedLazy(() => import(/* webpackChunkName: "landing-page" */ './LandingPage'), 'landing-page');
+const LandingPage = enhancedLazy(() => import(/* webpackChunkName: "landing" */ './LandingPage'), 'landing');
+const JobTicketFormSelector = enhancedLazy(() => import(/* webpackChunkName: "job-ticket-selector" */ './tickets/JobTicketFormSelector'), 'job-ticket-selector');
 
 /**
  * Route configuration for prefetching and organization
@@ -117,15 +118,21 @@ const AppRoutes = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth-test" element={<AuthTestPage />} />
         
-        {/* Protected routes */}
+        {/* Protected routes - All routes that require authentication */}
         <Route element={<ProtectedRoute />}>
+          {/* Dashboard and main navigation */}
           <Route path="/dashboard/*" element={<AppDashboard />} />
           <Route path="/profile" element={<UserProfilePage />} />
-          <Route path="/job-ticket-form" element={<JobTicketFormPage />} />
-          <Route path="/voice-recorder" element={<VoiceRecorderPage />} />
-          <Route path="/submitted" element={<SubmittedTicketList />} />
-          <Route path="/drafts" element={<DraftTicketList />} />
-          <Route path="/landing" element={<LandingPage />} />
+          
+          {/* Job Ticket Creation Routes */}
+          <Route path="/landing" element={<LandingPage />} /> {/* Landing page with options to create by hand or voice */}
+          <Route path="/job-ticket-form" element={<JobTicketFormPage />} /> {/* Manual form entry */}
+          <Route path="/job-ticket-selector" element={<JobTicketFormSelector />} /> {/* Form selector based on job type */}
+          <Route path="/voice-recorder" element={<VoiceRecorderPage />} /> {/* Voice recording entry */}
+          
+          {/* Ticket List Routes */}
+          <Route path="/submitted" element={<SubmittedTicketList />} /> {/* Submitted tickets list */}
+          <Route path="/drafts" element={<DraftTicketList />} /> {/* Draft tickets list */}
         </Route>
         
         {/* Redirect any unknown routes to home */}
