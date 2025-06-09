@@ -80,8 +80,9 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
       )}
     >
       <div className="flex h-full flex-col gap-y-5 overflow-y-auto px-6 py-4">
+        {/* Removed Job Ticket header - will be replaced with company name later */}
         <div className="flex h-16 shrink-0 items-center">
-          <h2 className="text-2xl font-bold text-white">Job Ticket</h2>
+          {/* Empty space for future company name */}
         </div>
         
         {/* Logo */}
@@ -192,6 +193,13 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
                       </span>
                     )}
                   </Link>
+                </li>
+                
+                {/* User Profile placeholder section */}
+                <li className="mt-8">
+                  <div className="text-sm font-semibold leading-6 text-white px-2 mb-2">
+                    User Profile
+                  </div>
                 </li>
                 
                 {/* Development Tools section - only visible in development mode */}
