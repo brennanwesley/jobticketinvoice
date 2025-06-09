@@ -93,39 +93,52 @@ export const submitJobTicket = async (ticketData, onProgress = null) => {
     // Initial progress
     if (onProgress) onProgress(10);
     
+    console.log('Submitting job ticket data:', ticketData);
+    
     // Validate the ticket data
     const validation = validateJobTicket(ticketData);
     if (!validation.isValid) {
+      console.error('Validation errors:', validation.errors);
       throw new Error('Validation failed: ' + Object.values(validation.errors).join(', '));
     }
     
     // Format data for API
     const apiData = formatTicketForApi(ticketData);
+    console.log('Formatted API data:', apiData);
     
     // Progress update
     if (onProgress) onProgress(30);
     
-    // Submit to API
-    const response = await apiService.jobTickets.submitTicket(apiData);
-    
-    // Progress update
-    if (onProgress) onProgress(80);
-    
-    // Format the response
-    const formattedResponse = {
-      success: true,
-      ticketNumber: response.ticket_number,
-      id: response.id,
-      message: `Job ticket #${response.ticket_number} submitted successfully`,
-      apiResponse: response
-    };
-    
-    // Final progress
-    if (onProgress) onProgress(100);
-    
-    return formattedResponse;
+    try {
+      // Submit to API
+      const response = await apiService.jobTickets.submitTicket(apiData);
+      console.log('API response:', response);
+      
+      // Progress update
+      if (onProgress) onProgress(80);
+      
+      // Format the response
+      const formattedResponse = {
+        success: true,
+        ticketNumber: response.ticket_number,
+        id: response.id,
+        message: `Job ticket #${response.ticket_number} submitted successfully`,
+        apiResponse: response
+      };
+      
+      // Final progress
+      if (onProgress) onProgress(100);
+      
+      return formattedResponse;
+    } catch (apiError) {
+      console.error('API submission error:', apiError);
+      throw new Error(apiError.response?.data?.detail || apiError.message || 'API submission failed');
+    }
   } catch (error) {
     console.error('Error submitting job ticket:', error);
+    
+    // Make sure progress is reset
+    if (onProgress) onProgress(0);
     
     // Format error response
     return {

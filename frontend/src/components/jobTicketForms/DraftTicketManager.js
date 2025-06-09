@@ -167,42 +167,54 @@ const DraftTicketManager = ({ onDraftSelected = null, showAsModal = false, isOpe
     }
     
     return (
-      <div className="space-y-4">
-        {sortedDrafts.map(draft => (
-          <div 
-            key={draft.id} 
-            className="bg-gray-800 rounded-md p-4 border border-gray-700 hover:border-orange-500 transition-colors"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-medium text-white">
+      <div className="overflow-x-auto w-full">
+        <table className="min-w-full bg-gray-800 rounded-lg overflow-hidden">
+          <thead className="bg-gray-700">
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                {t('jobTicket.company')}
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                {t('jobTicket.location')}
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                {t('jobTicket.lastUpdated')}
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
+                {t('common.actions')}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-700">
+            {sortedDrafts.map(draft => (
+              <tr key={draft.id} className="hover:bg-gray-700 transition-colors">
+                <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-white">
                   {draft.companyName || t('jobTicket.untitledDraft')}
-                </h3>
-                <p className="text-sm text-gray-400">
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
                   {draft.location || t('jobTicket.noLocation')}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {t('jobTicket.lastUpdated')}: {formatDate(draft.lastUpdated)}
-                </p>
-              </div>
-              
-              <div className="flex space-x-2">
-                <button
-                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"
-                  onClick={() => handleLoadDraft(draft)}
-                >
-                  {t('common.edit')}
-                </button>
-                <button
-                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
-                  onClick={() => confirmDeleteDraft(draft.id)}
-                >
-                  {t('common.delete')}
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-400">
+                  {formatDate(draft.lastUpdated)}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                  <button
+                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors mr-2"
+                    onClick={() => handleLoadDraft(draft)}
+                  >
+                    {t('common.edit')}
+                  </button>
+                  <button
+                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors"
+                    onClick={() => confirmDeleteDraft(draft.id)}
+                  >
+                    {t('common.delete')}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   };
