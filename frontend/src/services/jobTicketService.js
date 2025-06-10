@@ -6,8 +6,10 @@
  * - Progress tracking
  * - Response formatting
  * - Validation
+ * - Improved error feedback for form submissions
  * 
  * This service extends the base apiService with job ticket specific functionality.
+ * Updated: June 9, 2025 - Fixed job ticket submission error handling
  */
 
 import apiService from './apiService';

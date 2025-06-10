@@ -1,6 +1,6 @@
 # JobTicketInvoice Frontend Documentation
 
-*Last deployment: June 7, 2025 - API URL configuration updated*
+*Last deployment: June 9, 2025 - Fixed job ticket submission error handling*
 
 ## Overview
 This document serves as a reference guide for the JobTicketInvoice frontend application. It contains important information about the codebase, architecture decisions, and development guidelines.
@@ -20,6 +20,25 @@ This file is used to:
 
 ## Deployment Troubleshooting
 Common issues and their solutions will be documented here based on our conversations.
+
+### June 9, 2025 - Job Ticket Submission Fix
+
+**Issue:** Job tickets were not being properly submitted and were incorrectly saved as drafts when submission failed.
+
+**Solution:**
+1. Fixed schema mismatch between frontend and backend
+   - Updated backend to accept both `description` and `workDescription` fields
+   - Added proper field validation and mapping
+
+2. Enhanced error handling
+   - Improved API error response parsing
+   - Added specific error message display in the form
+   - Better handling of validation errors
+
+3. Fixed form submission logic
+   - Prevented failed submissions from being saved as drafts
+   - Only mark tickets as submitted after successful API response
+   - Added detailed error feedback for users
 
 ## Conversation History
 Please paste relevant conversation history below this line to maintain context across development sessions:
