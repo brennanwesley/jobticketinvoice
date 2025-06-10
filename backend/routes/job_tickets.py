@@ -20,22 +20,52 @@ async def submit_job_ticket(
     db: Session = Depends(get_db)
 ):
     """Submit a job ticket without authentication (for technicians in the field)"""
-    # Create new job ticket
-    ticket_data = job_ticket.dict()
-    # Set status explicitly
-    ticket_data["status"] = "submitted"
-    
-    # Generate a unique ticket number
-    ticket_data["ticket_number"] = generate_ticket_number(db)
-    
-    db_job_ticket = JobTicket(**ticket_data)
-    
-    # Save job ticket to database
-    db.add(db_job_ticket)
-    db.commit()
-    db.refresh(db_job_ticket)
-    
-    return db_job_ticket
+    try:
+        # Validate required fields
+        if not job_ticket.submitted_by:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Customer signature (submitted by) is required"
+            )
+            
+        # Check for work description
+        if not job_ticket.description and not job_ticket.work_description:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Work description is required"
+            )
+        
+        # Create new job ticket
+        ticket_data = job_ticket.dict()
+        
+        # Set status explicitly to ensure it's submitted, not draft
+        ticket_data["status"] = "submitted"
+        
+        # Generate a unique ticket number
+        ticket_data["ticket_number"] = generate_ticket_number(db)
+        
+        # Create the job ticket object
+        db_job_ticket = JobTicket(**ticket_data)
+        
+        # Save job ticket to database
+        db.add(db_job_ticket)
+        db.commit()
+        db.refresh(db_job_ticket)
+        
+        return db_job_ticket
+        
+    except Exception as e:
+        # Roll back transaction in case of error
+        db.rollback()
+        
+        # Provide detailed error message
+        if isinstance(e, HTTPException):
+            raise e
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to submit job ticket: {str(e)}"
+            )
 
 @router.post("/", response_model=JobTicketResponse, status_code=status.HTTP_201_CREATED)
 async def create_job_ticket(

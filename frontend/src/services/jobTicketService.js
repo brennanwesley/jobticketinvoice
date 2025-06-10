@@ -115,40 +115,31 @@ export const submitJobTicket = async (ticketData, onProgress = null) => {
     
     // Format data for API
     const apiData = formatTicketForApi(ticketData);
-    console.log('Formatted API data:', apiData);
     
-    // Progress update
+    // Ensure description field exists (backend requires it)
+    if (!apiData.description && apiData.work_description) {
+      apiData.description = apiData.work_description;
+    }
+    
+    // Ensure submitted_by is present
+    if (!apiData.submitted_by) {
+      throw new Error('Validation failed: Customer signature (submitted by) is required');
+    }
+    
     if (onProgress) onProgress(30);
     
-    try {
-      // Submit to API
-      const response = await apiService.jobTickets.submitTicket(apiData);
-      console.log('API response:', response);
-      
-      // Progress update
-      if (onProgress) onProgress(80);
-      
-      // Format the response
-      const formattedResponse = {
-        success: true,
-        ticketNumber: response.ticket_number,
-        id: response.id,
-        message: `Job ticket #${response.ticket_number} submitted successfully`,
-        apiResponse: response
-      };
-      
-      // Final progress
-      if (onProgress) onProgress(100);
-      
-      return formattedResponse;
-    } catch (apiError) {
-      console.error('API submission error:', apiError);
-      throw new Error(apiError.response?.data?.detail || apiError.message || 'API submission failed');
-    }
-  } catch (error) {
-    console.error('Error submitting job ticket:', error);
+    // Submit to API
+    const response = await apiService.jobTickets.submitTicket(apiData);
+    if (onProgress) onProgress(80);
     
-    // Make sure progress is reset
+    return {
+      success: true,
+      ticketNumber: response.ticket_number,
+      id: response.id,
+      message: `Job ticket #${response.ticket_number} submitted successfully`,
+      apiResponse: response
+    };
+  } catch (error) {
     if (onProgress) onProgress(0);
     
     // Format error response

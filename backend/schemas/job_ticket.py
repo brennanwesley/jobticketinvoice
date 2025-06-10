@@ -66,8 +66,8 @@ class JobTicketSubmit(JobTicketBase):
     """Job ticket submission schema (no authentication required)"""
     # Override company_name to be optional for field technicians
     company_name: Optional[str] = None
-    # Make description required for submitted tickets
-    description: str
+    # Allow both description and work_description for flexibility
+    description: Optional[str] = None
     # Make submitted_by required
     submitted_by: str
     # Rename drive fields to travel fields
@@ -79,6 +79,16 @@ class JobTicketSubmit(JobTicketBase):
         "from_attributes": True
     }
     
+    # Validate that either description or work_description is provided
+    @field_validator('description')
+    def validate_description(cls, v, info):
+        """Ensure either description or work_description is provided"""
+        # Get the data from the validator's context
+        data = info.data
+        if not v and not data.get('work_description'):
+            raise ValueError('Either description or work_description is required')
+        return v
+    
     # Map travel fields to drive fields in the model
     def dict(self, *args, **kwargs):
         data = super().dict(*args, **kwargs)
@@ -89,8 +99,15 @@ class JobTicketSubmit(JobTicketBase):
             data['drive_end_time'] = data.pop('travel_end_time')
         if 'travel_total_hours' in data:
             data['drive_total_hours'] = data.pop('travel_total_hours')
-        if 'description' in data:
+            
+        # Handle description/work_description mapping
+        # If work_description exists but description doesn't, use work_description
+        if not data.get('description') and data.get('work_description'):
+            data['description'] = data['work_description']
+        # If description exists, map it to work_description
+        if data.get('description'):
             data['work_description'] = data.pop('description')
+            
         return data
 
 class JobTicketList(BaseModel):

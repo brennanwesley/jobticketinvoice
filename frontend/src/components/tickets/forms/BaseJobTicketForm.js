@@ -109,10 +109,12 @@ const BaseJobTicketForm = ({
     return () => subscription.unsubscribe();
   }, [watch, updateFormData]);
   
-  // Handle success and error messages
+  // Form state - use local state for UI feedback since context state might be shared
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
-  
+  const [errorMessage, setErrorMessage] = useState('');
+  const [submissionProgress, setSubmissionProgress] = useState(0);
+
   useEffect(() => {
     if (submitSuccess) {
       setShowSuccessMessage(true);
@@ -128,23 +130,52 @@ const BaseJobTicketForm = ({
   }, [submitError]);
   
   // Handle form submission - memoized to prevent recreation
-  const handleFormSubmit = useCallback(async (data) => {
+  const handleFormSubmit = async (data) => {
+    setIsSubmitting(true);
+    setShowSuccessMessage(false);
+    setShowErrorMessage(false);
+    setErrorMessage('');
+    
     try {
-      // Save to local storage first
-      const savedDraft = saveJobTicketAsDraft(data);
+      // Submit to API first - only save as draft if successful
+      const result = await submitJobTicket(data, setSubmissionProgress);
       
-      // If custom onSubmit is provided, use it
-      if (onSubmit) {
-        await onSubmit(savedDraft);
-        return;
+      if (result.success) {
+        // Save as submitted ticket
+        const draftData = {
+          ...data,
+          status: 'submitted',
+          id: result.id || data.id || `ticket-${Date.now()}`
+        };
+        saveJobTicketAsDraft(draftData);
+        
+        setShowSuccessMessage(true);
+        resetForm();
+        
+        // Navigate to success page after delay
+        setTimeout(() => {
+          navigate('/ticket-submitted', { 
+            state: { 
+              ticketNumber: result.ticketNumber,
+              message: result.message
+            } 
+          });
+        }, 1500);
+      } else {
+        // Show specific error message from API
+        setShowErrorMessage(true);
+        setErrorMessage(result.message || 'Failed to submit job ticket');
+        console.error('Submission failed:', result.error);
       }
-      
-      // Otherwise use default submit behavior
-      await submitJobTicket(savedDraft);
     } catch (error) {
-      console.error('Error submitting job ticket:', error);
+      setShowErrorMessage(true);
+      setErrorMessage(error.message || 'An unexpected error occurred');
+      console.error('Error in form submission:', error);
+    } finally {
+      setIsSubmitting(false);
+      setSubmissionProgress(0);
     }
-  }, [onSubmit, saveJobTicketAsDraft, submitJobTicket]);
+  };
   
   // Pre-fill submittedBy field with user's name if available
   useEffect(() => {
@@ -340,7 +371,7 @@ const BaseJobTicketForm = ({
       {showErrorMessage && (
         <Card className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
           <strong className="font-bold">{t('common.error')}!</strong>
-          <span className="block sm:inline"> {t('jobTicket.submitError')}</span>
+          <span className="block sm:inline"> {errorMessage || t('jobTicket.submitError')}</span>
         </Card>
       )}
       

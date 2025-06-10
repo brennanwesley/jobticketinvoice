@@ -19,9 +19,26 @@ const handleApiError = (error) => {
   // If the error has a response from the server
   if (error.response) {
     const { status, data } = error.response;
+    
+    // Format the error message based on the response structure
+    let message = 'An error occurred with the server response';
+    
+    if (data) {
+      if (typeof data.detail === 'string') {
+        message = data.detail;
+      } else if (Array.isArray(data.detail)) {
+        // Handle validation error arrays from FastAPI
+        message = data.detail
+          .map(err => `${err.loc.join('.')}: ${err.msg}`)
+          .join(', ');
+      } else if (data.message) {
+        message = data.message;
+      }
+    }
+    
     return {
       status,
-      message: data.detail || 'An error occurred with the server response',
+      message,
       data: data
     };
   }
@@ -68,8 +85,24 @@ const apiRequest = async (params) => {
     
     // Check if the response is ok (status in the range 200-299)
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw { response: { status: response.status, data: errorData } };
+      // Try to parse error response as JSON
+      let errorData = {};
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        // If parsing fails, try to get text
+        try {
+          const text = await response.text();
+          errorData = { detail: text || 'Unknown error occurred' };
+        } catch (textError) {
+          errorData = { detail: 'Unable to parse error response' };
+        }
+      }
+      
+      // Create an error object with response details
+      const apiError = new Error(errorData.detail || 'API request failed');
+      apiError.response = { status: response.status, data: errorData };
+      throw apiError;
     }
     
     // For 204 No Content responses
@@ -79,6 +112,11 @@ const apiRequest = async (params) => {
     
     return await response.json();
   } catch (error) {
+    // If it's already a formatted API error, rethrow it
+    if (error.response) {
+      throw error;
+    }
+    // Otherwise format it
     throw handleApiError(error);
   }
 };
