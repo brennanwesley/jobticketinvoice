@@ -9,6 +9,10 @@ passlib[bcrypt]>=1.7.4
 python-multipart>=0.0.6
 python-dotenv>=1.0.0
 alembic>=1.12.1
+# For email service
+jinja2>=3.1.2
+# For encryption (multi-tenancy)
+cryptography>=41.0.7
 # For PostgreSQL support (when switching from SQLite)
 psycopg2-binary>=2.9.9
 # For testing
