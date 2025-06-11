@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, UniqueConstraint
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 import enum
 from database import Base
 from core.encryption import encrypt_field, decrypt_field
@@ -11,14 +12,14 @@ class JobTicketStatus(str, enum.Enum):
     COMPLETE = "complete"
 
 class JobTicket(Base):
-    """Job ticket model with field-level encryption for sensitive data"""
+    """Job ticket model with field-level encryption for sensitive data and multi-tenancy support"""
     __tablename__ = "job_tickets"
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     job_number = Column(String, index=True)
     ticket_number = Column(String(8), index=True, unique=True)
-    company_name = Column(String, nullable=False)
     customer_name = Column(String)
     
     # Add a unique constraint to ensure ticket_number is unique
@@ -43,6 +44,10 @@ class JobTicket(Base):
     status = Column(String, default=JobTicketStatus.DRAFT, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Relationships
+    company = relationship("Company", back_populates="job_tickets")
+    user = relationship("User")
     
     # Property for location field
     @property

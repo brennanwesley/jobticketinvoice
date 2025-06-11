@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 # Import routers
-from routes import auth, users, job_tickets, invoices
+from routes import auth, users, job_tickets, invoices, companies, invitations, manager_signup
 
 # Import database setup
 from database import Base, engine
@@ -57,10 +57,13 @@ def health_check():
 app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(users.router, prefix=settings.API_V1_STR)
 app.include_router(job_tickets.router, prefix=settings.API_V1_STR)
+app.include_router(invoices.router, prefix=settings.API_V1_STR)
+app.include_router(companies.router, prefix=settings.API_V1_STR)
+app.include_router(invitations.router, prefix=settings.API_V1_STR)
+app.include_router(manager_signup.router, prefix=settings.API_V1_STR)
 
 # Mount static files directory for serving logo uploads
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.include_router(invoices.router, prefix=settings.API_V1_STR)
 
 # Run the application with uvicorn
 if __name__ == "__main__":
