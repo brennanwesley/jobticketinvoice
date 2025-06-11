@@ -8,6 +8,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { MainLayout } from './components/layout';
 import { initializeStorageCleanup } from './utils/storageCleanup';
 
+// Multi-tenancy backend API integration ready - v0.2.0
+
 /**
  * Main App component
  * Provides context providers and manages layout
