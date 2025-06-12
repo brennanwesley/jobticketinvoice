@@ -149,7 +149,8 @@ export const AuthProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
+        redirect: 'error' // Prevent any redirects that might cause HTTP downgrade
       });
       
       const data = await response.json();
