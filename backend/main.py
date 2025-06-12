@@ -46,6 +46,7 @@ app.add_middleware(
 # Root endpoint
 @app.get("/")
 def read_root():
+    # Updated: 2025-06-12 - CORS fix deployed
     return {"message": "Welcome to JobTicketInvoice API"}
 
 # Health check endpoint
