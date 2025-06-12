@@ -61,32 +61,9 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     
-    // DEVELOPMENT ONLY: Hardcoded admin account for testing
-    // TODO: REMOVE THIS BEFORE PRODUCTION DEPLOYMENT
-    if (email === 'BrennanWesley' && password === 'admin000') {
-      console.log('DEV MODE: Using hardcoded admin account');
-      // Set a mock token and user for the admin
-      const mockToken = 'dev-admin-token';
-      setAuthToken(mockToken);
-      setToken(mockToken);
-      
-      // Set admin user data
-      const adminUser = {
-        id: 'admin-dev',
-        email: 'admin@example.com',
-        name: 'Admin User',
-        role: 'admin',
-        is_dev_admin: true // Flag to identify this is the dev admin account
-      };
-      setUser(adminUser);
-      
-      auditSecurityEvent(AUDIT_ACTIONS.LOGIN_SUCCESS, { username: email });
-      return { success: true, user: adminUser, is_dev_admin: true };
-    }
-    
     try {
       const formData = new FormData();
-      formData.append('username', email); // OAuth2 expects 'username' field
+      formData.append('username', email);
       formData.append('password', password);
       
       const apiUrl = process.env.REACT_APP_API_URL || 'https://jobticketinvoice-backend.onrender.com/api/v1';
@@ -125,9 +102,10 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Network error during login');
-      auditSecurityEvent(AUDIT_ACTIONS.LOGIN_FAILED, { username: email, reason: 'Network error during login' });
-      return { success: false, error: 'Network error during login' };
+      const errorMessage = 'Network error. Please try again.';
+      setError(errorMessage);
+      auditSecurityEvent(AUDIT_ACTIONS.LOGIN_FAILED, { username: email, reason: errorMessage });
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }

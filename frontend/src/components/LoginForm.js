@@ -38,11 +38,7 @@ const LoginForm = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Special case for admin username
-    // DEVELOPMENT ONLY - This check will be removed in production
-    const isAdminLogin = formData.email.trim() === 'BrennanWesley';
-    
-    // Email validation - skip format validation for admin username
+    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = t('validation.emailRequired');
     }
@@ -73,20 +69,14 @@ const LoginForm = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        // For the dev admin account, redirect directly to job ticket entry page
-        // DEVELOPMENT ONLY - This special routing will be removed in production
-        if (result.is_dev_admin) {
-          navigate('/dashboard');
+        // Regular user flow - redirect based on role
+        // Use the user data returned from the login function
+        const userData = result.user;
+        
+        if (userData && (userData.role === 'manager' || userData.role === 'admin')) {
+          navigate('/manager-dashboard');
         } else {
-          // Regular user flow - redirect based on role
-          // Use the user data returned from the login function
-          const userData = result.user;
-          
-          if (userData && (userData.role === 'manager' || userData.role === 'admin')) {
-            navigate('/manager-dashboard');
-          } else {
-            navigate('/dashboard');
-          }
+          navigate('/dashboard');
         }
       } else {
         setSubmitError(result.error);
