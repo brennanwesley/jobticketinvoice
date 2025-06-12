@@ -139,8 +139,11 @@ export const AuthProvider = ({ children }) => {
     
     try {
       // Use the manager signup endpoint for manager registration
+      console.log('Environment REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+      console.log('NODE_ENV:', process.env.NODE_ENV);
       const apiUrl = process.env.REACT_APP_API_URL || 'https://jobticketinvoice-backend.onrender.com/api/v1';
       console.log('Manager signup API URL:', apiUrl);
+      console.log('Full signup URL:', `${apiUrl}/manager-signup`);
       const response = await fetch(`${apiUrl}/manager-signup`, {
         method: 'POST',
         headers: {

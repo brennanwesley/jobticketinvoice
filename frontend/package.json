@@ -1,6 +1,6 @@
 {
   "name": "jobticketinvoice-frontend",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "resolutions": {
     "string-width": "^4.2.0"
