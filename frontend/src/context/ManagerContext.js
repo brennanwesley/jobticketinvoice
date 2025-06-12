@@ -51,7 +51,7 @@ export const ManagerProvider = ({ children }) => {
     setTechnicianError(null);
     
     try {
-      const response = await authenticatedFetch('/api/v1/users/technicians');
+      const response = await authenticatedFetch('/users/technicians');
       if (response.ok) {
         const data = await response.json();
         setTechnicians(data);
@@ -74,7 +74,7 @@ export const ManagerProvider = ({ children }) => {
     setCompanyError(null);
     
     try {
-      const response = await authenticatedFetch('/api/v1/companies/current');
+      const response = await authenticatedFetch('/companies/current');
       if (response.ok) {
         const data = await response.json();
         setCompanyProfile(data);
@@ -96,7 +96,7 @@ export const ManagerProvider = ({ children }) => {
     setLoadingInvitations(true);
     
     try {
-      const response = await authenticatedFetch('/api/v1/invitations/');
+      const response = await authenticatedFetch('/invitations/');
       if (response.ok) {
         const data = await response.json();
         setInvitations(data);
@@ -113,7 +113,7 @@ export const ManagerProvider = ({ children }) => {
     if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
     
     try {
-      const response = await authenticatedFetch('/api/v1/invitations/invite-technician', {
+      const response = await authenticatedFetch('/invitations/invite-technician', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -147,13 +147,13 @@ export const ManagerProvider = ({ children }) => {
       
       switch (action) {
         case 'activate':
-          endpoint = `/api/v1/users/${technicianId}/activate`;
+          endpoint = `/users/${technicianId}/activate`;
           break;
         case 'deactivate':
-          endpoint = `/api/v1/users/${technicianId}/deactivate`;
+          endpoint = `/users/${technicianId}/deactivate`;
           break;
         case 'remove':
-          endpoint = `/api/v1/users/${technicianId}`;
+          endpoint = `/users/${technicianId}`;
           method = 'DELETE';
           break;
         default:
@@ -219,7 +219,7 @@ export const ManagerProvider = ({ children }) => {
     if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
     
     try {
-      const response = await authenticatedFetch(`/api/v1/invitations/${invitationId}/resend`, {
+      const response = await authenticatedFetch(`/invitations/${invitationId}/resend`, {
         method: 'POST',
       });
       
@@ -242,7 +242,7 @@ export const ManagerProvider = ({ children }) => {
     if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
     
     try {
-      const response = await authenticatedFetch('/api/v1/companies/current', {
+      const response = await authenticatedFetch('/companies/current', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -273,7 +273,7 @@ export const ManagerProvider = ({ children }) => {
       const formData = new FormData();
       formData.append('logo', logoFile);
       
-      const response = await authenticatedFetch('/api/v1/companies/current/logo', {
+      const response = await authenticatedFetch('/companies/current/logo', {
         method: 'POST',
         body: formData,
       });
@@ -312,7 +312,7 @@ export const ManagerProvider = ({ children }) => {
         }
       });
       
-      const response = await authenticatedFetch(`/api/v1/audit/logs?${params}`);
+      const response = await authenticatedFetch(`/audit/logs?${params}`);
       if (response.ok) {
         const data = await response.json();
         setAuditLogs(data.logs || []);

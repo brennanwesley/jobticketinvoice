@@ -13,11 +13,11 @@ import './CompanyProfile.css';
 const CompanyProfile = () => {
   const { t } = useLanguage();
   const {
-    company,
+    companyProfile,
     loadingCompany,
     companyError,
-    fetchCompany,
-    updateCompany,
+    fetchCompanyProfile,
+    updateCompanyProfile,
     uploadCompanyLogo
   } = useManager();
   
@@ -45,24 +45,24 @@ const CompanyProfile = () => {
 
   // Load company data on mount
   useEffect(() => {
-    fetchCompany();
-  }, [fetchCompany]);
+    fetchCompanyProfile();
+  }, [fetchCompanyProfile]);
 
   // Update form when company data changes
   useEffect(() => {
-    if (company) {
+    if (companyProfile) {
       const data = {
-        name: company.name || '',
-        address: company.address || '',
-        phone: company.phone || '',
-        email: company.email || '',
-        website: company.website || ''
+        name: companyProfile.name || '',
+        address: companyProfile.address || '',
+        phone: companyProfile.phone || '',
+        email: companyProfile.email || '',
+        website: companyProfile.website || ''
       };
       setFormData(data);
       setOriginalData(data);
-      setLogoPreview(company.logo_url || null);
+      setLogoPreview(companyProfile.logo_url || null);
     }
-  }, [company]);
+  }, [companyProfile]);
 
   // Check for changes
   useEffect(() => {
@@ -125,7 +125,7 @@ const CompanyProfile = () => {
   // Remove logo
   const handleRemoveLogo = () => {
     setLogoFile(null);
-    setLogoPreview(company?.logo_url || null);
+    setLogoPreview(companyProfile?.logo_url || null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -184,7 +184,7 @@ const CompanyProfile = () => {
 
     try {
       // Upload logo first if there's a new one
-      let logoUrl = company?.logo_url;
+      let logoUrl = companyProfile?.logo_url;
       if (logoFile) {
         setLogoUploading(true);
         const logoResult = await uploadCompanyLogo(logoFile);
@@ -206,7 +206,7 @@ const CompanyProfile = () => {
         website: formData.website.trim()
       };
 
-      const result = await updateCompany(updateData);
+      const result = await updateCompanyProfile(updateData);
 
       if (result.success) {
         // Log the update
@@ -222,15 +222,15 @@ const CompanyProfile = () => {
 
         if (logoFile) {
           changes.logo = {
-            from: company?.logo_url || null,
+            from: companyProfile?.logo_url || null,
             to: logoUrl
           };
         }
 
         await auditCompanyAction(
           AUDIT_ACTIONS.COMPANY_UPDATED,
-          company.id,
-          company.name,
+          companyProfile.id,
+          companyProfile.name,
           { changes }
         );
 
@@ -262,7 +262,7 @@ const CompanyProfile = () => {
     setFormData(originalData);
     setErrors({});
     setLogoFile(null);
-    setLogoPreview(company?.logo_url || null);
+    setLogoPreview(companyProfile?.logo_url || null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
