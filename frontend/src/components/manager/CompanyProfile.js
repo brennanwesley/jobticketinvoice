@@ -45,6 +45,8 @@ const CompanyProfile = () => {
 
   // Load company data on mount
   useEffect(() => {
+    console.log('CompanyProfile: Component mounted, fetching company profile...');
+    console.log('CompanyProfile: Current states - loadingCompany:', loadingCompany, 'companyError:', companyError, 'companyProfile:', companyProfile);
     fetchCompanyProfile();
   }, [fetchCompanyProfile]);
 

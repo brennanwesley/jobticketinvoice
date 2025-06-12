@@ -79,11 +79,13 @@ export const ManagerProvider = ({ children }) => {
         const data = await response.json();
         setCompanyProfile(data);
       } else {
-        throw new Error('Failed to fetch company profile');
+        const errorData = await response.text();
+        console.error('Company profile fetch failed:', response.status, errorData);
+        throw new Error(`Failed to fetch company profile: ${response.status} - ${errorData}`);
       }
     } catch (error) {
       console.error('Error fetching company profile:', error);
-      setCompanyError('Failed to load company profile');
+      setCompanyError(error.message || 'Failed to load company profile');
     } finally {
       setLoadingCompany(false);
     }
