@@ -1,6 +1,6 @@
 # JobTicketInvoice Frontend Documentation
 
-*Last deployment: June 9, 2025 - Fixed job ticket submission error handling*
+*Last deployment: June 11, 2025 - Testing Vercel auto-deployment pipeline*
 
 ## Overview
 This document serves as a reference guide for the JobTicketInvoice frontend application. It contains important information about the codebase, architecture decisions, and development guidelines.
@@ -20,6 +20,14 @@ This file is used to:
 
 ## Deployment Troubleshooting
 Common issues and their solutions will be documented here based on our conversations.
+
+### June 11, 2025 - Vercel Auto-Deployment Test
+
+**Test:** Verifying that frontend changes automatically trigger Vercel deployment when pushed to GitHub.
+
+**Change:** Added this deployment test entry to confirm the CI/CD pipeline is functioning correctly.
+
+**Expected Result:** This change should trigger a new deployment on Vercel within 1-2 minutes of the GitHub push.
 
 ### June 9, 2025 - Job Ticket Submission Fix
 
