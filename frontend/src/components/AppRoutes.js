@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
+import RoleBasedRedirect from './RoleBasedRedirect';
 import { LoadingSpinner } from './ui';
 import { usePrefetchRoute } from '../hooks';
 
@@ -129,6 +130,7 @@ const AppRoutes = () => {
         {/* Protected routes - All routes that require authentication */}
         <Route element={<ProtectedRoute />}>
           {/* Dashboard with sidebar layout - All authenticated pages should be nested here */}
+          <Route path="/dashboard" element={<RoleBasedRedirect />} />
           <Route path="/dashboard/*" element={<AppDashboard />} />
           
           {/* These routes should be rendered within the dashboard layout */}

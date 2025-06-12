@@ -78,8 +78,15 @@ const LoginForm = () => {
         if (result.is_dev_admin) {
           navigate('/dashboard');
         } else {
-          // Regular user flow - redirect to dashboard
-          navigate('/dashboard');
+          // Regular user flow - redirect based on role
+          // Use the user data returned from the login function
+          const userData = result.user;
+          
+          if (userData && (userData.role === 'manager' || userData.role === 'admin')) {
+            navigate('/manager-dashboard');
+          } else {
+            navigate('/dashboard');
+          }
         }
       } else {
         setSubmitError(result.error);

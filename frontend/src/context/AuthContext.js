@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
       setUser(adminUser);
       
       auditSecurityEvent(AUDIT_ACTIONS.LOGIN_SUCCESS, { username: email });
-      return { success: true, is_dev_admin: true };
+      return { success: true, user: adminUser, is_dev_admin: true };
     }
     
     try {
@@ -110,13 +110,14 @@ export const AuthProvider = ({ children }) => {
           }
         });
         
+        let userData = null;
         if (userResponse.ok) {
-          const userData = await userResponse.json();
+          userData = await userResponse.json();
           setUser(userData);
         }
         
         auditSecurityEvent(AUDIT_ACTIONS.LOGIN_SUCCESS, { username: email });
-        return { success: true };
+        return { success: true, user: userData };
       } else {
         setError(data.detail || 'Login failed');
         auditSecurityEvent(AUDIT_ACTIONS.LOGIN_FAILED, { username: email, reason: data.detail || 'Login failed' });
