@@ -20,7 +20,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
     
     # CORS settings
-    CORS_ORIGINS: list = ["http://localhost:3000"]
+    CORS_ORIGINS: list = [
+        "http://localhost:3000",
+        "https://jobticketinvoice.vercel.app"
+    ]
     
     model_config = {
         "case_sensitive": True
