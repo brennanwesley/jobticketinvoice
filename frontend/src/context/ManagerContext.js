@@ -68,15 +68,26 @@ export const ManagerProvider = ({ children }) => {
   
   // Fetch company profile
   const fetchCompanyProfile = useCallback(async () => {
-    if (!hasManagerAccess()) return;
+    console.log('ManagerContext: fetchCompanyProfile called');
+    console.log('ManagerContext: isAuthenticated:', isAuthenticated, 'user:', user);
+    console.log('ManagerContext: hasManagerAccess():', hasManagerAccess());
+    
+    if (!hasManagerAccess()) {
+      console.log('ManagerContext: No manager access, returning early');
+      return;
+    }
     
     setLoadingCompany(true);
     setCompanyError(null);
     
     try {
+      console.log('ManagerContext: Making API call to /companies/current');
       const response = await authenticatedFetch('/companies/current');
+      console.log('ManagerContext: API response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('ManagerContext: Company profile data received:', data);
         setCompanyProfile(data);
       } else {
         const errorData = await response.text();
@@ -89,7 +100,7 @@ export const ManagerProvider = ({ children }) => {
     } finally {
       setLoadingCompany(false);
     }
-  }, [hasManagerAccess]);
+  }, [hasManagerAccess, isAuthenticated, user]);
   
   // Fetch invitations
   const fetchInvitations = useCallback(async () => {
