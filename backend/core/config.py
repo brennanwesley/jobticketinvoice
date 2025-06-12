@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     # CORS settings
     CORS_ORIGINS: list = [
         "http://localhost:3000",
+        "http://localhost:3001", 
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        "http://127.0.0.1:57655",  # Browser preview
         "https://jobticketinvoice.vercel.app"
     ]
     
