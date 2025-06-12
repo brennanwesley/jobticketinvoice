@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../../context/LanguageContext';
 import { useTicket } from '../../../context/TicketContext';
 import { useAuth } from '../../../context/AuthContext';
@@ -46,11 +47,18 @@ const BaseJobTicketForm = ({
   // Setup React Hook Form with memoized default values
   const defaultValues = useMemo(() => draftData || formData || {}, [draftData, formData]);
   
-  const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm({
+  const navigate = useNavigate();
+
+  const { register, handleSubmit, control, setValue, watch, reset, formState: { errors } } = useForm({
     defaultValues,
     mode: 'onChange' // Validate on change for better UX
   });
-  
+
+  const resetForm = useCallback(() => {
+    reset();
+    updateFormData({});
+  }, [reset, updateFormData]);
+
   // Watch time fields to calculate totals
   const workStartTime = watch('workStartTime');
   const workEndTime = watch('workEndTime');
@@ -114,6 +122,7 @@ const BaseJobTicketForm = ({
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [submissionProgress, setSubmissionProgress] = useState(0);
+  const [isSubmittingLocal, setIsSubmittingLocal] = useState(false);
 
   useEffect(() => {
     if (submitSuccess) {
@@ -131,7 +140,7 @@ const BaseJobTicketForm = ({
   
   // Handle form submission - memoized to prevent recreation
   const handleFormSubmit = async (data) => {
-    setIsSubmitting(true);
+    setIsSubmittingLocal(true);
     setShowSuccessMessage(false);
     setShowErrorMessage(false);
     setErrorMessage('');
@@ -172,7 +181,7 @@ const BaseJobTicketForm = ({
       setErrorMessage(error.message || 'An unexpected error occurred');
       console.error('Error in form submission:', error);
     } finally {
-      setIsSubmitting(false);
+      setIsSubmittingLocal(false);
       setSubmissionProgress(0);
     }
   };
@@ -381,11 +390,11 @@ const BaseJobTicketForm = ({
           <div className="flex justify-center sm:justify-end">
             <Button
               type="submit"
-              disabled={isSubmitting}
-              variant={isSubmitting ? "disabled" : "success"}
+              disabled={isSubmittingLocal}
+              variant={isSubmittingLocal ? "disabled" : "success"}
               size="lg"
             >
-              {isSubmitting ? (
+              {isSubmittingLocal ? (
                 <div className="flex items-center">
                   {t('jobTicket.submitting')}
                   <LoadingSpinner size="sm" className="ml-2" />
