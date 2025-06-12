@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
       formData.append('username', email); // OAuth2 expects 'username' field
       formData.append('password', password);
       
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'}/auth/login`, {
         method: 'POST',
         body: formData
       });
@@ -136,7 +136,8 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     
     try {
-      const response = await fetch('/api/auth/register', {
+      // Use the manager signup endpoint for manager registration
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'}/manager-signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -173,7 +174,7 @@ export const AuthProvider = ({ children }) => {
       const formData = new FormData();
       formData.append('file', file);
       
-      const response = await fetch('/api/auth/upload-logo', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'}/auth/upload-logo`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

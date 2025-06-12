@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DBAPIError
 import logging
 
 from database import get_db
@@ -104,23 +104,17 @@ async def manager_signup_with_company(
     except IntegrityError as e:
         db.rollback()
         logger.error(f"Database integrity error during manager signup: {str(e)}")
-        
-        # Try to provide more specific error messages
-        if "email" in str(e).lower():
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="User with this email already exists"
-            )
-        elif "normalized_name" in str(e).lower():
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Company with this name already exists"
-            )
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="A user or company with this information already exists"
-            )
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="A user or company with this information already exists"
+        )
+    except DBAPIError as e:
+        db.rollback()
+        logger.error(f"Database error during manager signup: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create manager account and company"
+        )
     except Exception as e:
         db.rollback()
         logger.error(f"Error during manager signup: {str(e)}")

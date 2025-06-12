@@ -21,7 +21,7 @@ class Company(Base):
     logo_url = Column(Text, nullable=True)
     
     # Audit fields
-    created_by = Column(Integer, nullable=False)  # User ID of the manager who created the company
+    created_by = Column(Integer, nullable=True)  # User ID of the manager who created the company (nullable for manager signup)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
