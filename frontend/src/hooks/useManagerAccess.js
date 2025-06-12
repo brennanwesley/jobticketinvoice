@@ -192,7 +192,7 @@ export const useManagerAccess = () => {
         return (
           <div className="alert alert-danger" role="alert">
             <h4 className="alert-heading">Access Denied</h4>
-            <p>You don't have permission to access this feature.</p>
+            <p>You don&apos;t have permission to access this feature.</p>
             <hr />
             <p className="mb-0">Please contact your administrator if you believe this is an error.</p>
           </div>
