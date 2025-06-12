@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
         setToken(data.access_token);
         
         // Get user data
-        const userResponse = await authenticatedFetch('/api/auth/me', {
+        const userResponse = await authenticatedFetch('/auth/me', {
           headers: {
             'Authorization': `Bearer ${data.access_token}`
           }

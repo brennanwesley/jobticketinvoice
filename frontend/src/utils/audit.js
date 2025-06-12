@@ -27,7 +27,7 @@ export const logAuditEvent = async (action, category, details = {}, targetId = n
       ip_address: null, // Will be populated by backend
     };
 
-    const response = await authenticatedFetch('/api/v1/audit/log', {
+    const response = await authenticatedFetch('/audit/log', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export const fetchAuditLogs = async (filters = {}, page = 1, limit = 50) => {
       ...filters,
     });
 
-    const response = await authenticatedFetch(`/api/v1/audit/logs?${params}`);
+    const response = await authenticatedFetch(`/audit/logs?${params}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch audit logs');
@@ -180,7 +180,7 @@ export const auditSystemEvent = async (action, details = {}) => {
  */
 export const logBatchAuditEvents = async (events) => {
   try {
-    const response = await authenticatedFetch('/api/v1/audit/batch-log', {
+    const response = await authenticatedFetch('/audit/batch-log', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -233,7 +233,7 @@ export const exportAuditLogs = async (filters = {}, filename = null) => {
       ...filters,
     });
 
-    const response = await authenticatedFetch(`/api/v1/audit/export?${params}`);
+    const response = await authenticatedFetch(`/audit/export?${params}`);
     
     if (!response.ok) {
       throw new Error('Failed to export audit logs');
@@ -268,7 +268,7 @@ export const exportAuditLogs = async (filters = {}, filename = null) => {
  */
 export const getAuditStats = async (timeframe = '30d') => {
   try {
-    const response = await authenticatedFetch(`/api/v1/audit/stats?timeframe=${timeframe}`);
+    const response = await authenticatedFetch(`/audit/stats?timeframe=${timeframe}`);
     
     if (!response.ok) {
       throw new Error('Failed to fetch audit statistics');

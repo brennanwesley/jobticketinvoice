@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
+import { ManagerProvider } from './context/ManagerContext';
 import TicketProvider from './context/TicketProvider';
 import AppRoutes from './components/AppRoutes';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -31,18 +32,18 @@ const App = () => {
       <Router>
         <LanguageProvider>
           <AuthProvider>
-            <TicketProvider>
-              <MainLayout>
-                <AppRoutes />
-              </MainLayout>
-            </TicketProvider>
+            <ManagerProvider>
+              <TicketProvider>
+                <MainLayout>
+                  <AppRoutes />
+                </MainLayout>
+              </TicketProvider>
+            </ManagerProvider>
           </AuthProvider>
         </LanguageProvider>
       </Router>
     </ErrorBoundary>
   );
 };
-
-
 
 export default App;
