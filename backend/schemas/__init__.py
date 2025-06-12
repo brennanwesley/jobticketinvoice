@@ -11,6 +11,10 @@ from .invitation import (
     InvitationBase, TechnicianInviteByEmail, TechnicianCreateDirect,
     InvitationAccept, InvitationResponse, InvitationListResponse, InvitationStatusResponse
 )
+from .audit import (
+    AuditLogCreate, AuditLogResponse, AuditLogListResponse, AuditLogExportResponse,
+    AuditLogStats, AuditCategory, AuditAction
+)
 
 __all__ = [
     # User schemas
@@ -24,5 +28,8 @@ __all__ = [
     "CompanyBase", "CompanyCreate", "CompanyUpdate", "CompanyResponse", "CompanyListResponse",
     # Invitation schemas
     "InvitationBase", "TechnicianInviteByEmail", "TechnicianCreateDirect",
-    "InvitationAccept", "InvitationResponse", "InvitationListResponse", "InvitationStatusResponse"
+    "InvitationAccept", "InvitationResponse", "InvitationListResponse", "InvitationStatusResponse",
+    # Audit schemas
+    "AuditLogCreate", "AuditLogResponse", "AuditLogListResponse", "AuditLogExportResponse",
+    "AuditLogStats", "AuditCategory", "AuditAction"
 ]

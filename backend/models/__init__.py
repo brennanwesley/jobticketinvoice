@@ -3,11 +3,13 @@ from .job_ticket import JobTicket, JobTicketStatus
 from .invoice import Invoice
 from .company import Company
 from .invitation import TechnicianInvitation
+from .audit_log import AuditLog
 
 __all__ = [
     "User", "UserRole", "JobType",
     "JobTicket", "JobTicketStatus", 
     "Invoice",
     "Company",
-    "TechnicianInvitation"
+    "TechnicianInvitation",
+    "AuditLog"
 ]

@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useMemo, memo } from 'react';
 import { getToken, setToken as setAuthToken, removeToken, isAuthenticated, parseToken, isTokenExpired, authenticatedFetch } from '../utils/auth';
 import { useLocalStorage } from '../hooks';
+import { auditSecurityEvent, AUDIT_ACTIONS } from '../utils/audit';
 
 // Create the context
 const AuthContext = createContext();
@@ -79,6 +80,7 @@ export const AuthProvider = ({ children }) => {
       };
       setUser(adminUser);
       
+      auditSecurityEvent(AUDIT_ACTIONS.LOGIN_SUCCESS, { username: email });
       return { success: true, is_dev_admin: true };
     }
     
@@ -111,14 +113,17 @@ export const AuthProvider = ({ children }) => {
           setUser(userData);
         }
         
+        auditSecurityEvent(AUDIT_ACTIONS.LOGIN_SUCCESS, { username: email });
         return { success: true };
       } else {
         setError(data.detail || 'Login failed');
+        auditSecurityEvent(AUDIT_ACTIONS.LOGIN_FAILED, { username: email, reason: data.detail || 'Login failed' });
         return { success: false, error: data.detail || 'Login failed' };
       }
     } catch (err) {
       console.error('Login error:', err);
       setError('Network error during login');
+      auditSecurityEvent(AUDIT_ACTIONS.LOGIN_FAILED, { username: email, reason: 'Network error during login' });
       return { success: false, error: 'Network error during login' };
     } finally {
       setLoading(false);
@@ -198,6 +203,7 @@ export const AuthProvider = ({ children }) => {
     removeToken();
     setToken(null);
     setUser(null);
+    auditSecurityEvent(AUDIT_ACTIONS.LOGOUT);
   }, []);
   
   // Context value - memoized to prevent unnecessary re-renders

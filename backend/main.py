@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 # Import routers
-from routes import auth, users, job_tickets, invoices, companies, invitations, manager_signup
+from routes import auth, users, job_tickets, invoices, companies, invitations, manager_signup, audit
 
 # Import database setup
 from database import Base, engine
@@ -61,6 +61,7 @@ app.include_router(invoices.router, prefix=settings.API_V1_STR)
 app.include_router(companies.router, prefix=settings.API_V1_STR)
 app.include_router(invitations.router, prefix=settings.API_V1_STR)
 app.include_router(manager_signup.router, prefix=settings.API_V1_STR)
+app.include_router(audit.router, prefix=settings.API_V1_STR)
 
 # Mount static files directory for serving logo uploads
 app.mount("/static", StaticFiles(directory="static"), name="static")

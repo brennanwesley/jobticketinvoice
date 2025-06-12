@@ -45,6 +45,7 @@ class User(Base):
     
     # Relationships
     company = relationship("Company", back_populates="users")
+    audit_logs = relationship("AuditLog", back_populates="user")
     
     def __repr__(self):
         return f"<User {self.email} ({self.role})>"
