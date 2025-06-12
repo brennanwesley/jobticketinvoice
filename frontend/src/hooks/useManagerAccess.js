@@ -11,17 +11,17 @@ export const useManagerAccess = () => {
 
   // Check if user has manager role
   const isManager = useMemo(() => {
-    return isAuthenticated && user && (user.role === 'MANAGER' || user.role === 'ADMIN');
+    return isAuthenticated && user && (user.role === 'manager' || user.role === 'admin');
   }, [isAuthenticated, user]);
 
   // Check if user has admin role
   const isAdmin = useMemo(() => {
-    return isAuthenticated && user && user.role === 'ADMIN';
+    return isAuthenticated && user && user.role === 'admin';
   }, [isAuthenticated, user]);
 
   // Check if user has technician role
   const isTechnician = useMemo(() => {
-    return isAuthenticated && user && user.role === 'TECHNICIAN';
+    return isAuthenticated && user && user.role === 'tech';
   }, [isAuthenticated, user]);
 
   // Get user's company ID for multi-tenancy
@@ -34,7 +34,7 @@ export const useManagerAccess = () => {
     if (!isAuthenticated || !user) {
       return false;
     }
-    return user.role === 'MANAGER' || user.role === 'ADMIN';
+    return user.role === 'manager' || user.role === 'admin';
   }, [isAuthenticated, user]);
 
   // Check if user can manage technicians

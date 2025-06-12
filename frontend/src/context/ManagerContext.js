@@ -40,7 +40,7 @@ export const ManagerProvider = ({ children }) => {
   
   // Check if user has manager access
   const hasManagerAccess = useCallback(() => {
-    return isAuthenticated && user && (user.role === 'MANAGER' || user.role === 'ADMIN');
+    return isAuthenticated && user && (user.role === 'manager' || user.role === 'admin');
   }, [isAuthenticated, user]);
   
   // Fetch technicians
