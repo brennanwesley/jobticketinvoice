@@ -287,7 +287,7 @@ const ManagerSignupForm = () => {
         {/* Password Field */}
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
-            {t('signup.password')} *
+            {t('signup.password')} * <span className="text-gray-400 font-normal">(minimum of 8 characters required)</span>
           </label>
           <input
             type="password"
