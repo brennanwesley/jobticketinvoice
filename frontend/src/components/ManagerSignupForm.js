@@ -156,8 +156,8 @@ const ManagerSignupForm = () => {
           }
         }
         
-        // Redirect to dashboard on success
-        navigate('/dashboard');
+        // Redirect to manager dashboard on success
+        navigate('/manager-dashboard');
       } else {
         setSubmitError(result.error);
       }

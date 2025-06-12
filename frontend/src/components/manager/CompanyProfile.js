@@ -3,7 +3,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useManager } from '../../context/ManagerContext';
 import { useManagerAccess } from '../../hooks/useManagerAccess';
 import { auditCompanyAction, AUDIT_ACTIONS } from '../../utils/audit';
-import Toast from '../common/Toast';
+import Toast from '../ui/Toast';
 import './CompanyProfile.css';
 
 /**
@@ -148,7 +148,7 @@ const CompanyProfile = () => {
     }
 
     // Phone validation (optional but must be valid if provided)
-    if (formData.phone.trim() && !/^[\d\s\-\+\(\)]+$/.test(formData.phone)) {
+    if (formData.phone.trim() && !/^[\d\s\-+()]+$/.test(formData.phone)) {
       newErrors.phone = t('manager.companyProfile.form.errors.phoneInvalid');
     }
 

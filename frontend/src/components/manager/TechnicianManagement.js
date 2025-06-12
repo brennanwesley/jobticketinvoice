@@ -4,8 +4,7 @@ import { useManager } from '../../context/ManagerContext';
 import { useManagerAccess } from '../../hooks/useManagerAccess';
 import { auditTechnicianAction, AUDIT_ACTIONS } from '../../utils/audit';
 import InviteTechnicianModal from './InviteTechnicianModal';
-import ConfirmationModal from '../common/ConfirmationModal';
-import Toast from '../common/Toast';
+import Toast from '../ui/Toast';
 import './TechnicianManagement.css';
 
 /**
@@ -440,7 +439,7 @@ const TechnicianManagement = () => {
               </select>
             </div>
             <div className="col-md-3">
-              <label className="form-label">&nbsp;</label>
+              <div className="form-label">&nbsp;</div>
               <div className="d-flex gap-2">
                 {selectedTechnicians.length > 0 && (
                   <div className="dropdown">
@@ -663,21 +662,6 @@ const TechnicianManagement = () => {
               message: t('manager.techManagement.inviteForm.invitationSent')
             });
           }}
-        />
-      )}
-
-      {confirmationModal && (
-        <ConfirmationModal
-          show={true}
-          title={confirmationModal.title}
-          message={confirmationModal.message}
-          confirmText={confirmationModal.confirmText}
-          cancelText={confirmationModal.cancelText}
-          variant={confirmationModal.variant}
-          showWarning={confirmationModal.showWarning}
-          warningText={confirmationModal.warningText}
-          onConfirm={confirmationModal.onConfirm}
-          onCancel={confirmationModal.onCancel}
         />
       )}
 

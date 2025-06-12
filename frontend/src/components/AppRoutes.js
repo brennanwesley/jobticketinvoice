@@ -60,6 +60,7 @@ const SubmittedTicketList = enhancedLazy(() => import(/* webpackChunkName: "subm
 const DraftTicketList = enhancedLazy(() => import(/* webpackChunkName: "draft-tickets" */ './tickets/DraftTicketList'), 'draft-tickets');
 const LandingPage = enhancedLazy(() => import(/* webpackChunkName: "landing" */ './LandingPage'), 'landing');
 const JobTicketFormSelector = enhancedLazy(() => import(/* webpackChunkName: "job-ticket-selector" */ './tickets/JobTicketFormSelector'), 'job-ticket-selector');
+const ManagerDashboard = enhancedLazy(() => import(/* webpackChunkName: "manager-dashboard" */ './manager/ManagerDashboard'), 'manager-dashboard');
 
 /**
  * Route configuration for prefetching and organization
@@ -70,6 +71,7 @@ const routeConfig = {
   '/login': LoginPage,
   '/auth-test': AuthTestPage,
   '/dashboard': AppDashboard,
+  '/manager-dashboard': ManagerDashboard,
   '/profile': UserProfilePage,
   '/job-ticket-form': JobTicketFormPage,
   '/voice-recorder': VoiceRecorderPage,
@@ -137,6 +139,7 @@ const AppRoutes = () => {
           <Route path="/voice-recorder" element={<VoiceRecorderPage />} /> {/* Voice recording entry */}
           <Route path="/submitted" element={<SubmittedTicketList />} /> {/* Submitted tickets list */}
           <Route path="/drafts" element={<DraftTicketList />} /> {/* Draft tickets list */}
+          <Route path="/manager-dashboard" element={<ManagerDashboard />} />
           
           {/* Landing page should also be within the dashboard layout */}
           <Route path="/landing" element={<Navigate to="/dashboard/landing" replace />} />

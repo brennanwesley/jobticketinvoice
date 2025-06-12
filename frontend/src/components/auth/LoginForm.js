@@ -10,7 +10,7 @@ import { Button, Input, Form, Card } from '../ui';
  */
 const LoginForm = () => {
   const { t } = useLanguage();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   
   // Form state
@@ -79,8 +79,16 @@ const LoginForm = () => {
         if (result.is_dev_admin) {
           navigate('/dashboard');
         } else {
-          // Regular user flow - redirect to dashboard
-          navigate('/dashboard');
+          // Check user role and redirect accordingly after a brief delay to allow state update
+          setTimeout(() => {
+            const userData = user || JSON.parse(localStorage.getItem('user') || '{}');
+            if (userData.role === 'manager' || userData.role === 'admin') {
+              navigate('/manager-dashboard');
+            } else {
+              // Regular technician user flow - redirect to dashboard
+              navigate('/dashboard');
+            }
+          }, 100);
         }
       } else {
         setSubmitError(result.error);
