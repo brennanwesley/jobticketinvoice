@@ -1,11 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useManager } from '../../context/ManagerContext';
 import { useManagerAccess } from '../../hooks/useManagerAccess';
+import { useAuth } from '../../context/AuthContext';
+import { Bars3Icon } from '@heroicons/react/24/outline';
+import { 
+  HomeIcon, 
+  UsersIcon, 
+  BuildingOfficeIcon, 
+  ClipboardDocumentListIcon,
+  Cog6ToothIcon,
+  ArrowRightOnRectangleIcon
+} from '@heroicons/react/24/outline';
+import LanguageToggle from '../LanguageToggle';
 import TechnicianManagement from './TechnicianManagement';
 import CompanyProfile from './CompanyProfile';
 import AuditLogs from './AuditLogs';
-import './ManagerDashboard.css';
 
 /**
  * Main Manager Dashboard Component
@@ -15,9 +25,13 @@ const ManagerDashboard = () => {
   const { t } = useLanguage();
   const { hasManagerAccess, getTechnicianStats } = useManager();
   const { validateAccess } = useManagerAccess();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [accessValidated, setAccessValidated] = useState(false);
   const [accessError, setAccessError] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleButtonRef = useRef();
+  const sidebarRef = useRef();
 
   // Validate access on component mount
   useEffect(() => {
@@ -33,283 +47,298 @@ const ManagerDashboard = () => {
     checkAccess();
   }, [validateAccess]);
 
-  // Show loading or access denied if not validated
-  if (!accessValidated) {
-    if (accessError) {
-      return (
-        <div className="manager-dashboard">
-          <div className="container-fluid py-4">
-            <div className="alert alert-danger" role="alert">
-              <h4 className="alert-heading">{t('common.accessDenied')}</h4>
-              <p>{accessError}</p>
-              <hr />
-              <p className="mb-0">{t('common.contactAdmin')}</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
+  // Handle clicks outside the sidebar to close it on mobile
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (window.innerWidth >= 768) return;
+      
+      if (
+        sidebarOpen && 
+        sidebarRef.current && 
+        !sidebarRef.current.contains(event.target) &&
+        toggleButtonRef.current && 
+        !toggleButtonRef.current.contains(event.target)
+      ) {
+        setSidebarOpen(false);
+      }
+    };
     
-    return (
-      <div className="manager-dashboard">
-        <div className="container-fluid py-4">
-          <div className="d-flex justify-content-center">
-            <div className="spinner-border" role="status">
-              <span className="visually-hidden">{t('common.loading')}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [sidebarOpen]);
 
-  const techStats = getTechnicianStats();
-
-  // Tab navigation items
-  const tabItems = [
+  // Navigation items
+  const navigationItems = [
     {
       id: 'overview',
       label: t('manager.overview'),
-      icon: 'bi-speedometer2',
-      component: <OverviewTab stats={techStats} />
+      icon: HomeIcon,
+      component: <OverviewTab stats={getTechnicianStats()} />
     },
     {
       id: 'technicians',
       label: t('manager.technicians'),
-      icon: 'bi-people',
+      icon: UsersIcon,
       component: <TechnicianManagement />
     },
     {
       id: 'company',
       label: t('manager.company'),
-      icon: 'bi-building',
+      icon: BuildingOfficeIcon,
       component: <CompanyProfile />
     },
     {
       id: 'audit',
       label: t('audit.title'),
-      icon: 'bi-clipboard-data',
+      icon: ClipboardDocumentListIcon,
       component: <AuditLogs />
     }
   ];
 
+  // Handle access errors
+  if (accessError) {
+    return (
+      <div className="bg-slate-900 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-400 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-white mb-2">{t('common.accessDenied')}</h2>
+          <p className="text-gray-400 mb-4">{accessError}</p>
+          <p className="text-gray-500">{t('common.contactAdmin')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (!accessValidated) {
+    return (
+      <div className="bg-slate-900 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">{t('common.loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="manager-dashboard">
-      <div className="container-fluid">
-        {/* Dashboard Header */}
-        <div className="dashboard-header py-3 mb-4">
-          <div className="row align-items-center">
-            <div className="col">
-              <h1 className="h3 mb-0">{t('manager.dashboard')}</h1>
-              <p className="text-muted mb-0">{t('manager.dashboardSubtitle')}</p>
+    <div className="bg-slate-900 min-h-screen">
+      {/* Header area for language toggle */}
+      <div className="h-14 relative">
+        <LanguageToggle />
+      </div>
+      
+      <div className="flex">
+        {/* Mobile sidebar toggle */}
+        <button
+          ref={toggleButtonRef}
+          className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+        </button>
+        
+        {/* Sidebar */}
+        <div
+          ref={sidebarRef}
+          className={`${
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } md:translate-x-0 transition-transform duration-300 ease-in-out fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-800 border-r border-gray-700`}
+        >
+          <div className="flex h-full flex-col gap-y-5 overflow-y-auto px-6 py-4">
+            {/* Company/Manager Header */}
+            <div className="flex h-16 shrink-0 items-center">
+              <div className="flex items-center">
+                <BuildingOfficeIcon className="h-8 w-8 text-blue-500 mr-3" />
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    {user?.company_name || t('manager.dashboard')}
+                  </h2>
+                  <p className="text-sm text-gray-400">{t('manager.portal')}</p>
+                </div>
+              </div>
             </div>
+            
+            {/* Navigation */}
+            <nav className="flex flex-1 flex-col">
+              <ul className="flex flex-1 flex-col gap-y-7">
+                <li>
+                  <ul className="-mx-2 space-y-1">
+                    {navigationItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <li key={item.id}>
+                          <button
+                            onClick={() => {
+                              setActiveTab(item.id);
+                              setSidebarOpen(false); // Close mobile sidebar
+                            }}
+                            className={`${
+                              activeTab === item.id
+                                ? 'bg-gray-700 text-white'
+                                : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                            } group flex w-full gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors duration-200`}
+                          >
+                            <Icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                            {item.label}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </li>
+                
+                {/* User section at bottom */}
+                <li className="mt-auto">
+                  <div className="border-t border-gray-700 pt-4">
+                    <div className="flex items-center gap-x-3 mb-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600">
+                        <span className="text-sm font-medium text-white">
+                          {user?.name?.charAt(0)?.toUpperCase() || 'M'}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-white truncate">
+                          {user?.name || t('common.manager')}
+                        </p>
+                        <p className="text-xs text-gray-400 truncate">
+                          {user?.email}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={logout}
+                      className="group flex w-full gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold text-gray-300 hover:text-white hover:bg-gray-700 transition-colors duration-200"
+                    >
+                      <ArrowRightOnRectangleIcon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                      {t('auth.logout')}
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
-
-        {/* Tab Navigation */}
-        <div className="dashboard-tabs mb-4">
-          <ul className="nav nav-tabs nav-tabs-custom" role="tablist">
-            {tabItems.map((tab) => (
-              <li className="nav-item" key={tab.id}>
-                <button
-                  className={`nav-link ${activeTab === tab.id ? 'active' : ''}`}
-                  onClick={() => setActiveTab(tab.id)}
-                  type="button"
-                  role="tab"
-                  aria-selected={activeTab === tab.id}
-                >
-                  <i className={`bi ${tab.icon} me-2`}></i>
-                  {tab.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Tab Content */}
-        <div className="dashboard-content">
-          {tabItems.find(tab => tab.id === activeTab)?.component}
-        </div>
+        
+        {/* Main content */}
+        <main className="flex-1 bg-slate-900 p-6 overflow-y-auto text-white">
+          <div className="mt-2 md:mt-0 pl-14 md:pl-0 md:ml-64">
+            <div className="max-w-7xl mx-auto">
+              {/* Page Header */}
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white">
+                  {navigationItems.find(item => item.id === activeTab)?.label}
+                </h1>
+                <p className="text-gray-400 mt-2">
+                  {activeTab === 'overview' && t('manager.dashboardSubtitle')}
+                  {activeTab === 'technicians' && t('manager.manageTechnicians')}
+                  {activeTab === 'company' && t('manager.manageCompany')}
+                  {activeTab === 'audit' && t('audit.viewLogs')}
+                </p>
+              </div>
+              
+              {/* Tab Content */}
+              <div className="bg-gray-800 rounded-lg shadow-xl">
+                {navigationItems.find(item => item.id === activeTab)?.component}
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
 };
 
-/**
- * Overview Tab Component
- * Shows dashboard statistics and quick actions
- */
+// Overview Tab Component
 const OverviewTab = ({ stats }) => {
   const { t } = useLanguage();
-  const { companyProfile, loadingCompany } = useManager();
+  const { user } = useAuth();
+
+  const overviewCards = [
+    {
+      title: t('manager.totalTechnicians'),
+      value: stats?.totalTechnicians || 0,
+      icon: UsersIcon,
+      color: 'blue',
+      description: t('manager.activeTechnicians')
+    },
+    {
+      title: t('manager.pendingInvitations'),
+      value: stats?.pendingInvitations || 0,
+      icon: Cog6ToothIcon,
+      color: 'yellow',
+      description: t('manager.awaitingResponse')
+    },
+    {
+      title: t('manager.completedJobs'),
+      value: stats?.completedJobs || 0,
+      icon: ClipboardDocumentListIcon,
+      color: 'green',
+      description: t('manager.thisMonth')
+    }
+  ];
 
   return (
-    <div className="overview-tab">
-      <div className="row">
-        {/* Statistics Cards */}
-        <div className="col-12 mb-4">
-          <div className="row g-3">
-            <div className="col-md-3">
-              <div className="stat-card card h-100">
-                <div className="card-body">
-                  <div className="d-flex align-items-center">
-                    <div className="stat-icon bg-primary">
-                      <i className="bi bi-people-fill text-white"></i>
-                    </div>
-                    <div className="ms-3">
-                      <h5 className="card-title mb-0">{stats.total}</h5>
-                      <p className="card-text text-muted">{t('manager.techManagement.totalTechnicians')}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="col-md-3">
-              <div className="stat-card card h-100">
-                <div className="card-body">
-                  <div className="d-flex align-items-center">
-                    <div className="stat-icon bg-success">
-                      <i className="bi bi-check-circle-fill text-white"></i>
-                    </div>
-                    <div className="ms-3">
-                      <h5 className="card-title mb-0">{stats.active}</h5>
-                      <p className="card-text text-muted">{t('manager.techManagement.activeTechnicians')}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="col-md-3">
-              <div className="stat-card card h-100">
-                <div className="card-body">
-                  <div className="d-flex align-items-center">
-                    <div className="stat-icon bg-warning">
-                      <i className="bi bi-clock-fill text-white"></i>
-                    </div>
-                    <div className="ms-3">
-                      <h5 className="card-title mb-0">{stats.pending}</h5>
-                      <p className="card-text text-muted">{t('manager.techManagement.pendingInvitations')}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="col-md-3">
-              <div className="stat-card card h-100">
-                <div className="card-body">
-                  <div className="d-flex align-items-center">
-                    <div className="stat-icon bg-secondary">
-                      <i className="bi bi-pause-circle-fill text-white"></i>
-                    </div>
-                    <div className="ms-3">
-                      <h5 className="card-title mb-0">{stats.deactivated}</h5>
-                      <p className="card-text text-muted">{t('manager.techManagement.deactivatedTechnicians')}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="p-6">
+      {/* Welcome Section */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-2">
+          {t('common.welcome')}, {user?.name}!
+        </h2>
+        <p className="text-gray-400">
+          {t('manager.overviewDescription')}
+        </p>
+      </div>
 
-        {/* Company Info Card */}
-        <div className="col-md-6 mb-4">
-          <div className="card h-100">
-            <div className="card-header">
-              <h5 className="card-title mb-0">{t('manager.companyProfile.title')}</h5>
-            </div>
-            <div className="card-body">
-              {loadingCompany ? (
-                <div className="text-center">
-                  <div className="spinner-border spinner-border-sm" role="status">
-                    <span className="visually-hidden">{t('common.loading')}</span>
-                  </div>
-                </div>
-              ) : companyProfile ? (
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {overviewCards.map((card, index) => {
+          const Icon = card.icon;
+          const colorClasses = {
+            blue: 'bg-blue-600 text-blue-100',
+            yellow: 'bg-yellow-600 text-yellow-100',
+            green: 'bg-green-600 text-green-100'
+          };
+          
+          return (
+            <div key={index} className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+              <div className="flex items-center justify-between">
                 <div>
-                  <div className="d-flex align-items-center mb-3">
-                    {companyProfile.logo_url && (
-                      <img 
-                        src={companyProfile.logo_url} 
-                        alt={companyProfile.name}
-                        className="company-logo me-3"
-                        style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px' }}
-                      />
-                    )}
-                    <div>
-                      <h6 className="mb-1">{companyProfile.name}</h6>
-                      <p className="text-muted mb-0">{companyProfile.email}</p>
-                    </div>
-                  </div>
-                  {companyProfile.phone && (
-                    <p className="mb-2">
-                      <i className="bi bi-telephone me-2"></i>
-                      {companyProfile.phone}
-                    </p>
-                  )}
-                  {companyProfile.website && (
-                    <p className="mb-2">
-                      <i className="bi bi-globe me-2"></i>
-                      <a href={companyProfile.website} target="_blank" rel="noopener noreferrer">
-                        {companyProfile.website}
-                      </a>
-                    </p>
-                  )}
+                  <p className="text-gray-400 text-sm font-medium">{card.title}</p>
+                  <p className="text-3xl font-bold text-white mt-2">{card.value}</p>
+                  <p className="text-gray-500 text-sm mt-1">{card.description}</p>
                 </div>
-              ) : (
-                <p className="text-muted">{t('common.noDataAvailable')}</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Actions Card */}
-        <div className="col-md-6 mb-4">
-          <div className="card h-100">
-            <div className="card-header">
-              <h5 className="card-title mb-0">{t('common.quickActions')}</h5>
-            </div>
-            <div className="card-body">
-              <div className="d-grid gap-2">
-                <button 
-                  className="btn btn-primary"
-                  onClick={() => {
-                    // This would be handled by parent component to switch tabs
-                    const event = new CustomEvent('switchTab', { detail: 'technicians' });
-                    window.dispatchEvent(event);
-                  }}
-                >
-                  <i className="bi bi-person-plus me-2"></i>
-                  {t('manager.techManagement.inviteTechnician')}
-                </button>
-                
-                <button 
-                  className="btn btn-outline-secondary"
-                  onClick={() => {
-                    const event = new CustomEvent('switchTab', { detail: 'company' });
-                    window.dispatchEvent(event);
-                  }}
-                >
-                  <i className="bi bi-building me-2"></i>
-                  {t('manager.companyProfile.title')}
-                </button>
-                
-                <button 
-                  className="btn btn-outline-info"
-                  onClick={() => {
-                    const event = new CustomEvent('switchTab', { detail: 'audit' });
-                    window.dispatchEvent(event);
-                  }}
-                >
-                  <i className="bi bi-clipboard-data me-2"></i>
-                  {t('audit.title')}
-                </button>
+                <div className={`p-3 rounded-full ${colorClasses[card.color]}`}>
+                  <Icon className="h-6 w-6" />
+                </div>
               </div>
             </div>
-          </div>
+          );
+        })}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+        <h3 className="text-lg font-semibold text-white mb-4">{t('manager.quickActions')}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <button className="flex items-center p-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200">
+            <UsersIcon className="h-5 w-5 text-white mr-3" />
+            <span className="text-white font-medium">{t('manager.inviteTechnician')}</span>
+          </button>
+          <button className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200">
+            <BuildingOfficeIcon className="h-5 w-5 text-white mr-3" />
+            <span className="text-white font-medium">{t('manager.updateCompany')}</span>
+          </button>
+          <button className="flex items-center p-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200">
+            <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
+            <span className="text-white font-medium">{t('audit.viewReports')}</span>
+          </button>
         </div>
       </div>
     </div>

@@ -228,10 +228,26 @@ const translations = {
     // Manager Dashboard translations
     manager: {
       dashboard: 'Manager Dashboard',
+      dashboardSubtitle: 'Manage your team and company operations',
+      portal: 'Manager Portal',
       overview: 'Overview',
       technicians: 'Technicians',
       company: 'Company',
       settings: 'Settings',
+      
+      // Overview page
+      overviewDescription: 'Get a quick overview of your team and company performance',
+      totalTechnicians: 'Total Technicians',
+      activeTechnicians: 'Active Technicians',
+      pendingInvitations: 'Pending Invitations',
+      completedJobs: 'Completed Jobs',
+      awaitingResponse: 'Awaiting Response',
+      thisMonth: 'This Month',
+      quickActions: 'Quick Actions',
+      inviteTechnician: 'Invite Technician',
+      updateCompany: 'Update Company',
+      manageTechnicians: 'Manage your team of technicians',
+      manageCompany: 'Manage your company profile and settings',
       
       // Technician Management
       techManagement: {
@@ -427,6 +443,8 @@ const translations = {
     audit: {
       title: 'Audit Log',
       subtitle: 'Track all changes and activities',
+      viewLogs: 'View audit logs and system activity',
+      viewReports: 'View Reports',
       timestamp: 'Timestamp',
       user: 'User',
       action: 'Action',
@@ -725,10 +743,26 @@ const translations = {
     // Manager Dashboard translations
     manager: {
       dashboard: 'Panel de Gerente',
+      dashboardSubtitle: 'Administre su equipo y operaciones de la empresa',
+      portal: 'Portal de Gerente',
       overview: 'Resumen',
       technicians: 'Técnicos',
       company: 'Empresa',
       settings: 'Configuración',
+      
+      // Overview page
+      overviewDescription: 'Obtenga una visión general rápida del rendimiento de su equipo y empresa',
+      totalTechnicians: 'Total de Técnicos',
+      activeTechnicians: 'Técnicos Activos',
+      pendingInvitations: 'Invitaciones Pendientes',
+      completedJobs: 'Trabajos Completados',
+      awaitingResponse: 'Esperando Respuesta',
+      thisMonth: 'Este Mes',
+      quickActions: 'Acciones Rápidas',
+      inviteTechnician: 'Invitar Técnico',
+      updateCompany: 'Actualizar Empresa',
+      manageTechnicians: 'Administre su equipo de técnicos',
+      manageCompany: 'Administre su perfil de empresa y configuración',
       
       // Technician Management
       techManagement: {
@@ -924,6 +958,8 @@ const translations = {
     audit: {
       title: 'Registro de Auditoría',
       subtitle: 'Rastrea todos los cambios y actividades',
+      viewLogs: 'Ver registros de auditoría y actividad del sistema',
+      viewReports: 'Ver informes',
       timestamp: 'Marca de Tiempo',
       user: 'Usuario',
       action: 'Acción',
