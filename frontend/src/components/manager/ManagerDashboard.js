@@ -164,7 +164,7 @@ const ManagerDashboard = () => {
           ref={sidebarRef}
           className={`${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } md:translate-x-0 transition-transform duration-300 ease-in-out fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-800 border-r border-gray-700`}
+          } md:translate-x-0 transition-transform duration-300 ease-in-out fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-800 border-r border-gray-700 h-screen`}
         >
           <div className="flex h-full flex-col gap-y-5 overflow-y-auto px-6 py-4">
             {/* Company/Manager Header */}
@@ -364,6 +364,18 @@ const OverviewTab = ({ stats }) => {
           <button className="flex items-center p-4 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors duration-200">
             <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
             <span className="text-white font-medium">{t('manager.createJobTicket')}</span>
+          </button>
+          <button 
+            className="flex items-center p-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            style={{
+              background: 'linear-gradient(135deg, #39b198 0%, #2d8a73 100%)',
+              boxShadow: '0 4px 15px rgba(57, 177, 152, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+            }}
+          >
+            <svg className="h-5 w-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span className="text-white font-medium">PatchAI</span>
           </button>
         </div>
       </div>
