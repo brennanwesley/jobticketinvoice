@@ -386,6 +386,53 @@ const translations = {
         comingSoon: 'Settings functionality coming soon'
       },
       
+      // Audit Logs
+      auditLogs: {
+        title: 'Audit Logs',
+        subtitle: 'Monitor system activities and user actions',
+        filters: {
+          category: 'Category',
+          action: 'Action',
+          user: 'User',
+          dateFrom: 'From Date',
+          dateTo: 'To Date',
+          search: 'Search',
+          apply: 'Apply Filters',
+          clear: 'Clear Filters'
+        },
+        table: {
+          timestamp: 'Timestamp',
+          user: 'User',
+          category: 'Category',
+          action: 'Action',
+          description: 'Description',
+          details: 'Details',
+          ipAddress: 'IP Address'
+        },
+        categories: {
+          security: 'Security',
+          user: 'User',
+          company: 'Company',
+          technician: 'Technician',
+          system: 'System'
+        },
+        actions: {
+          login: 'Login',
+          logout: 'Logout',
+          create: 'Create',
+          update: 'Update',
+          delete: 'Delete',
+          invite: 'Invite',
+          activate: 'Activate',
+          deactivate: 'Deactivate'
+        },
+        totalLogs: 'Total Logs',
+        noLogs: 'No audit logs found',
+        export: 'Export CSV',
+        loading: 'Loading audit logs...',
+        error: 'Error loading audit logs'
+      },
+      
       // Help and onboarding
       help: {
         techManagementHelp: 'Manage your team of technicians. You can invite new technicians, activate or deactivate existing ones, and track their status.',
@@ -427,53 +474,6 @@ const translations = {
         logoRemoved: 'Company logo removed'
       }
     },
-    
-    // Audit Logs
-    auditLogs: {
-      title: 'Audit Logs',
-      subtitle: 'View system activity and user actions',
-      filters: {
-        category: 'Category',
-        action: 'Action',
-        user: 'User',
-        dateFrom: 'From Date',
-        dateTo: 'To Date',
-        search: 'Search',
-        apply: 'Apply Filters',
-        clear: 'Clear Filters'
-      },
-      table: {
-        timestamp: 'Timestamp',
-        user: 'User',
-        category: 'Category',
-        action: 'Action',
-        description: 'Description',
-        details: 'Details',
-        ipAddress: 'IP Address'
-      },
-      categories: {
-        security: 'Security',
-        user: 'User',
-        company: 'Company',
-        technician: 'Technician',
-        system: 'System'
-      },
-      actions: {
-        login: 'Login',
-        logout: 'Logout',
-        create: 'Create',
-        update: 'Update',
-        delete: 'Delete',
-        invite: 'Invite',
-        activate: 'Activate',
-        deactivate: 'Deactivate'
-      },
-      totalLogs: 'Total Logs',
-      noLogs: 'No audit logs found',
-      export: 'Export CSV',
-      loading: 'Loading audit logs...',
-      error: 'Error loading audit logs'
-    }
   },
   
   es: {
@@ -856,6 +856,53 @@ const translations = {
         comingSoon: 'Funcionalidad de configuración por venir'
       },
       
+      // Audit Logs
+      auditLogs: {
+        title: 'Registros de Auditoría',
+        subtitle: 'Ver actividad del sistema y acciones de usuarios',
+        filters: {
+          category: 'Categoría',
+          action: 'Acción',
+          user: 'Usuario',
+          dateFrom: 'Fecha Desde',
+          dateTo: 'Fecha Hasta',
+          search: 'Buscar',
+          apply: 'Aplicar Filtros',
+          clear: 'Limpiar Filtros'
+        },
+        table: {
+          timestamp: 'Marca de Tiempo',
+          user: 'Usuario',
+          category: 'Categoría',
+          action: 'Acción',
+          description: 'Descripción',
+          details: 'Detalles',
+          ipAddress: 'Dirección IP'
+        },
+        categories: {
+          security: 'Seguridad',
+          user: 'Usuario',
+          company: 'Empresa',
+          technician: 'Técnico',
+          system: 'Sistema'
+        },
+        actions: {
+          login: 'Iniciar Sesión',
+          logout: 'Cerrar Sesión',
+          create: 'Crear',
+          update: 'Actualizar',
+          delete: 'Eliminar',
+          invite: 'Invitar',
+          activate: 'Activar',
+          deactivate: 'Desactivar'
+        },
+        totalLogs: 'Total de Registros',
+        noLogs: 'No se encontraron registros de auditoría',
+        export: 'Exportar CSV',
+        loading: 'Cargando registros de auditoría...',
+        error: 'Error al cargar registros de auditoría'
+      },
+      
       // Help and onboarding
       help: {
         techManagementHelp: 'Administra tu equipo de técnicos. Puedes invitar nuevos técnicos, activar o desactivar los existentes, y rastrear su estado.',
@@ -897,53 +944,6 @@ const translations = {
         logoRemoved: 'Logo de empresa eliminado'
       }
     },
-    
-    // Audit Logs
-    auditLogs: {
-      title: 'Registros de Auditoría',
-      subtitle: 'Ver actividad del sistema y acciones de usuarios',
-      filters: {
-        category: 'Categoría',
-        action: 'Acción',
-        user: 'Usuario',
-        dateFrom: 'Fecha Desde',
-        dateTo: 'Fecha Hasta',
-        search: 'Buscar',
-        apply: 'Aplicar Filtros',
-        clear: 'Limpiar Filtros'
-      },
-      table: {
-        timestamp: 'Marca de Tiempo',
-        user: 'Usuario',
-        category: 'Categoría',
-        action: 'Acción',
-        description: 'Descripción',
-        details: 'Detalles',
-        ipAddress: 'Dirección IP'
-      },
-      categories: {
-        security: 'Seguridad',
-        user: 'Usuario',
-        company: 'Empresa',
-        technician: 'Técnico',
-        system: 'Sistema'
-      },
-      actions: {
-        login: 'Iniciar Sesión',
-        logout: 'Cerrar Sesión',
-        create: 'Crear',
-        update: 'Actualizar',
-        delete: 'Eliminar',
-        invite: 'Invitar',
-        activate: 'Activar',
-        deactivate: 'Desactivar'
-      },
-      totalLogs: 'Total de Registros',
-      noLogs: 'No se encontraron registros de auditoría',
-      export: 'Exportar CSV',
-      loading: 'Cargando registros de auditoría...',
-      error: 'Error al cargar registros de auditoría'
-    }
   }
 };
 
