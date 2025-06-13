@@ -234,7 +234,6 @@ const translations = {
       overview: 'Overview',
       technicians: 'Technicians',
       company: 'Company',
-      settings: 'Settings',
       
       // Overview page
       overviewDescription: 'Get a quick overview of your team and company performance',
@@ -707,7 +706,6 @@ const translations = {
       overview: 'Resumen',
       technicians: 'Técnicos',
       company: 'Empresa',
-      settings: 'Configuración',
       
       // Overview page
       overviewDescription: 'Obtenga una visión general rápida del rendimiento de su equipo y empresa',
@@ -857,7 +855,7 @@ const translations = {
       // Settings
       settings: {
         title: 'Configuración',
-        comingSoon: 'La funcionalidad de configuración está por venir'
+        comingSoon: 'Funcionalidad de configuración por venir'
       },
       
       // Help and onboarding
