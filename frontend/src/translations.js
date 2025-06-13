@@ -238,6 +238,7 @@ const translations = {
       // Overview page
       overviewDescription: 'Get a quick overview of your team and company performance',
       totalTechnicians: 'Total Technicians',
+      totalWorkHours: 'Total Work Hours',
       activeTechnicians: 'Active Technicians',
       pendingInvitations: 'Pending Invitations',
       completedJobs: 'Completed Jobs',
@@ -708,6 +709,7 @@ const translations = {
       // Overview page
       overviewDescription: 'Obtenga una visión general rápida del rendimiento de su equipo y empresa',
       totalTechnicians: 'Total de Técnicos',
+      totalWorkHours: 'Total de Horas de Trabajo',
       activeTechnicians: 'Técnicos Activos',
       pendingInvitations: 'Invitaciones Pendientes',
       completedJobs: 'Trabajos Completados',

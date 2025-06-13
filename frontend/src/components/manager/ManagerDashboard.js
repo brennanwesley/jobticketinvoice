@@ -269,11 +269,11 @@ const OverviewTab = ({ stats }) => {
       description: t('manager.activeTechnicians')
     },
     {
-      title: t('manager.pendingInvitations'),
-      value: stats?.pendingInvitations || 0,
+      title: t('manager.totalWorkHours'),
+      value: stats?.totalWorkHours || 0,
       icon: Cog6ToothIcon,
       color: 'yellow',
-      description: t('manager.awaitingResponse')
+      description: t('manager.thisMonth')
     },
     {
       title: t('manager.completedJobs'),
