@@ -232,6 +232,8 @@ const translations = {
       dashboardSubtitle: 'Manage your team and company operations',
       portal: 'Manager Portal',
       overview: 'Overview',
+      invoicing: 'Invoicing',
+      jobTickets: 'Job Tickets',
       technicians: 'Technicians',
       company: 'Company',
       
@@ -251,6 +253,8 @@ const translations = {
       createJobTicket: 'Create Job Ticket',
       manageTechnicians: 'Manage your team of technicians',
       manageCompany: 'Manage your company profile and settings',
+      manageInvoicing: 'Create and manage invoices for your services',
+      manageJobTickets: 'Create and track job tickets for your team',
       
       // Technician Management
       techManagement: {
@@ -434,6 +438,22 @@ const translations = {
         export: 'Export CSV',
         loading: 'Loading audit logs...',
         error: 'Error loading audit logs'
+      },
+      
+      // Invoicing
+      invoicing: {
+        title: 'Invoicing',
+        subtitle: 'Manage invoices and billing',
+        comingSoon: 'Invoicing functionality coming soon',
+        description: 'Create, manage, and track invoices for your technician services.'
+      },
+      
+      // Job Tickets
+      jobTickets: {
+        title: 'Job Tickets',
+        subtitle: 'Manage work orders and job tickets',
+        comingSoon: 'Job Tickets functionality coming soon',
+        description: 'Create, assign, and track job tickets for your technician team.'
       },
       
       // Help and onboarding
@@ -705,6 +725,8 @@ const translations = {
       dashboardSubtitle: 'Administre su equipo y operaciones de la empresa',
       portal: 'Portal de Gerente',
       overview: 'Resumen',
+      invoicing: 'Facturación',
+      jobTickets: 'Boletas de Trabajo',
       technicians: 'Técnicos',
       company: 'Empresa',
       
@@ -724,6 +746,8 @@ const translations = {
       createJobTicket: 'Crear Boleta de Trabajo',
       manageTechnicians: 'Administre su equipo de técnicos',
       manageCompany: 'Administre su perfil de empresa y configuración',
+      manageInvoicing: 'Cree y administre facturas para sus servicios',
+      manageJobTickets: 'Cree y rastree boletas de trabajo para su equipo',
       
       // Technician Management
       techManagement: {
@@ -907,6 +931,22 @@ const translations = {
         export: 'Exportar CSV',
         loading: 'Cargando registros de auditoría...',
         error: 'Error al cargar registros de auditoría'
+      },
+      
+      // Invoicing
+      invoicing: {
+        title: 'Facturación',
+        subtitle: 'Administre facturas y cobros',
+        comingSoon: 'Funcionalidad de facturación por venir',
+        description: 'Cree, administre y rastree facturas para sus servicios técnicos.'
+      },
+      
+      // Job Tickets
+      jobTickets: {
+        title: 'Boletas de Trabajo',
+        subtitle: 'Administre órdenes de trabajo y boletas de trabajo',
+        comingSoon: 'Funcionalidad de boletas de trabajo por venir',
+        description: 'Cree, asigne y rastree boletas de trabajo para su equipo técnico.'
       },
       
       // Help and onboarding

@@ -3,19 +3,23 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useManager } from '../../context/ManagerContext';
 import { useManagerAccess } from '../../hooks/useManagerAccess';
 import { useAuth } from '../../context/AuthContext';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import TechnicianManagement from './TechnicianManagement';
+import CompanyProfile from './CompanyProfile';
+import Invoicing from './Invoicing';
+import JobTickets from './JobTickets';
+import AuditLogs from './AuditLogs';
 import { 
   HomeIcon, 
   UsersIcon, 
   BuildingOfficeIcon, 
   ClipboardDocumentListIcon,
+  DocumentTextIcon,
   Cog6ToothIcon,
+  Bars3Icon,
+  XMarkIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 import LanguageToggle from '../LanguageToggle';
-import TechnicianManagement from './TechnicianManagement';
-import CompanyProfile from './CompanyProfile';
-import AuditLogs from './AuditLogs';
 
 /**
  * Main Manager Dashboard Component
@@ -81,10 +85,16 @@ const ManagerDashboard = () => {
       component: <OverviewTab stats={getTechnicianStats()} />
     },
     {
-      id: 'technicians',
-      label: t('manager.technicians'),
-      icon: UsersIcon,
-      component: <TechnicianManagement />
+      id: 'invoicing',
+      label: t('manager.invoicing'),
+      icon: DocumentTextIcon,
+      component: <Invoicing />
+    },
+    {
+      id: 'jobTickets',
+      label: t('manager.jobTickets'),
+      icon: ClipboardDocumentListIcon,
+      component: <JobTickets />
     },
     {
       id: 'company',
@@ -93,9 +103,15 @@ const ManagerDashboard = () => {
       component: <CompanyProfile />
     },
     {
+      id: 'technicians',
+      label: t('manager.technicians'),
+      icon: UsersIcon,
+      component: <TechnicianManagement />
+    },
+    {
       id: 'audit',
       label: t('audit.title'),
-      icon: ClipboardDocumentListIcon,
+      icon: Cog6ToothIcon,
       component: <AuditLogs />
     }
   ];
@@ -238,6 +254,8 @@ const ManagerDashboard = () => {
                 <p className="text-gray-400 mt-2">
                   {activeTab === 'overview' && t('manager.dashboardSubtitle')}
                   {activeTab === 'technicians' && t('manager.manageTechnicians')}
+                  {activeTab === 'invoicing' && t('manager.manageInvoicing')}
+                  {activeTab === 'jobTickets' && t('manager.manageJobTickets')}
                   {activeTab === 'company' && t('manager.manageCompany')}
                   {activeTab === 'audit' && t('audit.viewLogs')}
                 </p>
