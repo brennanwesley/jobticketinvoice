@@ -86,13 +86,13 @@ const ManagerDashboard = () => {
     },
     {
       id: 'invoicing',
-      label: t('manager.invoicing'),
+      label: t('manager.invoicing.title'),
       icon: DocumentTextIcon,
       component: <Invoicing />
     },
     {
       id: 'jobTickets',
-      label: t('manager.jobTickets'),
+      label: t('manager.jobTickets.title'),
       icon: ClipboardDocumentListIcon,
       component: <JobTickets />
     },
@@ -254,8 +254,8 @@ const ManagerDashboard = () => {
                 <p className="text-gray-400 mt-2">
                   {activeTab === 'overview' && t('manager.dashboardSubtitle')}
                   {activeTab === 'technicians' && t('manager.manageTechnicians')}
-                  {activeTab === 'invoicing' && t('manager.manageInvoicing')}
-                  {activeTab === 'jobTickets' && t('manager.manageJobTickets')}
+                  {activeTab === 'invoicing' && t('manager.invoicing.subtitle')}
+                  {activeTab === 'jobTickets' && t('manager.jobTickets.subtitle')}
                   {activeTab === 'company' && t('manager.manageCompany')}
                   {activeTab === 'audit' && t('audit.viewLogs')}
                 </p>

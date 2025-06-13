@@ -232,8 +232,6 @@ const translations = {
       dashboardSubtitle: 'Manage your team and company operations',
       portal: 'Manager Portal',
       overview: 'Overview',
-      invoicing: 'Invoicing',
-      jobTickets: 'Job Tickets',
       technicians: 'Technicians',
       company: 'Company',
       
@@ -253,8 +251,6 @@ const translations = {
       createJobTicket: 'Create Job Ticket',
       manageTechnicians: 'Manage your team of technicians',
       manageCompany: 'Manage your company profile and settings',
-      manageInvoicing: 'Create and manage invoices for your services',
-      manageJobTickets: 'Create and track job tickets for your team',
       
       // Technician Management
       techManagement: {
@@ -725,8 +721,6 @@ const translations = {
       dashboardSubtitle: 'Administre su equipo y operaciones de la empresa',
       portal: 'Portal de Gerente',
       overview: 'Resumen',
-      invoicing: 'Facturación',
-      jobTickets: 'Boletas de Trabajo',
       technicians: 'Técnicos',
       company: 'Empresa',
       
@@ -746,8 +740,6 @@ const translations = {
       createJobTicket: 'Crear Boleta de Trabajo',
       manageTechnicians: 'Administre su equipo de técnicos',
       manageCompany: 'Administre su perfil de empresa y configuración',
-      manageInvoicing: 'Cree y administre facturas para sus servicios',
-      manageJobTickets: 'Cree y rastree boletas de trabajo para su equipo',
       
       // Technician Management
       techManagement: {
