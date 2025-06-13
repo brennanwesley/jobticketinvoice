@@ -84,12 +84,14 @@ const CompanyProfile = () => {
         />
       )}
 
-      {/* Section 1: Company Profile */}
-      <div className="profile-section">
-        <h2 className="section-header">
-          <i className="fas fa-building me-2"></i>
-          {t('manager.companyProfile.title')}
-        </h2>
+      {/* Company Profile Section */}
+      <div className="card shadow-sm border mb-4">
+        <div className="card-header bg-primary text-white">
+          <h3 className="card-title mb-0">
+            <i className="fas fa-building me-2"></i>
+            {t('manager.companyProfile.title')}
+          </h3>
+        </div>
         
         <div className="card-body">
           <div className="row">
@@ -102,7 +104,7 @@ const CompanyProfile = () => {
             <div className="col-md-6">
               <div className="mb-3">
                 <strong>{t('manager.companyProfile.managerName')}:</strong>
-                <span className="ms-2">{user?.first_name ? `${user.first_name} ${user.last_name}` : user?.email || t('common.notAvailable')}</span>
+                <span className="ms-2">{user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : user?.email || t('common.notAvailable')}</span>
               </div>
             </div>
           </div>
@@ -130,17 +132,20 @@ const CompanyProfile = () => {
         </div>
       </div>
 
-      {/* Section 2: Settings */}
-      <div className="settings-section">
-        <h2 className="section-header">
-          <i className="fas fa-cog me-2"></i>
-          {t('manager.settings.title')}
-        </h2>
+      {/* Settings Section */}
+      <div className="card shadow-sm border">
+        <div className="card-header bg-secondary text-white">
+          <h3 className="card-title mb-0">
+            <i className="fas fa-cog me-2"></i>
+            {t('manager.settings.title')}
+          </h3>
+        </div>
         
-        <div className="settings-placeholder">
-          <p className="text-muted">
-            {t('manager.settings.comingSoon')}
-          </p>
+        <div className="card-body">
+          <div className="text-center py-4">
+            <i className="fas fa-tools fa-3x text-muted mb-3"></i>
+            <p className="text-muted mb-0">{t('manager.settings.comingSoon')}</p>
+          </div>
         </div>
       </div>
     </div>
