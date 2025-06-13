@@ -91,36 +91,40 @@ const CompanyProfile = () => {
           {t('manager.companyProfile.title')}
         </h2>
         
-        <div className="profile-info">
-          <div className="info-item">
-            <label className="info-label">{t('manager.companyProfile.companyName')}</label>
-            <div className="info-value">
-              {companyProfile?.name || t('common.notAvailable')}
+        <div className="card-body">
+          <div className="row">
+            <div className="col-md-6">
+              <div className="mb-3">
+                <strong>{t('manager.companyProfile.companyName')}:</strong>
+                <span className="ms-2">{companyProfile?.name || t('common.notAvailable')}</span>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="mb-3">
+                <strong>{t('manager.companyProfile.managerName')}:</strong>
+                <span className="ms-2">{user?.first_name ? `${user.first_name} ${user.last_name}` : user?.email || t('common.notAvailable')}</span>
+              </div>
             </div>
           </div>
-
-          <div className="info-item">
-            <label className="info-label">{t('manager.companyProfile.managerName')}</label>
-            <div className="info-value">
-              {user?.name || t('common.notAvailable')}
+          
+          <div className="row">
+            <div className="col-md-6">
+              <div className="mb-3">
+                <strong>{t('manager.companyProfile.technicianCount')}:</strong>
+                <span className="ms-2">0</span>
+              </div>
             </div>
-          </div>
-
-          <div className="info-item">
-            <label className="info-label">{t('manager.companyProfile.technicianCount')}</label>
-            <div className="info-value">0</div>
-          </div>
-
-          <div className="info-item">
-            <label className="info-label">{t('manager.companyProfile.rateSheet')}</label>
-            <div className="info-value">
-              <button className="btn btn-outline-primary btn-sm" disabled>
-                <i className="fas fa-upload me-2"></i>
-                {t('manager.companyProfile.uploadRateSheet')}
-              </button>
-              <small className="text-muted d-block mt-1">
-                {t('manager.companyProfile.rateSheetNote')}
-              </small>
+            <div className="col-md-6">
+              <div className="mb-3">
+                <strong>{t('manager.companyProfile.rateSheet')}:</strong>
+                <div className="ms-2 d-inline-block">
+                  <button className="btn btn-outline-primary btn-sm me-2" disabled>
+                    <i className="fas fa-upload me-1"></i>
+                    {t('manager.companyProfile.uploadRateSheet')}
+                  </button>
+                  <small className="text-muted">{t('manager.companyProfile.rateSheetNote')}</small>
+                </div>
+              </div>
             </div>
           </div>
         </div>
