@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 
 # Import routers
-from routes import auth, users, job_tickets, invoices, companies, invitations, manager_signup, audit
+from routes import auth, users, job_tickets, invoices, companies, invitations, manager_signup, audit, tech_invites
 
 # Import database setup
 from database import Base, engine
@@ -63,6 +63,7 @@ app.include_router(companies.router, prefix=settings.API_V1_STR)
 app.include_router(invitations.router, prefix=settings.API_V1_STR)
 app.include_router(manager_signup.router, prefix=settings.API_V1_STR)
 app.include_router(audit.router, prefix=settings.API_V1_STR)
+app.include_router(tech_invites.router, prefix=settings.API_V1_STR)
 
 # Mount static files directory for serving logo uploads
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -74,7 +75,3 @@ if __name__ == "__main__":
 # - Invoice endpoints
 # - Customer management endpoints
 # - GPT integration endpoints
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

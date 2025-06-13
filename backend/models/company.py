@@ -32,6 +32,7 @@ class Company(Base):
     users = relationship("User", back_populates="company")
     job_tickets = relationship("JobTicket", back_populates="company")
     audit_logs = relationship("AuditLog", back_populates="company")
+    tech_invites = relationship("TechInvite", back_populates="company")
     
     # Ensure normalized company names are unique
     __table_args__ = (

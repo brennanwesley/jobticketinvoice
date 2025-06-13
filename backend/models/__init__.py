@@ -3,6 +3,7 @@ from .job_ticket import JobTicket, JobTicketStatus
 from .invoice import Invoice
 from .company import Company
 from .invitation import TechnicianInvitation
+from .tech_invite import TechInvite
 from .audit_log import AuditLog
 
 __all__ = [
@@ -11,5 +12,6 @@ __all__ = [
     "Invoice",
     "Company",
     "TechnicianInvitation",
+    "TechInvite",
     "AuditLog"
 ]
