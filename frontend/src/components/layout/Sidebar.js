@@ -79,8 +79,8 @@ const Sidebar = forwardRef(({ sidebarOpen, setSidebarOpen }, ref) => {
         'fixed top-0 left-0 z-40 h-full w-64 bg-gray-900 transition-transform duration-300 ease-in-out md:translate-x-0'
       )}
     >
-      <div className="flex h-full flex-col gap-y-5 overflow-y-auto px-6 py-4">
-        {/* Removed Job Ticket header - will be replaced with company name later */}
+      <div className="flex h-full flex-col gap-y-5 overflow-y-auto px-6 py-4 pt-16 md:pt-4">
+        {/* Company header section - moved down on mobile to avoid hamburger overlap */}
         <div className="flex h-16 shrink-0 items-center">
           {/* Empty space for future company name */}
         </div>

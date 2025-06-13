@@ -166,8 +166,8 @@ const ManagerDashboard = () => {
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           } md:translate-x-0 transition-transform duration-300 ease-in-out fixed md:static inset-y-0 left-0 z-40 w-64 bg-gray-800 border-r border-gray-700 h-screen`}
         >
-          <div className="flex h-full flex-col gap-y-5 overflow-y-auto px-6 py-4">
-            {/* Company/Manager Header */}
+          <div className="flex h-full flex-col gap-y-5 overflow-y-auto px-6 py-4 pt-16 md:pt-4">
+            {/* Company/Manager Header - moved down on mobile to avoid hamburger overlap */}
             <div className="flex h-16 shrink-0 items-center">
               <div className="flex items-center">
                 <BuildingOfficeIcon className="h-8 w-8 text-blue-500 mr-3" />
