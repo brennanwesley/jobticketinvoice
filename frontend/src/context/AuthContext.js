@@ -61,6 +61,11 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     
+    // Clear any existing user data first to prevent cross-account contamination
+    setUser(null);
+    removeToken();
+    setToken(null);
+    
     try {
       const formData = new FormData();
       formData.append('username', email);
@@ -80,7 +85,7 @@ export const AuthProvider = ({ children }) => {
         setAuthToken(data.access_token);
         setToken(data.access_token);
         
-        // Get user data
+        // Get user data with the new token
         const userResponse = await authenticatedFetch('/auth/me', {
           headers: {
             'Authorization': `Bearer ${data.access_token}`
@@ -88,9 +93,17 @@ export const AuthProvider = ({ children }) => {
         });
         
         let userData = null;
-        if (userResponse.ok) {
+        if (userResponse && userResponse.ok) {
           userData = await userResponse.json();
+          console.log('Login successful - User data:', userData);
           setUser(userData);
+        } else {
+          console.error('Failed to fetch user data after login');
+          // If we can't get user data, clear everything
+          removeToken();
+          setToken(null);
+          setUser(null);
+          throw new Error('Failed to fetch user data');
         }
         
         auditSecurityEvent(AUDIT_ACTIONS.LOGIN_SUCCESS, { username: email });
@@ -116,6 +129,11 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     
+    // Clear any existing user data first to prevent cross-account contamination
+    setUser(null);
+    removeToken();
+    setToken(null);
+    
     try {
       // Use the manager signup endpoint for manager registration
       console.log('Environment REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
@@ -135,9 +153,13 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       
       if (response.ok) {
+        console.log('Manager signup successful, attempting auto-login...');
         // Auto login after registration
-        return await login(userData.email, userData.password);
+        const loginResult = await login(userData.email, userData.password);
+        console.log('Auto-login result:', loginResult);
+        return loginResult;
       } else {
+        console.error('Manager signup failed:', data);
         setError(data.detail || 'Registration failed');
         return { success: false, error: data.detail || 'Registration failed' };
       }
