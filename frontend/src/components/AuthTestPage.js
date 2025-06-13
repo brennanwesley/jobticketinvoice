@@ -156,7 +156,7 @@ const AuthTestPage = () => {
                     name="email"
                     value={loginData.email}
                     onChange={handleLoginInputChange}
-                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
                   />
                 </div>
                 <div>
@@ -167,7 +167,7 @@ const AuthTestPage = () => {
                     name="password"
                     value={loginData.password}
                     onChange={handleLoginInputChange}
-                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
                   />
                 </div>
                 <button
@@ -192,7 +192,7 @@ const AuthTestPage = () => {
                     name="name"
                     value={registerData.name}
                     onChange={handleRegisterInputChange}
-                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
                   />
                 </div>
                 <div>
@@ -203,7 +203,7 @@ const AuthTestPage = () => {
                     name="email"
                     value={registerData.email}
                     onChange={handleRegisterInputChange}
-                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
                   />
                 </div>
                 <div>
@@ -214,7 +214,7 @@ const AuthTestPage = () => {
                     name="password"
                     value={registerData.password}
                     onChange={handleRegisterInputChange}
-                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
                   />
                 </div>
                 <div>
@@ -224,7 +224,7 @@ const AuthTestPage = () => {
                     name="role"
                     value={registerData.role}
                     onChange={handleRegisterInputChange}
-                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                    className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white"
                   >
                     <option value="tech">Tech</option>
                     <option value="manager">Manager</option>
@@ -238,7 +238,7 @@ const AuthTestPage = () => {
                       name="job_type"
                       value={registerData.job_type}
                       onChange={handleRegisterInputChange}
-                      className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                      className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white"
                     >
                       <option value="pump_service_technician">Pump Technician</option>
                       <option value="roustabout">Roustabout</option>
@@ -258,7 +258,7 @@ const AuthTestPage = () => {
                       name="company_name"
                       value={registerData.company_name || ''}
                       onChange={handleRegisterInputChange}
-                      className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md"
+                      className="w-full px-3 py-2 bg-slate-700 border border-gray-600 rounded-md text-white placeholder-gray-400"
                     />
                   </div>
                 )}

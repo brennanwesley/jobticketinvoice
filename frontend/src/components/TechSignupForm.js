@@ -142,7 +142,7 @@ const TechSignupForm = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-slate-700 border ${errors.name ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+            className={`w-full px-4 py-2 bg-slate-700 border ${errors.name ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-white placeholder-gray-400`}
           />
           {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
         </div>
@@ -158,7 +158,7 @@ const TechSignupForm = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-slate-700 border ${errors.email ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+            className={`w-full px-4 py-2 bg-slate-700 border ${errors.email ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-white placeholder-gray-400`}
           />
           {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
         </div>
@@ -174,7 +174,7 @@ const TechSignupForm = () => {
             name="company_name"
             value={formData.company_name}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-slate-700 border ${errors.company_name ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+            className={`w-full px-4 py-2 bg-slate-700 border ${errors.company_name ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-white placeholder-gray-400`}
           />
           {errors.company_name && <p className="mt-1 text-sm text-red-500">{errors.company_name}</p>}
         </div>
@@ -189,7 +189,7 @@ const TechSignupForm = () => {
             name="job_type"
             value={formData.job_type}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-slate-700 border ${errors.job_type ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+            className={`w-full px-4 py-2 bg-slate-700 border ${errors.job_type ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-white`}
           >
             <option value="">{t('signup.selectJobType')}</option>
             <option value="pump_service_technician">{t('jobTypes.pumpTech')}</option>
@@ -213,7 +213,7 @@ const TechSignupForm = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-slate-700 border ${errors.password ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+            className={`w-full px-4 py-2 bg-slate-700 border ${errors.password ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-white placeholder-gray-400`}
           />
           {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
         </div>
@@ -229,7 +229,7 @@ const TechSignupForm = () => {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-slate-700 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500`}
+            className={`w-full px-4 py-2 bg-slate-700 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-white placeholder-gray-400`}
           />
           {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>}
         </div>
