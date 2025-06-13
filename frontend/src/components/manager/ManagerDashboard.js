@@ -82,7 +82,7 @@ const ManagerDashboard = () => {
       id: 'overview',
       label: t('manager.overview'),
       icon: HomeIcon,
-      component: <OverviewTab stats={getTechnicianStats()} />
+      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} />
     },
     {
       id: 'invoicing',
@@ -274,7 +274,7 @@ const ManagerDashboard = () => {
 };
 
 // Overview Tab Component
-const OverviewTab = ({ stats }) => {
+const OverviewTab = ({ stats, setActiveTab }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
 
@@ -342,42 +342,57 @@ const OverviewTab = ({ stats }) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
-        <h3 className="text-lg font-semibold text-white mb-4">{t('manager.quickActions')}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button className="flex items-center p-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200">
-            <UsersIcon className="h-5 w-5 text-white mr-3" />
-            <span className="text-white font-medium">{t('manager.inviteTechnician')}</span>
-          </button>
-          <button className="flex items-center p-4 bg-gray-500 hover:bg-gray-600 rounded-lg transition-colors duration-200">
-            <BuildingOfficeIcon className="h-5 w-5 text-white mr-3" />
-            <span className="text-white font-medium">{t('manager.updateCompany')}</span>
-          </button>
-          <button className="flex items-center p-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200">
-            <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
-            <span className="text-white font-medium">{t('audit.viewReports')}</span>
-          </button>
-          <button className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200">
-            <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
-            <span className="text-white font-medium">{t('manager.createInvoice')}</span>
-          </button>
-          <button className="flex items-center p-4 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors duration-200">
-            <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
-            <span className="text-white font-medium">{t('manager.createJobTicket')}</span>
-          </button>
-          <button 
-            className="flex items-center p-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            style={{
-              background: 'linear-gradient(135deg, #39b198 0%, #2d8a73 100%)',
-              boxShadow: '0 4px 15px rgba(57, 177, 152, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-            }}
-          >
-            <svg className="h-5 w-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <span className="text-white font-medium">PatchAI</span>
-          </button>
-        </div>
+      <QuickActionsSection setActiveTab={setActiveTab} />
+    </div>
+  );
+};
+
+// Quick Actions Section
+const QuickActionsSection = ({ setActiveTab }) => {
+  const { t } = useLanguage();
+
+  return (
+    <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+      <h3 className="text-lg font-semibold text-white mb-4">{t('manager.quickActions')}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <button className="flex items-center p-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200">
+          <UsersIcon className="h-5 w-5 text-white mr-3" />
+          <span className="text-white font-medium">{t('manager.inviteTechnician')}</span>
+        </button>
+        <button className="flex items-center p-4 bg-gray-500 hover:bg-gray-600 rounded-lg transition-colors duration-200">
+          <BuildingOfficeIcon className="h-5 w-5 text-white mr-3" />
+          <span className="text-white font-medium">{t('manager.updateCompany')}</span>
+        </button>
+        <button className="flex items-center p-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200">
+          <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
+          <span className="text-white font-medium">{t('audit.viewReports')}</span>
+        </button>
+        <button 
+          className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
+          onClick={() => setActiveTab('invoicing')}
+        >
+          <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
+          <span className="text-white font-medium">{t('manager.createInvoice')}</span>
+        </button>
+        <button 
+          className="flex items-center p-4 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors duration-200"
+          onClick={() => setActiveTab('jobTickets')}
+        >
+          <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
+          <span className="text-white font-medium">{t('manager.createJobTicket')}</span>
+        </button>
+        <button 
+          className="flex items-center p-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+          style={{
+            background: 'linear-gradient(135deg, #39b198 0%, #2d8a73 100%)',
+            boxShadow: '0 4px 15px rgba(57, 177, 152, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+          }}
+        >
+          <svg className="h-5 w-5 text-white mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <span className="text-white font-medium">PatchAI</span>
+        </button>
       </div>
     </div>
   );
