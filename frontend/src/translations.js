@@ -7,6 +7,21 @@ import {
 
 const translations = {
   en: {
+    // Common translations
+    common: {
+      loading: 'Loading...',
+      back: 'Back',
+      cancel: 'Cancel',
+      confirm: 'Confirm',
+      loggedInAs: 'Logged in as',
+      select: 'Select an option',
+      add: 'Add',
+      remove: 'Remove',
+      success: 'Success',
+      error: 'Error',
+      welcome: 'Welcome'
+    },
+    
     // Job Ticket related translations
     jobTicket: {
       createNew: 'Create New Job Ticket',
@@ -151,20 +166,6 @@ const translations = {
       submitted: 'Submitted Tickets',
       profile: 'View Profile',
       logout: 'Logout'
-    },
-    
-    // Common translations
-    common: {
-      loading: 'Loading...',
-      back: 'Back',
-      cancel: 'Cancel',
-      confirm: 'Confirm',
-      loggedInAs: 'Logged in as',
-      select: 'Select an option',
-      add: 'Add',
-      remove: 'Remove',
-      success: 'Success',
-      error: 'Error'
     },
     
     // Job Types translations
@@ -372,61 +373,18 @@ const translations = {
       // Company Profile Management
       companyProfile: {
         title: 'Company Profile',
-        subtitle: 'Manage your company information',
-        basicInfo: 'Basic Information',
-        contactInfo: 'Contact Information',
-        branding: 'Branding',
-        
-        // Form fields
         companyName: 'Company Name',
-        companyNamePlaceholder: 'Enter your company name',
-        description: 'Description',
-        descriptionPlaceholder: 'Brief description of your company...',
-        website: 'Website',
-        websitePlaceholder: 'https://www.yourcompany.com',
-        
-        // Contact information
-        primaryPhone: 'Primary Phone',
-        secondaryPhone: 'Secondary Phone (Optional)',
-        email: 'Company Email',
-        
-        // Address
-        address: 'Address',
-        addressLine1: 'Address Line 1',
-        addressLine2: 'Address Line 2 (Optional)',
-        city: 'City',
-        state: 'State/Province',
-        zipCode: 'ZIP/Postal Code',
-        country: 'Country',
-        
-        // Logo upload
-        logo: 'Company Logo',
-        logoUpload: 'Upload Logo',
-        logoRemove: 'Remove Logo',
-        logoPreview: 'Logo Preview',
-        logoRequirements: 'Recommended: 200x200px, max 2MB, PNG or JPG format',
-        logoUploading: 'Uploading...',
-        logoUploadSuccess: 'Logo uploaded successfully',
-        logoUploadError: 'Failed to upload logo. Please try again.',
-        logoRemoveConfirm: 'Are you sure you want to remove the company logo?',
-        
-        // Actions
-        save: 'Save Changes',
-        cancel: 'Cancel',
-        saving: 'Saving...',
-        saved: 'Changes saved successfully',
-        saveError: 'Failed to save changes. Please try again.',
-        
-        // Validation
-        validation: {
-          companyNameRequired: 'Company name is required',
-          companyNameLength: 'Company name must be at least 2 characters',
-          emailInvalid: 'Please enter a valid email address',
-          phoneInvalid: 'Please enter a valid phone number',
-          websiteInvalid: 'Please enter a valid website URL',
-          logoTooLarge: 'Logo file is too large. Maximum size is 2MB.',
-          logoInvalidFormat: 'Invalid logo format. Please use PNG or JPG.'
-        }
+        managerName: 'Manager Name',
+        technicianCount: 'Technician Count',
+        rateSheet: 'Rate Sheet',
+        uploadRateSheet: 'Upload Rate Sheet',
+        rateSheetNote: 'Upload functionality coming soon'
+      },
+      
+      // Settings
+      settings: {
+        title: 'Settings',
+        comingSoon: 'Settings functionality coming soon'
       },
       
       // Help and onboarding
@@ -522,6 +480,21 @@ const translations = {
   },
   
   es: {
+    // Common translations
+    common: {
+      loading: 'Cargando...',
+      back: 'Atrás',
+      cancel: 'Cancelar',
+      confirm: 'Confirmar',
+      loggedInAs: 'Conectado como',
+      select: 'Seleccione una opción',
+      add: 'Agregar',
+      remove: 'Eliminar',
+      success: 'Éxito',
+      error: 'Error',
+      welcome: 'Bienvenido'
+    },
+    
     // Job Ticket related translations
     jobTicket: {
       createNew: 'Crear Nueva Boleta de Trabajo',
@@ -666,20 +639,6 @@ const translations = {
       submitted: 'Boletas Enviadas',
       profile: 'Ver Perfil',
       logout: 'Cerrar Sesión'
-    },
-    
-    // Common translations
-    common: {
-      loading: 'Cargando...',
-      back: 'Atrás',
-      cancel: 'Cancelar',
-      confirm: 'Confirmar',
-      loggedInAs: 'Conectado como',
-      select: 'Seleccione una opción',
-      add: 'Agregar',
-      remove: 'Eliminar',
-      success: 'Éxito',
-      error: 'Error'
     },
     
     // Job Types translations
@@ -887,61 +846,18 @@ const translations = {
       // Company Profile Management
       companyProfile: {
         title: 'Perfil de la Empresa',
-        subtitle: 'Administra la información de tu empresa',
-        basicInfo: 'Información Básica',
-        contactInfo: 'Información de Contacto',
-        branding: 'Marca',
-        
-        // Form fields
         companyName: 'Nombre de la Empresa',
-        companyNamePlaceholder: 'Ingresa el nombre de tu empresa',
-        description: 'Descripción',
-        descriptionPlaceholder: 'Breve descripción de tu empresa...',
-        website: 'Sitio Web',
-        websitePlaceholder: 'https://www.tuempresa.com',
-        
-        // Contact information
-        primaryPhone: 'Teléfono Principal',
-        secondaryPhone: 'Teléfono Secundario (Opcional)',
-        email: 'Correo de la Empresa',
-        
-        // Address
-        address: 'Dirección',
-        addressLine1: 'Línea de Dirección 1',
-        addressLine2: 'Línea de Dirección 2 (Opcional)',
-        city: 'Ciudad',
-        state: 'Estado/Provincia',
-        zipCode: 'Código Postal',
-        country: 'País',
-        
-        // Logo upload
-        logo: 'Logo de la Empresa',
-        logoUpload: 'Subir Logo',
-        logoRemove: 'Eliminar Logo',
-        logoPreview: 'Vista Previa del Logo',
-        logoRequirements: 'Recomendado: 200x200px, máx 2MB, formato PNG o JPG',
-        logoUploading: 'Subiendo...',
-        logoUploadSuccess: 'Logo subido exitosamente',
-        logoUploadError: 'Error al subir el logo. Por favor, inténtelo de nuevo.',
-        logoRemoveConfirm: '¿Está seguro de que desea eliminar el logo de la empresa?',
-        
-        // Actions
-        save: 'Guardar Cambios',
-        cancel: 'Cancelar',
-        saving: 'Guardando...',
-        saved: 'Cambios guardados exitosamente',
-        saveError: 'Error al guardar los cambios. Por favor, inténtelo de nuevo.',
-        
-        // Validation
-        validation: {
-          companyNameRequired: 'El nombre de la empresa es obligatorio',
-          companyNameLength: 'El nombre de la empresa debe tener al menos 2 caracteres',
-          emailInvalid: 'Por favor, ingrese un correo electrónico válido',
-          phoneInvalid: 'Por favor, ingrese un número de teléfono válido',
-          websiteInvalid: 'Por favor, ingrese una URL de sitio web válida',
-          logoTooLarge: 'El archivo del logo es demasiado grande. El tamaño máximo es 2MB.',
-          logoInvalidFormat: 'Formato de logo inválido. Por favor, use PNG o JPG.'
-        }
+        managerName: 'Nombre del Gerente',
+        technicianCount: 'Cantidad de Técnicos',
+        rateSheet: 'Tarifa',
+        uploadRateSheet: 'Subir Tarifa',
+        rateSheetNote: 'La funcionalidad de subir está por venir'
+      },
+      
+      // Settings
+      settings: {
+        title: 'Configuración',
+        comingSoon: 'La funcionalidad de configuración está por venir'
       },
       
       // Help and onboarding

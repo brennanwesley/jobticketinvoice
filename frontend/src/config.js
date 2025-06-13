@@ -8,7 +8,7 @@
 // API URLs for different environments
 const config = {
   development: {
-    apiUrl: process.env.REACT_APP_API_URL || 'http://localhost:5000/api'
+    apiUrl: process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'
   },
   production: {
     // In production, API calls are relative to the current domain

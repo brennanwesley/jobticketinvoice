@@ -81,8 +81,8 @@ export const ManagerProvider = ({ children }) => {
     setCompanyError(null);
     
     try {
-      console.log('ManagerContext: Making API call to /companies/current');
-      const response = await authenticatedFetch('/companies/current');
+      console.log('ManagerContext: Making API call to /companies/my-company');
+      const response = await authenticatedFetch('/companies/my-company');
       console.log('ManagerContext: API response status:', response.status);
       
       if (response.ok) {
