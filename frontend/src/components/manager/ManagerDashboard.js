@@ -331,13 +331,21 @@ const OverviewTab = ({ stats }) => {
             <UsersIcon className="h-5 w-5 text-white mr-3" />
             <span className="text-white font-medium">{t('manager.inviteTechnician')}</span>
           </button>
-          <button className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200">
+          <button className="flex items-center p-4 bg-gray-500 hover:bg-gray-600 rounded-lg transition-colors duration-200">
             <BuildingOfficeIcon className="h-5 w-5 text-white mr-3" />
             <span className="text-white font-medium">{t('manager.updateCompany')}</span>
           </button>
           <button className="flex items-center p-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200">
             <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
             <span className="text-white font-medium">{t('audit.viewReports')}</span>
+          </button>
+          <button className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200">
+            <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
+            <span className="text-white font-medium">{t('manager.createInvoice')}</span>
+          </button>
+          <button className="flex items-center p-4 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors duration-200">
+            <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
+            <span className="text-white font-medium">{t('manager.createJobTicket')}</span>
           </button>
         </div>
       </div>

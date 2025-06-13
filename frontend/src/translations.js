@@ -247,6 +247,8 @@ const translations = {
       quickActions: 'Quick Actions',
       inviteTechnician: 'Invite Technician',
       updateCompany: 'Update Company',
+      createInvoice: 'Create Invoice',
+      createJobTicket: 'Create Job Ticket',
       manageTechnicians: 'Manage your team of technicians',
       manageCompany: 'Manage your company profile and settings',
       
@@ -718,6 +720,8 @@ const translations = {
       quickActions: 'Acciones Rápidas',
       inviteTechnician: 'Invitar Técnico',
       updateCompany: 'Actualizar Empresa',
+      createInvoice: 'Crear Factura',
+      createJobTicket: 'Crear Boleta de Trabajo',
       manageTechnicians: 'Administre su equipo de técnicos',
       manageCompany: 'Administre su perfil de empresa y configuración',
       
