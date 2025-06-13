@@ -432,49 +432,47 @@ const translations = {
     auditLogs: {
       title: 'Audit Logs',
       subtitle: 'View system activity and user actions',
-      exportLogs: 'Export Logs',
-      exporting: 'Exporting...',
-      clearFilters: 'Clear Filters',
-      totalLogs: 'Total logs: {count}',
-      perPage: 'per page',
-      showingResults: 'Showing {start}-{end} of {total} results',
-      
-      // Table headers
-      timestamp: 'Timestamp',
-      category: 'Category',
-      action: 'Action',
-      user: 'User',
-      description: 'Description',
-      ipAddress: 'IP Address',
-      
-      // Filters
       filters: {
         category: 'Category',
         action: 'Action',
         user: 'User',
         dateFrom: 'From Date',
         dateTo: 'To Date',
-        searchPlaceholder: 'Search logs...'
+        search: 'Search',
+        apply: 'Apply Filters',
+        clear: 'Clear Filters'
       },
-      
-      // Categories
+      table: {
+        timestamp: 'Timestamp',
+        user: 'User',
+        category: 'Category',
+        action: 'Action',
+        description: 'Description',
+        details: 'Details',
+        ipAddress: 'IP Address'
+      },
       categories: {
         security: 'Security',
         user: 'User',
         company: 'Company',
         technician: 'Technician',
-        system: 'System',
-        jobticket: 'Job Ticket',
-        invoice: 'Invoice'
+        system: 'System'
       },
-      
-      // Messages
-      messages: {
-        loadingLogs: 'Loading audit logs...',
-        noLogsFound: 'No audit logs found',
-        exportSuccess: 'Audit logs exported successfully',
-        exportError: 'Failed to export audit logs'
-      }
+      actions: {
+        login: 'Login',
+        logout: 'Logout',
+        create: 'Create',
+        update: 'Update',
+        delete: 'Delete',
+        invite: 'Invite',
+        activate: 'Activate',
+        deactivate: 'Deactivate'
+      },
+      totalLogs: 'Total Logs',
+      noLogs: 'No audit logs found',
+      export: 'Export CSV',
+      loading: 'Loading audit logs...',
+      error: 'Error loading audit logs'
     }
   },
   
@@ -904,49 +902,47 @@ const translations = {
     auditLogs: {
       title: 'Registros de Auditoría',
       subtitle: 'Ver actividad del sistema y acciones de usuarios',
-      exportLogs: 'Exportar Registros',
-      exporting: 'Exportando...',
-      clearFilters: 'Limpiar Filtros',
-      totalLogs: 'Total de registros: {count}',
-      perPage: 'por página',
-      showingResults: 'Mostrando {start}-{end} de {total} resultados',
-      
-      // Table headers
-      timestamp: 'Marca de Tiempo',
-      category: 'Categoría',
-      action: 'Acción',
-      user: 'Usuario',
-      description: 'Descripción',
-      ipAddress: 'Dirección IP',
-      
-      // Filters
       filters: {
         category: 'Categoría',
         action: 'Acción',
         user: 'Usuario',
         dateFrom: 'Fecha Desde',
         dateTo: 'Fecha Hasta',
-        searchPlaceholder: 'Buscar registros...'
+        search: 'Buscar',
+        apply: 'Aplicar Filtros',
+        clear: 'Limpiar Filtros'
       },
-      
-      // Categories
+      table: {
+        timestamp: 'Marca de Tiempo',
+        user: 'Usuario',
+        category: 'Categoría',
+        action: 'Acción',
+        description: 'Descripción',
+        details: 'Detalles',
+        ipAddress: 'Dirección IP'
+      },
       categories: {
         security: 'Seguridad',
         user: 'Usuario',
         company: 'Empresa',
         technician: 'Técnico',
-        system: 'Sistema',
-        jobticket: 'Boleta de Trabajo',
-        invoice: 'Factura'
+        system: 'Sistema'
       },
-      
-      // Messages
-      messages: {
-        loadingLogs: 'Cargando registros de auditoría...',
-        noLogsFound: 'No se encontraron registros de auditoría',
-        exportSuccess: 'Registros de auditoría exportados exitosamente',
-        exportError: 'Error al exportar registros de auditoría'
-      }
+      actions: {
+        login: 'Iniciar Sesión',
+        logout: 'Cerrar Sesión',
+        create: 'Crear',
+        update: 'Actualizar',
+        delete: 'Eliminar',
+        invite: 'Invitar',
+        activate: 'Activar',
+        deactivate: 'Desactivar'
+      },
+      totalLogs: 'Total de Registros',
+      noLogs: 'No se encontraron registros de auditoría',
+      export: 'Exportar CSV',
+      loading: 'Cargando registros de auditoría...',
+      error: 'Error al cargar registros de auditoría'
     }
   }
 };
