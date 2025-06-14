@@ -54,11 +54,20 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
     }
   }, [isOpen]);
 
+  // API Base URL - Use production backend URL when in production
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 
+    (window.location.hostname === 'localhost' ? 
+      'http://localhost:8000/api/v1' : 
+      'https://jobticketinvoice-backend.onrender.com/api/v1');
+
+  console.log('🔍 InviteTechnician API Debug:', {
+    hostname: window.location.hostname,
+    envApiUrl: process.env.REACT_APP_API_URL,
+    finalApiUrl: API_BASE_URL
+  });
+
   // Early return after all hooks
   if (!isOpen) return null;
-
-  // API Base URL
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1';
 
   // Handle form submissions
   const handleCreateSubmit = async (e) => {
@@ -122,6 +131,16 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
     setIsLoading(true);
     setError(null);
 
+    console.log('🔍 Email Submit Debug:', {
+      apiUrl: API_BASE_URL,
+      endpoint: `${API_BASE_URL}/tech-invites/send-email`,
+      formData: {
+        tech_name: emailForm.techName,
+        email: emailForm.email
+      },
+      hasToken: !!localStorage.getItem('token')
+    });
+
     try {
       const response = await fetch(`${API_BASE_URL}/tech-invites/send-email`, {
         method: 'POST',
@@ -135,12 +154,21 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
         })
       });
 
+      console.log('🔍 Response Debug:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('🔍 Error Response:', errorData);
         throw new Error(errorData.detail || t('manager.techManagement.inviteForm.emailError'));
       }
 
       const result = await response.json();
+      console.log('🔍 Success Response:', result);
       setSuccess(t('manager.techManagement.inviteForm.emailSuccess', { name: emailForm.techName, email: emailForm.email }));
       onSuccess && onSuccess(result);
       
@@ -150,6 +178,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
       }, 2000);
 
     } catch (err) {
+      console.error('🔍 Email Submit Error:', err);
       setError(err.message);
     } finally {
       setIsLoading(false);
