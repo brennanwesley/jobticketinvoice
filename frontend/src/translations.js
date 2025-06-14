@@ -101,20 +101,29 @@ const translations = {
       logout: 'Logout',
     },
     
-    // Signup Page translations
+    // Signup and registration
     signup: {
       title: 'Create Your Account',
       description: 'Create your account to get started with our platform.',
-      name: 'Full Name',
+      managerTitle: 'Create Manager Account',
+      managerOnlyDescription: 'Register your company and start managing your team',
+      technicianNote: 'Technicians are invited by their manager and cannot self-register',
+      managerSignup: 'Manager Signup',
+      alreadyHaveAccount: 'Already have an account?',
+      loginInstead: 'Login instead',
       email: 'Email Address',
+      company: 'Company Name',
+      companyLogo: 'Company Logo (Optional)',
+      dragDropOrClick: 'Drag and drop a logo here, or click to select',
+      logoRequirements: 'PNG, JPG, GIF up to 5MB',
+      selectFile: 'Select File',
       password: 'Password',
       confirmPassword: 'Confirm Password',
-      company: 'Company Name',
-      phone: 'Phone Number',
+      submitting: 'Creating Account...',
+      termsAgree: 'I agree to the Terms and Conditions',
       address: 'Address',
-      submit: 'Create Account',
-      createAccount: 'Create Account',
-      termsAgree: 'I agree to the Terms and Conditions'
+      phone: 'Phone Number',
+      name: 'Full Name',
     },
     
     // Public Landing Page translations
@@ -655,20 +664,29 @@ const translations = {
       logout: 'Cerrar sesión',
     },
     
-    // Signup Page translations
+    // Signup and registration
     signup: {
       title: 'Crear Su Cuenta',
       description: 'Cree su cuenta para comenzar con nuestra plataforma.',
-      name: 'Nombre Completo',
+      managerTitle: 'Crear Cuenta de Gerente',
+      managerOnlyDescription: 'Registre su empresa y comience a gestionar su equipo',
+      technicianNote: 'Los técnicos son invitados por su gerente y no pueden registrarse ellos mismos',
+      managerSignup: 'Registro de Gerente',
+      alreadyHaveAccount: '¿Ya tiene una cuenta?',
+      loginInstead: 'Iniciar sesión en su lugar',
       email: 'Correo Electrónico',
+      company: 'Nombre de la Empresa',
+      companyLogo: 'Logo de la Empresa (Opcional)',
+      dragDropOrClick: 'Arrastre y suelte un logo aquí, o haga clic para seleccionar',
+      logoRequirements: 'PNG, JPG, GIF hasta 5MB',
+      selectFile: 'Seleccionar Archivo',
       password: 'Contraseña',
       confirmPassword: 'Confirmar Contraseña',
-      company: 'Nombre de la Empresa',
-      phone: 'Número de Teléfono',
+      submitting: 'Creando Cuenta...',
+      termsAgree: 'Acepto los Términos y Condiciones',
       address: 'Dirección',
-      submit: 'Crear Cuenta',
-      createAccount: 'Crear Cuenta',
-      termsAgree: 'Acepto los Términos y Condiciones'
+      phone: 'Número de Teléfono',
+      name: 'Nombre Completo',
     },
     
     // Public Landing Page translations
