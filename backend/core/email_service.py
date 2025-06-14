@@ -18,10 +18,15 @@ class EmailService:
         """Initialize SendGrid email service"""
         self.api_key = os.getenv("SENDGRID_API_KEY")
         self.from_email = os.getenv("SENDGRID_FROM_EMAIL", "noreply@jobticketinvoice.com")
+        self.dev_mode = os.getenv("EMAIL_DEV_MODE", "false").lower() == "true"
         
         if not self.api_key:
-            logger.warning("SendGrid API key not configured - email sending will be disabled")
-            self.sg = None
+            if self.dev_mode:
+                logger.info("Email service running in development mode - emails will be logged instead of sent")
+                self.sg = None
+            else:
+                logger.warning("SendGrid API key not configured - email sending will be disabled")
+                self.sg = None
         else:
             self.sg = SendGridAPIClient(api_key=self.api_key)
             logger.info("SendGrid email service initialized successfully")
@@ -29,73 +34,75 @@ class EmailService:
     async def send_tech_invitation(
         self, 
         tech_name: str, 
-        email: str, 
+        tech_email: str, 
         company_name: str, 
         invite_token: str
     ) -> bool:
         """
         Send technician invitation email via SendGrid
-        
-        Args:
-            tech_name: Name of the technician being invited
-            email: Email address to send invitation to
-            company_name: Name of the company extending the invitation
-            invite_token: Secure token for the invitation link
-            
-        Returns:
-            bool: True if email sent successfully, False otherwise
+        Returns True if email was sent successfully, False otherwise
         """
         try:
-            # Check if SendGrid is configured
+            # Development mode - just log the email
+            if self.dev_mode:
+                logger.info(f"[DEV MODE] Would send tech invitation email:")
+                logger.info(f"  To: {tech_email}")
+                logger.info(f"  Tech Name: {tech_name}")
+                logger.info(f"  Company: {company_name}")
+                logger.info(f"  Invite Token: {invite_token[:20]}...")
+                return True
+            
             if not self.sg:
-                logger.warning(f"SendGrid not configured - cannot send email to {email}")
-                logger.info(f"Mock email would be sent to {tech_name} ({email}) with token: {invite_token}")
+                logger.error("SendGrid client not initialized")
                 return False
             
-            # Construct the signup URL
-            signup_url = f"https://quickticketai.com/signup-tech?token={invite_token}"
+            # Create email content
+            subject = f"Invitation to join {company_name} team"
             
-            # Compose email content
-            subject = "You've been invited to join QuickTicketAI"
+            # Create signup URL with token
+            signup_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/signup-tech?token={invite_token}"
             
-            body = f"""Hello {tech_name},
+            plain_content = f"""
+Hello {tech_name},
 
-You've been invited to join QuickTicketAI by your manager at {company_name}.
+You've been invited to join the {company_name} team as a field technician.
 
-Click the link below to create your account:
-
+To complete your registration, please click the link below:
 {signup_url}
 
-This link will expire in 48 hours.
+This invitation will expire in 48 hours.
 
-— QuickTicketAI Team"""
+If you have any questions, please contact your manager.
+
+Best regards,
+{company_name} Team
+            """.strip()
             
-            # Create SendGrid mail object
+            # Create the email
             message = Mail(
-                from_email=From(self.from_email),
-                to_emails=To(email),
+                from_email=From(self.from_email, "JobTicket Invoice"),
+                to_emails=To(tech_email),
                 subject=Subject(subject),
-                plain_text_content=PlainTextContent(body)
+                plain_text_content=PlainTextContent(plain_content)
             )
             
-            # Send email
+            # Send the email
             response = self.sg.send(message)
             
-            # Check response status
             if response.status_code in [200, 201, 202]:
-                logger.info(f"Tech invitation email sent successfully to {email}")
+                logger.info(f"Tech invitation email sent successfully to {tech_email}")
                 return True
             else:
-                logger.error(f"SendGrid API returned status {response.status_code} for {email}")
+                logger.error(f"SendGrid API returned status {response.status_code}")
                 return False
                 
         except Exception as e:
-            logger.error(f"Failed to send tech invitation email to {email}: {str(e)}")
+            logger.error(f"Error sending tech invitation email: {str(e)}")
             return False
     
     def is_configured(self) -> bool:
-        """Check if SendGrid is properly configured"""
-        return bool(self.api_key and self.from_email)
+        """Check if SendGrid is properly configured or if dev mode is enabled"""
+        return bool(self.api_key and self.from_email) or self.dev_mode
 
 # Global email service instance
 email_service = EmailService()
