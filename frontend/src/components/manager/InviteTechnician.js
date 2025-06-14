@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { XMarkIcon } from '@heroicons/react/24/outline';
@@ -8,8 +8,6 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
  * Provides three ways to invite technicians: Create Your Own, Send Email, Send SMS
  */
 const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
-  if (!isOpen) return null;
-
   const { t } = useLanguage();
   const { user } = useAuth();
   
@@ -37,8 +35,14 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
     phone: ''
   });
 
+  // Clear messages when tab changes
+  useEffect(() => {
+    setError(null);
+    setSuccess(null);
+  }, [activeTab]);
+
   // Reset forms and states when modal opens/closes
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) {
       setActiveTab('email');
       setIsLoading(false);
@@ -49,6 +53,9 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
       setSmsForm({ techName: '', phone: '' });
     }
   }, [isOpen]);
+
+  // Early return after all hooks
+  if (!isOpen) return null;
 
   // API Base URL
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1';
