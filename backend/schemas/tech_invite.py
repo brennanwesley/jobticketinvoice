@@ -26,6 +26,25 @@ class TechInviteCreate(BaseModel):
             return v.strip()
         return v
 
+class TechInviteEmailRequest(BaseModel):
+    """Schema for sending tech invite via email"""
+    tech_name: str = Field(..., min_length=2, max_length=255, description="Full name of the technician")
+    email: EmailStr = Field(..., description="Email address of the technician")
+    
+    @validator('email')
+    def validate_email(cls, v):
+        return v.lower().strip()
+    
+    @validator('tech_name')
+    def validate_name(cls, v):
+        return v.strip()
+
+class TechInviteEmailResponse(BaseModel):
+    """Schema for email invite response"""
+    success: bool
+    message: str
+    invite_id: Optional[str] = None
+
 class TechInviteResponse(BaseModel):
     """Schema for tech invite response"""
     invite_id: str

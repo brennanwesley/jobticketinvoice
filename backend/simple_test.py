@@ -60,6 +60,33 @@ def test_manager_signup_validation():
     if response.status_code != 201:
         print(f"Response: {response.text}")
 
+def test_api_endpoints():
+    """Test API endpoints"""
+    print("\n=== Testing API Endpoints ===")
+    
+    # Test the root endpoint
+    try:
+        response = requests.get("http://127.0.0.1:8000/")
+        print(f"Root endpoint status: {response.status_code}")
+        print(f"Response: {response.text}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+    # Test the docs endpoint
+    try:
+        response = requests.get("http://127.0.0.1:8000/docs")
+        print(f"Docs endpoint status: {response.status_code}")
+        print("Docs endpoint accessible")
+    except Exception as e:
+        print(f"Error accessing docs: {e}")
+
+    # Test the manager signup endpoint
+    try:
+        response = requests.get("http://127.0.0.1:8000/api/v1/manager-signup")
+        print(f"Manager signup endpoint (GET) status: {response.status_code}")
+    except Exception as e:
+        print(f"Error: {e}")
+
 def main():
     """Run all tests"""
     print("Testing key endpoints from checkpoint...\n")
@@ -67,6 +94,7 @@ def main():
     test_basic_endpoints()
     test_auth_endpoints()
     test_manager_signup_validation()
+    test_api_endpoints()
     
     print("\n=== Summary ===")
     print("- Backend server is running and responsive")

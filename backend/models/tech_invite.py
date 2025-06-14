@@ -22,6 +22,7 @@ class TechInvite(Base):
     
     # Invite status and timing
     status = Column(String(20), default="pending", nullable=False)  # pending, accepted, expired, cancelled
+    delivery_method = Column(String(20), nullable=True)  # email, sms, manual
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=False, 
                        default=lambda: datetime.utcnow() + timedelta(hours=48))

@@ -8,6 +8,7 @@ import CompanyProfile from './CompanyProfile';
 import Invoicing from './Invoicing';
 import JobTickets from './JobTickets';
 import AuditLogs from './AuditLogs';
+import InviteTechnician from './InviteTechnician';
 import { 
   HomeIcon, 
   UsersIcon, 
@@ -34,6 +35,7 @@ const ManagerDashboard = () => {
   const [accessValidated, setAccessValidated] = useState(false);
   const [accessError, setAccessError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const toggleButtonRef = useRef();
   const sidebarRef = useRef();
 
@@ -82,7 +84,7 @@ const ManagerDashboard = () => {
       id: 'overview',
       label: t('manager.overview'),
       icon: HomeIcon,
-      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} />
+      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} />
     },
     {
       id: 'invoicing',
@@ -269,12 +271,22 @@ const ManagerDashboard = () => {
           </div>
         </main>
       </div>
+      
+      {/* Render the InviteTechnician modal */}
+      <InviteTechnician
+        isOpen={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+        onSuccess={(result) => {
+          console.log('Technician invitation successful:', result);
+          // Optionally refresh technician list or show additional success feedback
+        }}
+      />
     </div>
   );
 };
 
 // Overview Tab Component
-const OverviewTab = ({ stats, setActiveTab }) => {
+const OverviewTab = ({ stats, setActiveTab, setShowInviteModal }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
 
@@ -303,59 +315,100 @@ const OverviewTab = ({ stats, setActiveTab }) => {
   ];
 
   return (
-    <div className="p-6">
-      {/* Welcome Section */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2">
-          {t('common.welcome')}, {user?.name}!
-        </h2>
-        <p className="text-gray-400">
-          {t('manager.overviewDescription')}
-        </p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {overviewCards.map((card, index) => {
-          const Icon = card.icon;
-          const colorClasses = {
-            blue: 'bg-blue-600 text-blue-100',
-            yellow: 'bg-yellow-600 text-yellow-100',
-            green: 'bg-green-600 text-green-100'
-          };
-          
-          return (
-            <div key={index} className="bg-gray-700 rounded-lg p-6 border border-gray-600">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm font-medium">{card.title}</p>
-                  <p className="text-3xl font-bold text-white mt-2">{card.value}</p>
-                  <p className="text-gray-500 text-sm mt-1">{card.description}</p>
-                </div>
-                <div className={`p-3 rounded-full ${colorClasses[card.color]}`}>
-                  <Icon className="h-6 w-6" />
-                </div>
-              </div>
+    <div className="space-y-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <UsersIcon className="h-8 w-8 text-blue-400" />
             </div>
-          );
-        })}
+            <div className="ml-5 w-0 flex-1">
+              <dl>
+                <dt className="text-sm font-medium text-gray-400 truncate">
+                  {t('manager.totalTechnicians')}
+                </dt>
+                <dd className="text-lg font-medium text-white">
+                  {stats.totalTechnicians}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <ClipboardDocumentListIcon className="h-8 w-8 text-green-400" />
+            </div>
+            <div className="ml-5 w-0 flex-1">
+              <dl>
+                <dt className="text-sm font-medium text-gray-400 truncate">
+                  {t('manager.activeTickets')}
+                </dt>
+                <dd className="text-lg font-medium text-white">
+                  {stats.activeTickets}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <DocumentTextIcon className="h-8 w-8 text-yellow-400" />
+            </div>
+            <div className="ml-5 w-0 flex-1">
+              <dl>
+                <dt className="text-sm font-medium text-gray-400 truncate">
+                  {t('manager.pendingInvoices')}
+                </dt>
+                <dd className="text-lg font-medium text-white">
+                  {stats.pendingInvoices}
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <BuildingOfficeIcon className="h-8 w-8 text-purple-400" />
+            </div>
+            <div className="ml-5 w-0 flex-1">
+              <dl>
+                <dt className="text-sm font-medium text-gray-400 truncate">
+                  {t('manager.companyStatus')}
+                </dt>
+                <dd className="text-lg font-medium text-white">
+                  Active
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <QuickActionsSection setActiveTab={setActiveTab} />
+      <QuickActionsSection setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} />
     </div>
   );
 };
 
 // Quick Actions Section
-const QuickActionsSection = ({ setActiveTab }) => {
+const QuickActionsSection = ({ setActiveTab, setShowInviteModal }) => {
   const { t } = useLanguage();
 
   return (
     <div className="bg-gray-700 rounded-lg p-6 border border-gray-600">
       <h3 className="text-lg font-semibold text-white mb-4">{t('manager.quickActions')}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <button className="flex items-center p-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200">
+        <button 
+          className="flex items-center p-4 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200"
+          onClick={() => setShowInviteModal(true)}
+        >
           <UsersIcon className="h-5 w-5 text-white mr-3" />
           <span className="text-white font-medium">{t('manager.inviteTechnician')}</span>
         </button>

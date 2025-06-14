@@ -15,10 +15,12 @@ from models import User, Company, TechInvite
 from models.user import UserRole
 from schemas.tech_invite import (
     TechInviteCreate, TechInviteResponse, TechInviteTokenResponse,
-    TechInviteValidationResponse, TechInviteRedemptionRequest, TechInviteRedemptionResponse
+    TechInviteValidationResponse, TechInviteRedemptionRequest, TechInviteRedemptionResponse,
+    TechInviteEmailRequest, TechInviteEmailResponse
 )
 from core.security import get_current_user, require_role, get_password_hash, create_user_token
 from core.invite_tokens import InviteTokenService
+from core.email_service import email_service
 from core.config import settings
 
 router = APIRouter(prefix="/tech-invites", tags=["tech-invites"])
@@ -355,4 +357,103 @@ async def cancel_tech_invite(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to cancel invite"
+        )
+
+@router.post("/send-email", response_model=TechInviteEmailResponse, status_code=status.HTTP_200_OK)
+async def send_tech_invite_email(
+    email_request: TechInviteEmailRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.MANAGER, UserRole.ADMIN]))
+):
+    """
+    Send tech invite via email using SendGrid (Manager/Admin only)
+    Creates invite record and sends secure onboarding link via email
+    """
+    try:
+        # Check if SendGrid is configured
+        if not email_service.is_configured():
+            logger.error("SendGrid email service not configured")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Email service not available"
+            )
+        
+        # Check if user already exists with this email
+        existing_user = db.query(User).filter(User.email == email_request.email).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="User with this email already exists"
+            )
+        
+        # Check if there's already a pending invite for this email in this company
+        existing_invite = db.query(TechInvite).filter(
+            TechInvite.email == email_request.email,
+            TechInvite.company_id == current_user.company.company_id,
+            TechInvite.status == "pending"
+        ).first()
+        
+        if existing_invite:
+            # Update existing invite
+            invite_record = existing_invite
+            logger.info(f"Updating existing invite for {email_request.email}")
+        else:
+            # Create new invite record
+            invite_record = TechInvite(
+                tech_name=email_request.tech_name,
+                email=email_request.email,
+                company_id=current_user.company.company_id,
+                created_by=current_user.id,
+                delivery_method="email"
+            )
+            db.add(invite_record)
+        
+        # Update delivery method and status
+        invite_record.delivery_method = "email"
+        invite_record.status = "pending"
+        
+        # Generate secure invite token
+        token_service = InviteTokenService()
+        invite_token = token_service.create_invite_token(
+            invite_id=invite_record.invite_id,
+            tech_name=email_request.tech_name,
+            email=email_request.email,
+            company_id=current_user.company.company_id
+        )
+        
+        # Send email via SendGrid
+        email_sent = await email_service.send_tech_invitation(
+            tech_name=email_request.tech_name,
+            tech_email=email_request.email,
+            company_name=current_user.company.company_name,
+            invite_token=invite_token
+        )
+        
+        if not email_sent:
+            db.rollback()
+            logger.error(f"Failed to send email to {email_request.email}")
+            return TechInviteEmailResponse(
+                success=False,
+                message="Unable to send invite. Please try again later."
+            )
+        
+        # Commit the database changes
+        db.commit()
+        
+        logger.info(f"Tech invite email sent successfully to {email_request.email}")
+        return TechInviteEmailResponse(
+            success=True,
+            message=f"Invitation sent successfully to {email_request.email}",
+            invite_id=invite_record.invite_id
+        )
+        
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error sending tech invite email: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to send invitation email"
         )
