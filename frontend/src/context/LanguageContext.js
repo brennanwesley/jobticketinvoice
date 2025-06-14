@@ -20,8 +20,19 @@ export const LanguageProvider = ({ children }) => {
     enTranslations: !!translations?.en,
     esTranslations: !!translations?.es,
     managerSection: !!translations?.en?.manager,
-    inviteFormSection: !!translations?.en?.manager?.inviteForm
+    inviteFormSection: !!translations?.en?.manager?.techManagement?.inviteForm
   });
+  
+  // Debug: Log the exact structure of manager.techManagement.inviteForm
+  if (translations?.en?.manager?.techManagement?.inviteForm) {
+    console.log('🔍 manager.techManagement.inviteForm structure:', translations.en.manager.techManagement.inviteForm);
+    console.log('🔍 title key exists:', !!translations.en.manager.techManagement.inviteForm.title);
+    console.log('🔍 title value:', translations.en.manager.techManagement.inviteForm.title);
+  } else {
+    console.log('❌ manager.techManagement.inviteForm section not found');
+    console.log('🔍 manager keys:', Object.keys(translations?.en?.manager || {}));
+    console.log('🔍 techManagement keys:', Object.keys(translations?.en?.manager?.techManagement || {}));
+  }
   
   // Get the current translations based on selected language
   const getTranslation = useCallback((key, variables = {}) => {
