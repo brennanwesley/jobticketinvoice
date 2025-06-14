@@ -16,6 +16,13 @@ import { authenticatedFetch } from './auth';
  */
 export const logAuditEvent = async (action, category, details = {}, targetId = null, targetType = null) => {
   try {
+    // Check if we have an authentication token before attempting to log
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.warn('Skipping audit log - no authentication token available:', { action, category, details });
+      return false;
+    }
+
     const auditData = {
       action,
       category,
