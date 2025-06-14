@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { authenticatedFetch } from '../../utils/auth';
+import { auditTechnicianAction, AUDIT_ACTIONS } from '../../utils/audit';
 
 /**
  * InviteTechnician Modal Component
@@ -84,11 +86,10 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
 
     try {
       // This endpoint will need to be implemented in the backend
-      const response = await fetch(`${API_BASE_URL}/tech-invites/create-direct`, {
+      const response = await authenticatedFetch('/tech-invites/create-direct', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           full_name: createForm.fullName,
@@ -126,11 +127,10 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/tech-invites/send-email`, {
+      const response = await authenticatedFetch('/tech-invites/send-email', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           tech_name: emailForm.techName,
@@ -138,21 +138,32 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
         })
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Log audit event for technician invitation
+        await auditTechnicianAction(
+          AUDIT_ACTIONS.TECHNICIAN_INVITED,
+          emailForm.email,
+          { 
+            tech_name: emailForm.techName,
+            invitation_method: 'email'
+          }
+        );
+        
+        setSuccess(t('manager.techManagement.inviteForm.emailSent'));
+        setEmailForm({ techName: '', email: '' });
+        
+        // Close modal after 2 seconds
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
         const errorData = await response.json();
-        throw new Error(errorData.detail || t('manager.techManagement.inviteForm.emailError'));
+        throw new Error(errorData.detail || 'Failed to send email invitation');
       }
-
-      const result = await response.json();
-      setSuccess(t('manager.techManagement.inviteForm.emailSuccess', { name: emailForm.techName, email: emailForm.email }));
-      onSuccess && onSuccess(result);
-      
-      // Close modal after 2 seconds
-      setTimeout(() => {
-        onClose();
-      }, 2000);
-
     } catch (err) {
+      console.error('Email invitation error:', err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -165,12 +176,10 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
     setError(null);
 
     try {
-      // Placeholder for SMS functionality
-      const response = await fetch(`${API_BASE_URL}/tech-invites/send-sms`, {
+      const response = await authenticatedFetch('/tech-invites/send-sms', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           tech_name: smsForm.techName,
@@ -178,21 +187,32 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
         })
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Log audit event for technician invitation
+        await auditTechnicianAction(
+          AUDIT_ACTIONS.TECHNICIAN_INVITED,
+          smsForm.phone,
+          { 
+            tech_name: smsForm.techName,
+            invitation_method: 'sms'
+          }
+        );
+        
+        setSuccess(t('manager.techManagement.inviteForm.smsSent'));
+        setSmsForm({ techName: '', phone: '' });
+        
+        // Close modal after 2 seconds
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      } else {
         const errorData = await response.json();
-        throw new Error(errorData.detail || t('manager.techManagement.inviteForm.smsError'));
+        throw new Error(errorData.detail || 'Failed to send SMS invitation');
       }
-
-      const result = await response.json();
-      setSuccess(t('manager.techManagement.inviteForm.smsSuccess', { name: smsForm.techName, phone: smsForm.phone }));
-      onSuccess && onSuccess(result);
-      
-      // Close modal after 2 seconds
-      setTimeout(() => {
-        onClose();
-      }, 2000);
-
     } catch (err) {
+      console.error('SMS invitation error:', err);
       setError(err.message);
     } finally {
       setIsLoading(false);
