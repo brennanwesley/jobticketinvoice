@@ -147,6 +147,8 @@ const ManagerSignupForm = () => {
       });
       
       if (result.success) {
+        console.log('Manager signup successful, user data:', result.user);
+        
         // Upload logo if provided
         if (logo) {
           const logoResult = await uploadLogo(logo);
@@ -156,8 +158,11 @@ const ManagerSignupForm = () => {
           }
         }
         
-        // Redirect to manager dashboard on success
-        navigate('/manager-dashboard');
+        // Wait a moment for authentication state to be fully set
+        setTimeout(() => {
+          console.log('Redirecting to manager dashboard...');
+          navigate('/manager-dashboard');
+        }, 100);
       } else {
         setSubmitError(result.error);
       }

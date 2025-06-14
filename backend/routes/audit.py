@@ -34,6 +34,15 @@ async def log_audit_event(
     Log an audit event
     """
     try:
+        # Debug logging
+        print(f"Audit log attempt - User ID: {current_user.id}, Company ID: {current_user.company_id}")
+        print(f"Audit data: {audit_data}")
+        
+        # Validate required fields
+        if not current_user.company_id:
+            print(f"Warning: User {current_user.id} has no company_id")
+            # For now, allow audit logging without company_id for debugging
+        
         # Create audit log entry
         audit_log = AuditLog(
             user_id=current_user.id,
@@ -56,6 +65,8 @@ async def log_audit_event(
         
     except Exception as e:
         db.rollback()
+        print(f"Audit logging error: {str(e)}")
+        print(f"Error type: {type(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to log audit event: {str(e)}")
 
 @router.get("/logs", response_model=AuditLogListResponse)

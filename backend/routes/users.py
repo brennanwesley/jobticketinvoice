@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models.user import User
+from models.user import User, UserRole
 from schemas.user import UserResponse
 from utils.jwt import get_current_user, get_admin_user
 
@@ -16,6 +16,27 @@ router = APIRouter(
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     """Get current user information"""
     return current_user
+
+@router.get("/technicians", response_model=List[UserResponse])
+async def get_technicians(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get technicians from the same company (manager/admin only)"""
+    # Check if user has manager or admin role
+    if current_user.role not in [UserRole.MANAGER, UserRole.ADMIN]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only managers and admins can view technicians"
+        )
+    
+    # Get technicians from the same company
+    technicians = db.query(User).filter(
+        User.company_id == current_user.company_id,
+        User.role == UserRole.TECH
+    ).all()
+    
+    return technicians
 
 @router.get("/", response_model=List[UserResponse])
 async def get_users(

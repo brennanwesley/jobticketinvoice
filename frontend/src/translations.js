@@ -19,7 +19,13 @@ const translations = {
       remove: 'Remove',
       success: 'Success',
       error: 'Error',
-      welcome: 'Welcome'
+      welcome: 'Welcome',
+      email: 'Email',
+      fullName: 'Full Name',
+      password: 'Password',
+      confirmPassword: 'Confirm Password',
+      jobType: 'Job Type',
+      goHome: 'Go Home'
     },
     
     // Job Ticket related translations
@@ -98,25 +104,9 @@ const translations = {
     // Signup Page translations
     signup: {
       title: 'Create Your Account',
-      description: 'Choose your role to get started with our platform.',
-      managerTitle: 'Create Manager Account',
-      managerOnlyDescription: 'Create your company account and start managing your team.',
-      technicianNote: 'Only company managers may create new accounts. Technicians will be onboarded by their manager.',
-      selectRole: 'Select Your Role',
-      roleDescription: 'Choose the role that best describes your position.',
-      techRole: 'Field Technician',
-      techDescription: 'Create job tickets in the field, track hours, and submit work details.',
-      managerRole: 'Manager / Admin',
-      managerDescription: 'Review job tickets, generate invoices, and manage company settings.',
-      techSignup: 'Technician Registration',
-      managerSignup: 'Manager Registration',
-      alreadyHaveAccount: 'Already have an account?',
-      loginInstead: 'Login instead',
-      // Form fields
+      description: 'Create your account to get started with our platform.',
       name: 'Full Name',
       email: 'Email Address',
-      jobType: 'Job Type',
-      selectJobType: 'Select your job type',
       password: 'Password',
       confirmPassword: 'Confirm Password',
       company: 'Company Name',
@@ -493,6 +483,31 @@ const translations = {
         logoRemoved: 'Company logo removed'
       }
     },
+    
+    // Technician Signup
+    techSignup: {
+      title: 'Complete Your Registration',
+      subtitle: 'You have been invited to join as a technician',
+      validatingInvitation: 'Validating Invitation',
+      pleaseWait: 'Please wait while we verify your invitation...',
+      invalidInvitation: 'Invalid Invitation',
+      invitationDetails: 'Invitation Details',
+      createAccount: 'Create Account',
+      creating: 'Creating Account...',
+      footer: 'By creating an account, you agree to our terms of service.',
+      placeholders: {
+        fullName: 'Enter your full name',
+        password: 'Enter a secure password',
+        confirmPassword: 'Confirm your password'
+      },
+      errors: {
+        noToken: 'No invitation token provided in the URL',
+        invalidToken: 'This invitation link is invalid or has expired',
+        validationFailed: 'Failed to validate invitation token',
+        signupFailed: 'Failed to create account. Please try again.',
+        accountCreated: 'Account created successfully. Please login to continue.'
+      }
+    },
   },
   
   es: {
@@ -503,12 +518,18 @@ const translations = {
       cancel: 'Cancelar',
       confirm: 'Confirmar',
       loggedInAs: 'Conectado como',
-      select: 'Seleccione una opción',
+      select: 'Seleccionar una opción',
       add: 'Agregar',
       remove: 'Eliminar',
       success: 'Éxito',
       error: 'Error',
-      welcome: 'Bienvenido'
+      welcome: 'Bienvenido',
+      email: 'Correo Electrónico',
+      fullName: 'Nombre Completo',
+      password: 'Contraseña',
+      confirmPassword: 'Confirmar Contraseña',
+      jobType: 'Tipo de Trabajo',
+      goHome: 'Ir al Inicio'
     },
     
     // Job Ticket related translations
@@ -587,25 +608,9 @@ const translations = {
     // Signup Page translations
     signup: {
       title: 'Crear Su Cuenta',
-      description: 'Elija su rol para comenzar con nuestra plataforma.',
-      managerTitle: 'Crear Cuenta de Gerente',
-      managerOnlyDescription: 'Cree su cuenta de empresa y comience a gestionar su equipo.',
-      technicianNote: 'Solo los gerentes de empresa pueden crear nuevas cuentas. Los técnicos serán incorporados por su gerente.',
-      selectRole: 'Seleccione Su Rol',
-      roleDescription: 'Elija el rol que mejor describa su posición.',
-      techRole: 'Técnico de Campo',
-      techDescription: 'Cree boletas de trabajo en el campo, registre horas y envíe detalles del trabajo.',
-      managerRole: 'Gerente / Administrador',
-      managerDescription: 'Revise boletas de trabajo, genere facturas y administre la configuración de la empresa.',
-      techSignup: 'Registro de Técnico',
-      managerSignup: 'Registro de Gerente',
-      alreadyHaveAccount: '¿Ya tiene una cuenta?',
-      loginInstead: 'Iniciar sesión en su lugar',
-      // Form fields
+      description: 'Cree su cuenta para comenzar con nuestra plataforma.',
       name: 'Nombre Completo',
       email: 'Correo Electrónico',
-      jobType: 'Tipo de Trabajo',
-      selectJobType: 'Seleccione su tipo de trabajo',
       password: 'Contraseña',
       confirmPassword: 'Confirmar Contraseña',
       company: 'Nombre de la Empresa',
@@ -980,6 +985,31 @@ const translations = {
         companyUpdated: 'Perfil de empresa actualizado',
         logoUploaded: 'Logo de empresa subido',
         logoRemoved: 'Logo de empresa eliminado'
+      }
+    },
+    
+    // Technician Signup
+    techSignup: {
+      title: 'Complete su Registro',
+      subtitle: 'Ha sido invitado a unirse como técnico',
+      validatingInvitation: 'Validando Invitación',
+      pleaseWait: 'Por favor espere mientras verificamos su invitación...',
+      invalidInvitation: 'Invitación Inválida',
+      invitationDetails: 'Detalles de la Invitación',
+      createAccount: 'Crear Cuenta',
+      creating: 'Creando Cuenta...',
+      footer: 'Al crear una cuenta, acepta nuestros términos de servicio.',
+      placeholders: {
+        fullName: 'Ingrese su nombre completo',
+        password: 'Ingrese una contraseña segura',
+        confirmPassword: 'Confirme su contraseña'
+      },
+      errors: {
+        noToken: 'No se proporcionó token de invitación en la URL',
+        invalidToken: 'Este enlace de invitación es inválido o ha expirado',
+        validationFailed: 'Error al validar el token de invitación',
+        signupFailed: 'Error al crear la cuenta. Por favor intente de nuevo.',
+        accountCreated: 'Cuenta creada exitosamente. Por favor inicie sesión para continuar.'
       }
     },
   }

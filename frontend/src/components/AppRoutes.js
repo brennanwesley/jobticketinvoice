@@ -51,6 +51,7 @@ const enhancedLazy = (importFn, chunkName) => {
 // Lazy load route components with chunk naming for better debugging
 const PublicLandingPage = enhancedLazy(() => import(/* webpackChunkName: "landing" */ './PublicLandingPage'), 'landing');
 const SignupPage = enhancedLazy(() => import(/* webpackChunkName: "auth" */ './SignupPage'), 'auth');
+const TechnicianSignupPage = enhancedLazy(() => import(/* webpackChunkName: "auth" */ './TechnicianSignupPage'), 'auth');
 const LoginPage = enhancedLazy(() => import(/* webpackChunkName: "auth" */ './LoginPage'), 'auth');
 const AuthTestPage = enhancedLazy(() => import(/* webpackChunkName: "auth-test" */ './AuthTestPage'), 'auth-test');
 const AppDashboard = enhancedLazy(() => import(/* webpackChunkName: "dashboard" */ './AppDashboard'), 'dashboard');
@@ -69,6 +70,7 @@ const ManagerDashboard = enhancedLazy(() => import(/* webpackChunkName: "manager
 const routeConfig = {
   '/': PublicLandingPage,
   '/signup': SignupPage,
+  '/signup-tech': TechnicianSignupPage,
   '/login': LoginPage,
   '/auth-test': AuthTestPage,
   '/dashboard': AppDashboard,
@@ -124,6 +126,7 @@ const AppRoutes = () => {
         {/* Public routes */}
         <Route path="/" element={<PublicLandingPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/signup-tech" element={<TechnicianSignupPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth-test" element={<AuthTestPage />} />
         
