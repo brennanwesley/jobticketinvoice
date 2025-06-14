@@ -12,66 +12,25 @@ const LanguageContext = createContext();
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en'); // Default to English
   
-  // Debug: Check if translations are loaded correctly
-  console.log('🔍 LanguageProvider initialized:', {
-    language,
-    translationsObject: !!translations,
-    availableLanguages: Object.keys(translations || {}),
-    enTranslations: !!translations?.en,
-    esTranslations: !!translations?.es,
-    managerSection: !!translations?.en?.manager,
-    inviteFormSection: !!translations?.en?.manager?.techManagement?.inviteForm
-  });
-  
-  // Debug: Log the exact structure of manager.techManagement.inviteForm
-  if (translations?.en?.manager?.techManagement?.inviteForm) {
-    console.log('🔍 manager.techManagement.inviteForm structure:', translations.en.manager.techManagement.inviteForm);
-    console.log('🔍 title key exists:', !!translations.en.manager.techManagement.inviteForm.title);
-    console.log('🔍 title value:', translations.en.manager.techManagement.inviteForm.title);
-  } else {
-    console.log('❌ manager.techManagement.inviteForm section not found');
-    console.log('🔍 manager keys:', Object.keys(translations?.en?.manager || {}));
-    console.log('🔍 techManagement keys:', Object.keys(translations?.en?.manager?.techManagement || {}));
-  }
-  
   // Get the current translations based on selected language
   const getTranslation = useCallback((key, variables = {}) => {
-    console.log('🔍 Translation Debug:', {
-      key,
-      language,
-      variables,
-      translationsAvailable: !!translations[language],
-      translationsKeys: Object.keys(translations[language] || {})
-    });
-    
     const keys = key.split('.');
     let value = translations[language];
     
-    console.log('🔍 Starting translation lookup:', { key, keys, initialValue: !!value });
-    
-    for (let i = 0; i < keys.length; i++) {
-      const k = keys[i];
-      console.log(`🔍 Step ${i + 1}: Looking for key "${k}" in:`, value ? Object.keys(value) : 'null/undefined');
-      
+    for (const k of keys) {
       if (value && value[k] !== undefined) {
         value = value[k];
-        console.log(`🔍 Step ${i + 1}: Found value:`, typeof value === 'object' ? Object.keys(value) : value);
       } else {
-        console.warn(`❌ Translation key not found: ${key} (failed at "${k}")`);
-        console.log('🔍 Available keys at this level:', value ? Object.keys(value) : 'none');
+        console.warn(`Translation key not found: ${key}`);
         return key; // Return the key as fallback
       }
     }
     
-    console.log('✅ Final translation value:', value);
-    
     // Handle interpolation if variables are provided
     if (typeof value === 'string' && Object.keys(variables).length > 0) {
-      const interpolated = value.replace(/\{\{(\w+)\}\}/g, (match, variableName) => {
+      return value.replace(/\{\{(\w+)\}\}/g, (match, variableName) => {
         return variables[variableName] !== undefined ? variables[variableName] : match;
       });
-      console.log('🔍 Interpolated result:', interpolated);
-      return interpolated;
     }
     
     return value;

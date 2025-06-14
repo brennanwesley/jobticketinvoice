@@ -196,7 +196,6 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             {t('manager.techManagement.inviteForm.title')}
-            {/* Invite Technician (Hardcoded Test) */}
           </h2>
           <button
             onClick={onClose}
