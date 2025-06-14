@@ -26,6 +26,7 @@ export const logAuditEvent = async (action, category, details = {}, targetId = n
     const auditData = {
       action,
       category,
+      description: `${action} - ${category}`,
       details: typeof details === 'string' ? { message: details } : details,
       target_id: targetId,
       target_type: targetType,

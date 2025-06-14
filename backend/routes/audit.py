@@ -36,21 +36,21 @@ async def log_audit_event(
     try:
         # Debug logging
         print(f"Audit log attempt - User ID: {current_user.id}, Company ID: {current_user.company_id}")
-        print(f"Audit data: {audit_data}")
+        print(f"Audit data: {audit_data.dict()}")
         
         # Validate required fields
         if not current_user.company_id:
             print(f"Warning: User {current_user.id} has no company_id")
             # For now, allow audit logging without company_id for debugging
         
-        # Create audit log entry
+        # Create audit log entry with explicit field mapping
         audit_log = AuditLog(
             user_id=current_user.id,
             company_id=current_user.company_id,
             action=audit_data.action,
             category=audit_data.category,
-            description=audit_data.description,
-            details=audit_data.details,
+            description=audit_data.description or f"{audit_data.action} - {audit_data.category}",
+            details=audit_data.details or {},
             target_id=audit_data.target_id,
             target_type=audit_data.target_type,
             ip_address=audit_data.ip_address,
@@ -58,15 +58,20 @@ async def log_audit_event(
             timestamp=datetime.utcnow()
         )
         
+        print(f"Created audit log object: {audit_log.__dict__}")
+        
         db.add(audit_log)
         db.commit()
         
+        print("Audit log committed successfully")
         return {"success": True, "message": "Audit event logged successfully"}
         
     except Exception as e:
         db.rollback()
         print(f"Audit logging error: {str(e)}")
         print(f"Error type: {type(e)}")
+        import traceback
+        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Failed to log audit event: {str(e)}")
 
 @router.get("/logs", response_model=AuditLogListResponse)
