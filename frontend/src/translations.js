@@ -291,8 +291,50 @@ const translations = {
         
         // Invite technician form
         inviteForm: {
-          title: 'Invite New Technician',
+          title: 'Invite Technician',
           subtitle: 'Send an invitation to join your team',
+          
+          // Tab labels
+          createTab: 'Create Your Own',
+          emailTab: 'Send Email',
+          smsTab: 'Send Text Message',
+          
+          // Create Your Own form
+          fullName: 'Full Name',
+          fullNameRequired: 'Full Name *',
+          emailAddress: 'Email Address',
+          emailAddressRequired: 'Email Address *',
+          phoneNumber: 'Phone Number',
+          phoneNumberRequired: 'Phone Number *',
+          password: 'Password',
+          passwordRequired: 'Password *',
+          passwordMinLength: '(minimum 8 characters)',
+          confirmPassword: 'Confirm Password',
+          confirmPasswordRequired: 'Confirm Password *',
+          
+          // Placeholders
+          enterFullName: 'Enter technician\'s full name',
+          enterEmail: 'Enter email address',
+          enterPhone: 'Enter phone number',
+          enterPassword: 'Enter password',
+          confirmPasswordPlaceholder: 'Confirm password',
+          enterTechnicianName: 'Enter technician\'s name',
+          
+          // Buttons and actions
+          creating: 'Creating...',
+          createTechnician: 'Create Technician',
+          sending: 'Sending...',
+          sendEmailInvitation: 'Send Email Invitation',
+          smsInviteComingSoon: 'SMS invite available after registration',
+          
+          // Form labels
+          technicianName: 'Technician Name',
+          technicianNameRequired: 'Technician Name *',
+          
+          // Info messages
+          emailInviteInfo: 'An email invitation will be sent with a secure signup link. The technician will be able to set their own password during signup.',
+          smsInviteInfo: 'SMS invitations will be available after completing your company registration and SMS service setup.',
+          
           firstName: 'First Name',
           lastName: 'Last Name',
           email: 'Email Address',
@@ -457,56 +499,6 @@ const translations = {
         invitationHelp: 'Technicians will receive an email invitation with instructions to create their account and join your team.',
         batchActionsHelp: 'Select multiple technicians to perform actions on them all at once.',
         auditTrailHelp: 'All changes to technician status and company profile are logged for audit purposes.'
-      },
-      inviteTechnician: {
-        title: 'Invite Technician',
-        createTab: 'Create Your Own',
-        emailTab: 'Send Email',
-        smsTab: 'Send Text Message',
-        
-        // Create Your Own form
-        fullName: 'Full Name',
-        fullNameRequired: 'Full Name *',
-        emailAddress: 'Email Address',
-        emailAddressRequired: 'Email Address *',
-        phoneNumber: 'Phone Number',
-        phoneNumberRequired: 'Phone Number *',
-        password: 'Password',
-        passwordRequired: 'Password *',
-        passwordMinLength: '(minimum 8 characters)',
-        confirmPassword: 'Confirm Password',
-        confirmPasswordRequired: 'Confirm Password *',
-        
-        // Placeholders
-        enterFullName: 'Enter technician\'s full name',
-        enterEmail: 'Enter email address',
-        enterPhone: 'Enter phone number',
-        enterPassword: 'Enter password',
-        confirmPasswordPlaceholder: 'Confirm password',
-        enterTechnicianName: 'Enter technician\'s name',
-        
-        // Buttons and actions
-        creating: 'Creating...',
-        createTechnician: 'Create Technician',
-        sending: 'Sending...',
-        sendEmailInvitation: 'Send Email Invitation',
-        smsInviteComingSoon: 'SMS invite available after registration',
-        
-        // Form labels
-        technicianName: 'Technician Name',
-        technicianNameRequired: 'Technician Name *',
-        
-        // Info messages
-        emailInviteInfo: 'An email invitation will be sent with a secure signup link. The technician will be able to set their own password during signup.',
-        smsInviteInfo: 'SMS invitations will be available after completing your company registration and SMS service setup.',
-        passwordMismatch: 'Passwords do not match',
-        passwordMinLengthError: 'Password must be at least 8 characters',
-        createError: 'Failed to create technician',
-        emailError: 'Failed to send email invitation',
-        smsError: 'Failed to send SMS invitation',
-        createSuccess: 'Technician {{name}} created successfully!',
-        emailSuccess: 'Email invitation sent to {{name}} at {{email}}!',
-        smsSuccess: 'SMS invitation sent to {{name}} at {{phone}}!'
       },
     },
     
@@ -853,8 +845,50 @@ const translations = {
         
         // Invite technician form
         inviteForm: {
-          title: 'Invitar Nuevo Técnico',
+          title: 'Invitar Técnico',
           subtitle: 'Envía una invitación para unirse a tu equipo',
+          
+          // Tab labels
+          createTab: 'Crear Propio',
+          emailTab: 'Enviar Correo',
+          smsTab: 'Enviar Mensaje de Texto',
+          
+          // Create Your Own form
+          fullName: 'Nombre Completo',
+          fullNameRequired: 'Nombre Completo *',
+          emailAddress: 'Dirección de Correo Electrónico',
+          emailAddressRequired: 'Dirección de Correo Electrónico *',
+          phoneNumber: 'Número de Teléfono',
+          phoneNumberRequired: 'Número de Teléfono *',
+          password: 'Contraseña',
+          passwordRequired: 'Contraseña *',
+          passwordMinLength: '(mínimo 8 caracteres)',
+          confirmPassword: 'Confirmar Contraseña',
+          confirmPasswordRequired: 'Confirmar Contraseña *',
+          
+          // Placeholders
+          enterFullName: 'Ingrese el nombre completo del técnico',
+          enterEmail: 'Ingrese la dirección de correo electrónico',
+          enterPhone: 'Ingrese el número de teléfono',
+          enterPassword: 'Ingrese la contraseña',
+          confirmPasswordPlaceholder: 'Confirme la contraseña',
+          enterTechnicianName: 'Ingrese el nombre del técnico',
+          
+          // Buttons and actions
+          creating: 'Creando...',
+          createTechnician: 'Crear Técnico',
+          sending: 'Enviando...',
+          sendEmailInvitation: 'Enviar Invitación por Correo',
+          smsInviteComingSoon: 'Invitación por SMS disponible después del registro',
+          
+          // Form labels
+          technicianName: 'Nombre del Técnico',
+          technicianNameRequired: 'Nombre del Técnico *',
+          
+          // Info messages
+          emailInviteInfo: 'Se enviará una invitación por correo electrónico con un enlace de registro seguro. El técnico podrá establecer su propia contraseña durante el registro.',
+          smsInviteInfo: 'Las invitaciones por SMS estarán disponibles después de completar el registro de su empresa y la configuración del servicio SMS.',
+          
           firstName: 'Nombre',
           lastName: 'Apellido',
           email: 'Correo Electrónico',
@@ -1019,56 +1053,6 @@ const translations = {
         invitationHelp: 'Los técnicos recibirán una invitación por correo electrónico con instrucciones para crear su cuenta y unirse a tu equipo.',
         batchActionsHelp: 'Selecciona múltiples técnicos para realizar acciones en todos ellos a la vez.',
         auditTrailHelp: 'Todos los cambios en el estado de los técnicos y el perfil de la empresa se registran para fines de auditoría.'
-      },
-      inviteTechnician: {
-        title: 'Invitar Técnico',
-        createTab: 'Crear Propio',
-        emailTab: 'Enviar Correo',
-        smsTab: 'Enviar Mensaje de Texto',
-        
-        // Create Your Own form
-        fullName: 'Nombre Completo',
-        fullNameRequired: 'Nombre Completo *',
-        emailAddress: 'Dirección de Correo Electrónico',
-        emailAddressRequired: 'Dirección de Correo Electrónico *',
-        phoneNumber: 'Número de Teléfono',
-        phoneNumberRequired: 'Número de Teléfono *',
-        password: 'Contraseña',
-        passwordRequired: 'Contraseña *',
-        passwordMinLength: '(mínimo 8 caracteres)',
-        confirmPassword: 'Confirmar Contraseña',
-        confirmPasswordRequired: 'Confirmar Contraseña *',
-        
-        // Placeholders
-        enterFullName: 'Ingrese el nombre completo del técnico',
-        enterEmail: 'Ingrese la dirección de correo electrónico',
-        enterPhone: 'Ingrese el número de teléfono',
-        enterPassword: 'Ingrese la contraseña',
-        confirmPasswordPlaceholder: 'Confirme la contraseña',
-        enterTechnicianName: 'Ingrese el nombre del técnico',
-        
-        // Buttons and actions
-        creating: 'Creando...',
-        createTechnician: 'Crear Técnico',
-        sending: 'Enviando...',
-        sendEmailInvitation: 'Enviar Invitación por Correo',
-        smsInviteComingSoon: 'Invitación por SMS disponible después del registro',
-        
-        // Form labels
-        technicianName: 'Nombre del Técnico',
-        technicianNameRequired: 'Nombre del Técnico *',
-        
-        // Info messages
-        emailInviteInfo: 'Se enviará una invitación por correo electrónico con un enlace de registro seguro. El técnico podrá establecer su propia contraseña durante el registro.',
-        smsInviteInfo: 'Las invitaciones por SMS estarán disponibles después de completar el registro de su empresa y la configuración del servicio SMS.',
-        passwordMismatch: 'Las contraseñas no coinciden',
-        passwordMinLengthError: 'La contraseña debe tener al menos 8 caracteres',
-        createError: 'Error al crear técnico',
-        emailError: 'Error al enviar invitación por correo',
-        smsError: 'Error al enviar invitación por SMS',
-        createSuccess: '¡Técnico {{name}} creado exitosamente!',
-        emailSuccess: '¡Invitación por correo enviada a {{name}} en {{email}}!',
-        smsSuccess: '¡Invitación por SMS enviada a {{name}} en {{phone}}!'
       },
     },
     

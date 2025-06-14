@@ -58,13 +58,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
 
     // Validation
     if (createForm.password !== createForm.confirmPassword) {
-      setError(t('manager.inviteTechnician.passwordMismatch'));
+      setError(t('manager.inviteForm.passwordMismatch'));
       setIsLoading(false);
       return;
     }
 
     if (createForm.password.length < 8) {
-      setError(t('manager.inviteTechnician.passwordMinLengthError'));
+      setError(t('manager.inviteForm.passwordMinLengthError'));
       setIsLoading(false);
       return;
     }
@@ -88,11 +88,11 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || t('manager.inviteTechnician.createError'));
+        throw new Error(errorData.detail || t('manager.inviteForm.createError'));
       }
 
       const result = await response.json();
-      setSuccess(t('manager.inviteTechnician.createSuccess', { name: createForm.fullName }));
+      setSuccess(t('manager.inviteForm.createSuccess', { name: createForm.fullName }));
       onSuccess && onSuccess(result);
       
       // Close modal after 2 seconds
@@ -127,11 +127,11 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || t('manager.inviteTechnician.emailError'));
+        throw new Error(errorData.detail || t('manager.inviteForm.emailError'));
       }
 
       const result = await response.json();
-      setSuccess(t('manager.inviteTechnician.emailSuccess', { name: emailForm.techName, email: emailForm.email }));
+      setSuccess(t('manager.inviteForm.emailSuccess', { name: emailForm.techName, email: emailForm.email }));
       onSuccess && onSuccess(result);
       
       // Close modal after 2 seconds
@@ -167,11 +167,11 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || t('manager.inviteTechnician.smsError'));
+        throw new Error(errorData.detail || t('manager.inviteForm.smsError'));
       }
 
       const result = await response.json();
-      setSuccess(t('manager.inviteTechnician.smsSuccess', { name: smsForm.techName, phone: smsForm.phone }));
+      setSuccess(t('manager.inviteForm.smsSuccess', { name: smsForm.techName, phone: smsForm.phone }));
       onSuccess && onSuccess(result);
       
       // Close modal after 2 seconds
@@ -194,7 +194,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {t('manager.inviteTechnician.title')}
+            {t('manager.inviteForm.title')}
           </h2>
           <button
             onClick={onClose}
@@ -215,7 +215,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              {t('manager.inviteTechnician.createTab')}
+              {t('manager.inviteForm.createTab')}
             </button>
             <button
               onClick={() => setActiveTab('email')}
@@ -225,7 +225,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              {t('manager.inviteTechnician.emailTab')}
+              {t('manager.inviteForm.emailTab')}
             </button>
             <button
               onClick={() => setActiveTab('sms')}
@@ -235,7 +235,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              {t('manager.inviteTechnician.smsTab')}
+              {t('manager.inviteForm.smsTab')}
             </button>
           </nav>
         </div>
@@ -261,7 +261,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
             <form onSubmit={handleCreateSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.fullNameRequired')}
+                  {t('manager.inviteForm.fullNameRequired')}
                 </label>
                 <input
                   type="text"
@@ -269,13 +269,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={createForm.fullName}
                   onChange={(e) => setCreateForm({...createForm, fullName: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterFullName')}
+                  placeholder={t('manager.inviteForm.enterFullName')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.emailAddressRequired')}
+                  {t('manager.inviteForm.emailAddressRequired')}
                 </label>
                 <input
                   type="email"
@@ -283,26 +283,26 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={createForm.email}
                   onChange={(e) => setCreateForm({...createForm, email: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterEmail')}
+                  placeholder={t('manager.inviteForm.enterEmail')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.phoneNumber')}
+                  {t('manager.inviteForm.phoneNumber')}
                 </label>
                 <input
                   type="tel"
                   value={createForm.phone}
                   onChange={(e) => setCreateForm({...createForm, phone: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterPhone')}
+                  placeholder={t('manager.inviteForm.enterPhone')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.passwordRequired')} <span className="text-gray-400 font-normal">{t('manager.inviteTechnician.passwordMinLength')}</span>
+                  {t('manager.inviteForm.passwordRequired')} <span className="text-gray-400 font-normal">{t('manager.inviteForm.passwordMinLength')}</span>
                 </label>
                 <input
                   type="password"
@@ -310,13 +310,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={createForm.password}
                   onChange={(e) => setCreateForm({...createForm, password: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterPassword')}
+                  placeholder={t('manager.inviteForm.enterPassword')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.confirmPasswordRequired')}
+                  {t('manager.inviteForm.confirmPasswordRequired')}
                 </label>
                 <input
                   type="password"
@@ -324,7 +324,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={createForm.confirmPassword}
                   onChange={(e) => setCreateForm({...createForm, confirmPassword: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.confirmPasswordPlaceholder')}
+                  placeholder={t('manager.inviteForm.confirmPasswordPlaceholder')}
                 />
               </div>
               
@@ -333,7 +333,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                 disabled={isLoading}
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? t('manager.inviteTechnician.creating') : t('manager.inviteTechnician.createTechnician')}
+                {isLoading ? t('manager.inviteForm.creating') : t('manager.inviteForm.createTechnician')}
               </button>
             </form>
           )}
@@ -343,7 +343,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.technicianNameRequired')}
+                  {t('manager.inviteForm.technicianNameRequired')}
                 </label>
                 <input
                   type="text"
@@ -351,13 +351,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={emailForm.techName}
                   onChange={(e) => setEmailForm({...emailForm, techName: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterTechnicianName')}
+                  placeholder={t('manager.inviteForm.enterTechnicianName')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.emailAddressRequired')}
+                  {t('manager.inviteForm.emailAddressRequired')}
                 </label>
                 <input
                   type="email"
@@ -365,13 +365,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={emailForm.email}
                   onChange={(e) => setEmailForm({...emailForm, email: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterEmail')}
+                  placeholder={t('manager.inviteForm.enterEmail')}
                 />
               </div>
               
               <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
                 <p className="text-sm text-blue-800">
-                  {t('manager.inviteTechnician.emailInviteInfo')}
+                  {t('manager.inviteForm.emailInviteInfo')}
                 </p>
               </div>
               
@@ -380,7 +380,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                 disabled={isLoading}
                 className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? t('manager.inviteTechnician.sending') : t('manager.inviteTechnician.sendEmailInvitation')}
+                {isLoading ? t('manager.inviteForm.sending') : t('manager.inviteForm.sendEmailInvitation')}
               </button>
             </form>
           )}
@@ -390,7 +390,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
             <form onSubmit={handleSmsSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.technicianNameRequired')}
+                  {t('manager.inviteForm.technicianNameRequired')}
                 </label>
                 <input
                   type="text"
@@ -398,13 +398,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={smsForm.techName}
                   onChange={(e) => setSmsForm({...smsForm, techName: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterTechnicianName')}
+                  placeholder={t('manager.inviteForm.enterTechnicianName')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('manager.inviteTechnician.phoneNumberRequired')}
+                  {t('manager.inviteForm.phoneNumberRequired')}
                 </label>
                 <input
                   type="tel"
@@ -412,13 +412,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                   value={smsForm.phone}
                   onChange={(e) => setSmsForm({...smsForm, phone: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t('manager.inviteTechnician.enterPhone')}
+                  placeholder={t('manager.inviteForm.enterPhone')}
                 />
               </div>
               
               <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                 <p className="text-sm text-yellow-800">
-                  {t('manager.inviteTechnician.smsInviteInfo')}
+                  {t('manager.inviteForm.smsInviteInfo')}
                 </p>
               </div>
               
@@ -427,10 +427,20 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                 disabled={true}
                 className="w-full bg-gray-400 text-white py-2 px-4 rounded-md cursor-not-allowed"
               >
-                {t('manager.inviteTechnician.smsInviteComingSoon')}
+                {t('manager.inviteForm.smsInviteComingSoon')}
               </button>
             </form>
           )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end space-x-3 p-6 border-t border-gray-200">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            {t('manager.inviteForm.cancel')}
+          </button>
         </div>
       </div>
     </div>
