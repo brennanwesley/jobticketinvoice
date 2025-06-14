@@ -12,7 +12,7 @@ const ManagerContext = createContext();
  * Handles technician management, company profile, and audit logging
  */
 export const ManagerProvider = ({ children }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const { t } = useLanguage();
   
   // State for technicians
@@ -40,8 +40,8 @@ export const ManagerProvider = ({ children }) => {
   
   // Check if user has manager access
   const hasManagerAccess = useCallback(() => {
-    return isAuthenticated && user && (user.role === 'manager' || user.role === 'admin');
-  }, [isAuthenticated, user]);
+    return !authLoading && isAuthenticated && user && (user.role === 'manager' || user.role === 'admin');
+  }, [authLoading, isAuthenticated, user]);
   
   // Fetch technicians
   const fetchTechnicians = useCallback(async () => {
@@ -379,12 +379,13 @@ export const ManagerProvider = ({ children }) => {
   
   // Load initial data when user changes
   useEffect(() => {
-    if (hasManagerAccess()) {
+    // Only make API calls if authentication is not loading and user has manager access
+    if (!authLoading && hasManagerAccess()) {
       fetchTechnicians();
       fetchCompanyProfile();
       fetchInvitations();
     }
-  }, [hasManagerAccess, fetchTechnicians, fetchCompanyProfile, fetchInvitations]);
+  }, [authLoading, hasManagerAccess, fetchTechnicians, fetchCompanyProfile, fetchInvitations]);
   
   // Context value
   const contextValue = {
