@@ -10,6 +10,15 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  
+  // Debug: Check if translation is working
+  console.log('Debug - Translation test:', t('manager.inviteForm.title'));
+  console.log('Debug - Simple test:', t('common.loading'));
+  console.log('Debug - Manager test:', t('manager.dashboard'));
+  console.log('Debug - t function:', t);
+  console.log('Debug - Modal isOpen:', isOpen);
+  console.log('Debug - useLanguage hook:', useLanguage());
+  
   const [activeTab, setActiveTab] = useState('email'); // Default to Send Email
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -187,6 +196,8 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
   };
 
   if (!isOpen) return null;
+
+  console.log('Debug - Component is rendering because isOpen is true');
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
