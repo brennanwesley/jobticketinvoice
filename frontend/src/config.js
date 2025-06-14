@@ -11,9 +11,8 @@ const config = {
     apiUrl: process.env.REACT_APP_API_URL || 'http://localhost:8000/api/v1'
   },
   production: {
-    // In production, API calls are relative to the current domain
-    // This works when backend and frontend are deployed together
-    apiUrl: process.env.REACT_APP_API_URL || '/api'
+    // Use the full Render backend URL in production
+    apiUrl: process.env.REACT_APP_API_URL || 'https://jobticketinvoice-backend.onrender.com/api/v1'
   }
 };
 
