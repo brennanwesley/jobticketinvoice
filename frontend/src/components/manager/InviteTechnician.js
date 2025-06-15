@@ -85,8 +85,8 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
     }
 
     try {
-      // This endpoint will need to be implemented in the backend
-      const response = await authenticatedFetch('/tech-invites/create-direct', {
+      // Call the new tech-accounts/create endpoint
+      const response = await authenticatedFetch('/tech-accounts/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -95,8 +95,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
           full_name: createForm.fullName,
           email: createForm.email,
           phone: createForm.phone,
-          password: createForm.password,
-          company_id: user.company_id
+          password: createForm.password
         })
       });
 
@@ -107,7 +106,11 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
 
       const result = await response.json();
       setSuccess(t('manager.techManagement.inviteForm.createSuccess', { name: createForm.fullName }));
-      onSuccess && onSuccess(result);
+      
+      // Call onSuccess callback with the new technician data
+      if (onSuccess) {
+        onSuccess(result);
+      }
       
       // Close modal after 2 seconds
       setTimeout(() => {

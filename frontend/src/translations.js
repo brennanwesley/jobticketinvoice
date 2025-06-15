@@ -275,6 +275,7 @@ const translations = {
         invitedDate: 'Invited Date',
         lastActive: 'Last Active',
         actions: 'Actions',
+        phoneNumber: 'Phone Number',
         
         // Status labels
         statusActive: 'Active',
@@ -289,6 +290,7 @@ const translations = {
         remove: 'Remove',
         viewProfile: 'View Profile',
         editProfile: 'Edit Profile',
+        delete: 'Delete',
         
         // Batch actions
         batchActions: 'Batch Actions',
@@ -297,6 +299,7 @@ const translations = {
         batchActivate: 'Activate Selected',
         batchDeactivate: 'Deactivate Selected',
         batchRemove: 'Remove Selected',
+        batchDelete: 'Delete Selected',
         
         // Invite technician form
         inviteForm: {
@@ -385,6 +388,13 @@ const translations = {
             cancel: 'Cancel',
             warning: 'This action is permanent and cannot be undone.'
           },
+          delete: {
+            title: 'Delete Technician',
+            message: 'Are you sure you want to permanently delete {{name}}? This action cannot be undone and all their data will be deleted.',
+            confirm: 'Delete',
+            cancel: 'Cancel',
+            warning: 'This action is permanent and cannot be undone.'
+          },
           batchActivate: {
             title: 'Activate Technicians',
             message: 'Are you sure you want to activate {{count}} technicians?',
@@ -403,22 +413,59 @@ const translations = {
             confirm: 'Remove All',
             cancel: 'Cancel',
             warning: 'This action is permanent and cannot be undone.'
+          },
+          batchDelete: {
+            title: 'Delete Technicians',
+            message: 'Are you sure you want to permanently delete {{count}} technicians? This action cannot be undone.',
+            confirm: 'Delete All',
+            cancel: 'Cancel',
+            warning: 'This action is permanent and cannot be undone.'
           }
         },
         
         // Messages and notifications
         messages: {
-          technicianActivated: 'Technician activated successfully',
+          invitationSent: 'Invitation sent successfully',
+          technicianCreated: 'Technician {{name}} created successfully',
           technicianDeactivated: 'Technician deactivated successfully',
-          technicianRemoved: 'Technician removed successfully',
+          technicianDeleted: 'Technician deleted successfully',
+          technicianActivated: 'Technician activated successfully',
           techniciansActivated: '{{count}} technicians activated successfully',
           techniciansDeactivated: '{{count}} technicians deactivated successfully',
           techniciansRemoved: '{{count}} technicians removed successfully',
+          techniciansDeleted: '{{count}} technicians deleted successfully',
           invitationResent: 'Invitation resent successfully',
           noTechniciansFound: 'No technicians found',
           loadingTechnicians: 'Loading technicians...',
           errorLoadingTechnicians: 'Error loading technicians. Please try again.'
-        }
+        },
+        
+        // Stat boxes section
+        statBoxes: {
+          title: 'Technician Management',
+          totalTechnicians: 'Total Technicians',
+          activeTechnicians: 'Active Technicians',
+          pendingInvitations: 'Pending Invitations'
+        },
+        
+        // Table section
+        table: {
+          title: 'Technician Team',
+          noTechnicians: 'No technicians found',
+          inviteFirstTechnician: 'Invite your first technician to get started',
+          headers: {
+            name: 'Name',
+            email: 'Email',
+            phoneNumber: 'Phone Number',
+            status: 'Status',
+            actions: 'Actions'
+          },
+          actions: {
+            deactivate: 'Deactivate',
+            delete: 'Delete',
+            activate: 'Activate'
+          }
+        },
       },
       
       // Company Profile Management
@@ -838,6 +885,7 @@ const translations = {
         invitedDate: 'Fecha de Invitación',
         lastActive: 'Última Actividad',
         actions: 'Acciones',
+        phoneNumber: 'Número de Teléfono',
         
         // Status labels
         statusActive: 'Activo',
@@ -852,6 +900,7 @@ const translations = {
         remove: 'Eliminar',
         viewProfile: 'Ver Perfil',
         editProfile: 'Editar Perfil',
+        delete: 'Eliminar',
         
         // Batch actions
         batchActions: 'Acciones en Lote',
@@ -860,6 +909,7 @@ const translations = {
         batchActivate: 'Activar Seleccionados',
         batchDeactivate: 'Desactivar Seleccionados',
         batchRemove: 'Eliminar Seleccionados',
+        batchDelete: 'Eliminar Seleccionados',
         
         // Invite technician form
         inviteForm: {
@@ -948,6 +998,13 @@ const translations = {
             cancel: 'Cancelar',
             warning: 'Esta acción es permanente y no se puede deshacer.'
           },
+          delete: {
+            title: 'Eliminar Técnico',
+            message: '¿Está seguro de que desea eliminar permanentemente a {{name}}? Esta acción no se puede deshacer y todos sus datos serán eliminados.',
+            confirm: 'Eliminar',
+            cancel: 'Cancelar',
+            warning: 'Esta acción es permanente y no se puede deshacer.'
+          },
           batchActivate: {
             title: 'Activar Técnicos',
             message: '¿Está seguro de que desea activar {{count}} técnicos?',
@@ -966,22 +1023,59 @@ const translations = {
             confirm: 'Eliminar Todos',
             cancel: 'Cancelar',
             warning: 'Esta acción es permanente y no se puede deshacer.'
+          },
+          batchDelete: {
+            title: 'Eliminar Técnicos',
+            message: '¿Está seguro de que desea eliminar permanentemente {{count}} técnicos? Esta acción no se puede deshacer.',
+            confirm: 'Eliminar Todos',
+            cancel: 'Cancelar',
+            warning: 'Esta acción es permanente y no se puede deshacer.'
           }
         },
         
         // Messages and notifications
         messages: {
-          technicianActivated: 'Técnico activado exitosamente',
+          invitationSent: 'Invitación enviada exitosamente',
+          technicianCreated: 'Técnico {{name}} creado exitosamente',
           technicianDeactivated: 'Técnico desactivado exitosamente',
-          technicianRemoved: 'Técnico eliminado exitosamente',
+          technicianDeleted: 'Técnico eliminado exitosamente',
+          technicianActivated: 'Técnico activado exitosamente',
           techniciansActivated: '{{count}} técnicos activados exitosamente',
           techniciansDeactivated: '{{count}} técnicos desactivados exitosamente',
           techniciansRemoved: '{{count}} técnicos eliminados exitosamente',
+          techniciansDeleted: '{{count}} técnicos eliminados exitosamente',
           invitationResent: 'Invitación reenviada exitosamente',
           noTechniciansFound: 'No se encontraron técnicos',
           loadingTechnicians: 'Cargando técnicos...',
           errorLoadingTechnicians: 'Error al cargar técnicos. Por favor, inténtelo de nuevo.'
-        }
+        },
+        
+        // Stat boxes section
+        statBoxes: {
+          title: 'Gestión de Técnicos',
+          totalTechnicians: 'Total de Técnicos',
+          activeTechnicians: 'Técnicos Activos',
+          pendingInvitations: 'Invitaciones Pendientes'
+        },
+        
+        // Table section
+        table: {
+          title: 'Equipo de Técnicos',
+          noTechnicians: 'No se encontraron técnicos',
+          inviteFirstTechnician: 'Invite a su primer técnico para comenzar',
+          headers: {
+            name: 'Nombre',
+            email: 'Correo Electrónico',
+            phoneNumber: 'Número de Teléfono',
+            status: 'Estado',
+            actions: 'Acciones'
+          },
+          actions: {
+            deactivate: 'Desactivar',
+            delete: 'Eliminar',
+            activate: 'Activar'
+          }
+        },
       },
       
       // Company Profile Management

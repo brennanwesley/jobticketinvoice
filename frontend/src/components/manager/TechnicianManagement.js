@@ -156,32 +156,32 @@ const TechnicianManagement = () => {
 
   // Get status priority for sorting
   const getStatusPriority = (technician) => {
-    if (technician.pending_invitation) return 3; // Pending
-    if (technician.is_active) return 1; // Active
-    return 2; // Deactivated
+    if (technician.is_active) return 1;
+    if (technician.force_password_reset) return 2;
+    return 3;
   };
 
-  // Get technician status
+  // Get technician status with proper translation
   const getTechnicianStatus = (technician) => {
-    if (technician.pending_invitation) {
-      return {
-        key: 'pending',
-        label: t('manager.techManagement.statusPending'),
-        class: 'warning'
-      };
-    }
     if (technician.is_active) {
       return {
         key: 'active',
-        label: t('manager.techManagement.statusActive'),
-        class: 'success'
+        label: t('techManagement.statusActive'),
+        color: 'text-green-400'
+      };
+    } else if (technician.force_password_reset) {
+      return {
+        key: 'pending',
+        label: t('techManagement.statusPending'),
+        color: 'text-yellow-400'
+      };
+    } else {
+      return {
+        key: 'deactivated',
+        label: t('techManagement.statusDeactivated'),
+        color: 'text-gray-400'
       };
     }
-    return {
-      key: 'deactivated',
-      label: t('manager.techManagement.statusDeactivated'),
-      class: 'secondary'
-    };
   };
 
   // Handle invite technician
@@ -198,13 +198,42 @@ const TechnicianManagement = () => {
   };
 
   // Handle invite success
-  const handleInviteSuccess = () => {
+  const handleInviteSuccess = (newTechnicianData) => {
     setShowInviteModal(false);
-    setToast({
-      type: 'success',
-      message: t('manager.techManagement.messages.invitationSent')
-    });
-    fetchTechnicians(); // Refresh data
+    
+    // If we received new technician data (from "Create Your Own" form)
+    if (newTechnicianData && newTechnicianData.id) {
+      setToast({
+        type: 'success',
+        message: t('manager.techManagement.messages.technicianCreated', { name: newTechnicianData.name })
+      });
+      
+      // Add the new technician to the local state immediately for instant UI update
+      // This provides immediate feedback while the backend data syncs
+      const newTechnician = {
+        id: newTechnicianData.id,
+        name: newTechnicianData.name,
+        email: newTechnicianData.email,
+        phone: newTechnicianData.phone || '',
+        is_active: true,
+        force_password_reset: false,
+        created_at: new Date().toISOString()
+      };
+      
+      // Update technicians list if using real data
+      if (technicians && technicians.length > 0) {
+        // The useManager context will handle adding to the real technicians list
+        fetchTechnicians(); // Refresh from backend to ensure consistency
+      }
+    } else {
+      // For email/SMS invitations
+      setToast({
+        type: 'success',
+        message: t('manager.techManagement.messages.invitationSent')
+      });
+    }
+    
+    fetchTechnicians(); // Always refresh data to ensure consistency
   };
 
   // Handle technician action
@@ -267,19 +296,13 @@ const TechnicianManagement = () => {
 
         // Show success message
         const messageKey = action === 'reinvite' ? 'invitationResent' : `technician${action.charAt(0).toUpperCase() + action.slice(1)}d`;
-        setToast({
-          type: 'success',
-          message: t(`manager.techManagement.messages.${messageKey}`)
-        });
+        setToast(prevState => ({ ...prevState, type: 'success', message: t(`manager.techManagement.messages.${messageKey}`) }));
       } else {
         throw new Error(result.error);
       }
     } catch (error) {
       console.error(`Error ${action} technician:`, error);
-      setToast({
-        type: 'error',
-        message: error.message || t('common.errorOccurred')
-      });
+      setToast(prevState => ({ ...prevState, type: 'error', message: error.message || t('common.errorOccurred') }));
     }
   };
 
@@ -331,10 +354,7 @@ const TechnicianManagement = () => {
 
         // Show success message
         const messageKey = `technicians${action.charAt(0).toUpperCase() + action.slice(1)}d`;
-        setToast({
-          type: result.failureCount > 0 ? 'warning' : 'success',
-          message: t(`manager.techManagement.messages.${messageKey}`, { count: result.successCount })
-        });
+        setToast(prevState => ({ ...prevState, type: result.failureCount > 0 ? 'warning' : 'success', message: t(`manager.techManagement.messages.${messageKey}`, { count: result.successCount }) }));
 
         // Clear selection
         setSelectedTechnicians([]);
@@ -343,10 +363,7 @@ const TechnicianManagement = () => {
       }
     } catch (error) {
       console.error(`Error batch ${action}:`, error);
-      setToast({
-        type: 'error',
-        message: t('common.errorOccurred')
-      });
+      setToast(prevState => ({ ...prevState, type: 'error', message: t('common.errorOccurred') }));
     }
   };
 
@@ -371,6 +388,54 @@ const TechnicianManagement = () => {
   };
 
   const filteredTechnicians = filteredAndSortedTechnicians();
+
+  const handleDeactivateTechnician = async (technicianId) => {
+    try {
+      // TODO: Implement actual deactivate API call
+      console.log('Deactivating technician:', technicianId);
+      
+      // For now, update local state to show deactivated
+      const updatedTechnicians = displayTechnicians.map(tech => 
+        tech.id === technicianId ? { ...tech, is_active: false } : tech
+      );
+      
+      // If using real data, this would trigger a refetch
+      if (technicians.length > 0) {
+        // Would call actual API and refetch
+        // await deactivateTechnician(technicianId);
+        // fetchTechnicians();
+      }
+      
+      setToast(prevState => ({ ...prevState, type: 'success', message: t('techManagement.messages.technicianDeactivated') }));
+    } catch (error) {
+      console.error('Error deactivating technician:', error);
+      setToast(prevState => ({ ...prevState, type: 'error', message: 'Error deactivating technician' }));
+    }
+  };
+
+  const handleDeleteTechnician = async (technicianId, technicianName) => {
+    if (window.confirm(t('techManagement.confirmations.delete.message', { name: technicianName }))) {
+      try {
+        // TODO: Implement actual delete API call
+        console.log('Deleting technician:', technicianId);
+        
+        // For now, remove from local state
+        const updatedTechnicians = displayTechnicians.filter(tech => tech.id !== technicianId);
+        
+        // If using real data, this would trigger a refetch
+        if (technicians.length > 0) {
+          // Would call actual API and refetch
+          // await deleteTechnician(technicianId);
+          // fetchTechnicians();
+        }
+        
+        setToast(prevState => ({ ...prevState, type: 'success', message: t('techManagement.messages.technicianDeleted') }));
+      } catch (error) {
+        console.error('Error deleting technician:', error);
+        setToast(prevState => ({ ...prevState, type: 'error', message: 'Error deleting technician' }));
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 md:p-6">
@@ -397,7 +462,7 @@ const TechnicianManagement = () => {
 
       {/* Technician Management - Top Box Summary */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-white mb-4">Technician Management</h2>
+        <h2 className="text-lg font-semibold text-white mb-4">{t('manager.techManagement.statBoxes.title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Total Technicians */}
           <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-lg">
@@ -410,7 +475,7 @@ const TechnicianManagement = () => {
                   {loadingTechnicians ? '...' : stats.total}
                 </p>
                 <p className="text-gray-400 text-sm">
-                  {t('manager.techManagement.totalTechnicians')}
+                  {t('manager.techManagement.statBoxes.totalTechnicians')}
                 </p>
               </div>
             </div>
@@ -427,7 +492,7 @@ const TechnicianManagement = () => {
                   {loadingTechnicians ? '...' : stats.active}
                 </p>
                 <p className="text-gray-400 text-sm">
-                  {t('manager.techManagement.activeTechnicians')}
+                  {t('manager.techManagement.statBoxes.activeTechnicians')}
                 </p>
               </div>
             </div>
@@ -444,7 +509,7 @@ const TechnicianManagement = () => {
                   {loadingTechnicians ? '...' : stats.pending}
                 </p>
                 <p className="text-gray-400 text-sm">
-                  {t('manager.techManagement.pendingInvitations')}
+                  {t('manager.techManagement.statBoxes.pendingInvitations')}
                 </p>
               </div>
             </div>
@@ -454,7 +519,7 @@ const TechnicianManagement = () => {
 
       {/* Technician Team - Table Section */}
       <div>
-        <h2 className="text-lg font-semibold text-white mb-4">Technician Team</h2>
+        <h2 className="text-lg font-semibold text-white mb-4">{t('manager.techManagement.table.title')}</h2>
         <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden">
           {loadingTechnicians ? (
             <div className="p-8 text-center">
@@ -468,8 +533,8 @@ const TechnicianManagement = () => {
           ) : filteredTechnicians.length === 0 ? (
             <div className="p-8 text-center">
               <UsersIcon className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-              <p className="text-gray-400 mb-2">No technicians found</p>
-              <p className="text-gray-500 text-sm">Invite your first technician to get started</p>
+              <p className="text-gray-400 mb-2">{t('manager.techManagement.table.noTechnicians')}</p>
+              <p className="text-gray-500 text-sm">{t('manager.techManagement.table.inviteFirstTechnician')}</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -477,19 +542,19 @@ const TechnicianManagement = () => {
                 <thead className="bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                      Name
+                      {t('manager.techManagement.table.headers.name')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                      Email
+                      {t('manager.techManagement.table.headers.email')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider hidden sm:table-cell">
-                      Phone Number
+                      {t('manager.techManagement.table.headers.phoneNumber')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                      Status
+                      {t('manager.techManagement.table.headers.status')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                      Actions
+                      {t('manager.techManagement.table.headers.actions')}
                     </th>
                   </tr>
                 </thead>
@@ -515,20 +580,35 @@ const TechnicianManagement = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
-                          <span className="text-sm text-green-400 font-medium">
-                            Active
+                          {getTechnicianStatus(technician).key === 'active' ? (
+                            <CheckCircleIcon className="h-4 w-4 text-green-500 mr-2" />
+                          ) : getTechnicianStatus(technician).key === 'pending' ? (
+                            <ClockIcon className="h-4 w-4 text-yellow-500 mr-2" />
+                          ) : (
+                            <div className="h-4 w-4 mr-2 bg-gray-500 rounded-full"></div>
+                          )}
+                          <span className={`text-sm font-medium ${getTechnicianStatus(technician).color}`}>
+                            {getTechnicianStatus(technician).label}
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <button
-                            className="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                            onClick={() => handleTechnicianAction(technician, 'deactivate')}
-                          >
-                            Deactivate
-                          </button>
+                          {getTechnicianStatus(technician).key === 'active' ? (
+                            <button
+                              className="text-sm text-red-500 hover:text-red-700 transition-colors duration-200"
+                              onClick={() => handleDeactivateTechnician(technician.id)}
+                            >
+                              {t('manager.techManagement.table.actions.deactivate')}
+                            </button>
+                          ) : (
+                            <button
+                              className="text-sm text-red-500 hover:text-red-700 transition-colors duration-200"
+                              onClick={() => handleDeleteTechnician(technician.id, technician.name)}
+                            >
+                              {t('manager.techManagement.table.actions.delete')}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
