@@ -3,6 +3,7 @@ import { useAuth } from './AuthContext';
 import { useLanguage } from './LanguageContext';
 import { authenticatedFetch } from '../utils/auth';
 import { auditTechnicianAction, auditCompanyAction, AUDIT_ACTIONS } from '../utils/audit';
+import { getToken } from '../utils/auth';
 
 // Create the context
 const ManagerContext = createContext();
@@ -52,6 +53,13 @@ export const ManagerProvider = ({ children }) => {
       return false;
     }
     
+    // Must have a valid token in localStorage
+    const token = getToken();
+    if (!token) {
+      console.log('ManagerContext: No authentication token found in localStorage, skipping data fetch');
+      return false;
+    }
+    
     // Must have manager or admin role
     if (user.role !== 'manager' && user.role !== 'admin') {
       console.log('ManagerContext: User does not have manager access, skipping data fetch');
@@ -82,7 +90,10 @@ export const ManagerProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error fetching technicians:', error);
-      setTechnicianError(t('manager.techManagement.messages.errorLoadingTechnicians'));
+      // Only set error message for non-authentication errors to avoid user confusion
+      if (!error.message.includes('No authentication token found')) {
+        setTechnicianError(t('manager.techManagement.messages.errorLoadingTechnicians'));
+      }
     } finally {
       setLoadingTechnicians(false);
     }
@@ -105,7 +116,10 @@ export const ManagerProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error fetching company profile:', error);
-      setCompanyError(error.message || 'Failed to load company profile');
+      // Only set error message for non-authentication errors to avoid user confusion
+      if (!error.message.includes('No authentication token found')) {
+        setCompanyError(error.message || 'Failed to load company profile');
+      }
     } finally {
       setLoadingCompany(false);
     }
@@ -123,6 +137,7 @@ export const ManagerProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error fetching invitations:', error);
+      // Silently fail for authentication errors since this is not critical data
     } finally {
       setLoadingInvitations(false);
     }
