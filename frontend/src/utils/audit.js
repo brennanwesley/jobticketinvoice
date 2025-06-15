@@ -56,6 +56,9 @@ export const logAuditEvent = async (action, category, details = {}, targetId = n
       } else if (response.status === 500) {
         console.log('Audit logging: Server error (500), continuing without audit');
         return false;
+      } else if (response.status === 422) {
+        console.log('Audit logging: Validation error (422), continuing without audit');
+        return false;
       } else {
         console.log(`Audit logging: HTTP ${response.status}, continuing without audit`);
         return false;
