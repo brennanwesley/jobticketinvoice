@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://localhost:8006"
+BASE_URL = "http://localhost:8000"
 API_BASE = f"{BASE_URL}/api/v1"
 
 def login_admin():

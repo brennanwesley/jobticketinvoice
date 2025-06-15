@@ -38,11 +38,6 @@ async def log_audit_event(
         print(f"Audit log attempt - User ID: {current_user.id}, Company ID: {current_user.company_id}")
         print(f"Audit data: {audit_data.dict()}")
         
-        # Validate required fields
-        if not current_user.company_id:
-            print(f"Warning: User {current_user.id} has no company_id")
-            # For now, allow audit logging without company_id for debugging
-        
         # Create audit log entry with explicit field mapping
         audit_log = AuditLog(
             user_id=current_user.id,

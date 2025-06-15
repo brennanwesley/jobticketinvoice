@@ -21,7 +21,7 @@ class AuditLog(Base):
     
     # User and company information for multi-tenancy
     user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
-    company_id = Column(String(36), ForeignKey("companies.company_id"), nullable=False, index=True)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     
     # Event information
     action = Column(String(100), nullable=False, index=True)
