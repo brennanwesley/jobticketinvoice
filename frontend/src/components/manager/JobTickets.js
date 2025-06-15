@@ -35,11 +35,6 @@ const JobTickets = () => {
     customer_name: ''
   });
 
-  // Validate manager access
-  if (!validateAccess()) {
-    return null;
-  }
-
   // Fetch job tickets from API
   const fetchJobTickets = useCallback(async () => {
     setLoading(true);
@@ -79,6 +74,11 @@ const JobTickets = () => {
       notAssigned
     };
   }, [jobTickets]);
+
+  // Validate manager access
+  if (!validateAccess()) {
+    return null;
+  }
 
   // Handle edit ticket
   const handleEditTicket = (ticket) => {
