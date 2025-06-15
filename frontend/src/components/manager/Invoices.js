@@ -24,11 +24,6 @@ const Invoices = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Validate manager access
-  if (!validateAccess()) {
-    return null;
-  }
-
   // Fetch invoices from backend (placeholder for future implementation)
   const fetchInvoices = useCallback(async () => {
     try {
@@ -90,6 +85,11 @@ const Invoices = () => {
   useEffect(() => {
     fetchInvoices();
   }, [fetchInvoices]);
+
+  // Validate manager access - moved after hooks
+  if (!validateAccess()) {
+    return null;
+  }
 
   // Calculate statistics
   const getStatusStats = () => {
