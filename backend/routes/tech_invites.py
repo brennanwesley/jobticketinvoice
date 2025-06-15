@@ -437,7 +437,7 @@ async def send_tech_invite_email(
         logger.info("Step 4: Generating invite token...")
         try:
             token_service = InviteTokenService()
-            invite_token = token_service.create_invite_token(
+            invite_token = token_service.generate_invite_token(
                 invite_id=invite_record.invite_id,
                 tech_name=email_request.tech_name,
                 email=email_request.email,
