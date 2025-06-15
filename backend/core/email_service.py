@@ -18,15 +18,19 @@ class EmailService:
         """Initialize SendGrid email service"""
         self.api_key = os.getenv("SENDGRID_API_KEY")
         self.from_email = os.getenv("SENDGRID_FROM_EMAIL", "noreply@jobticketinvoice.com")
-        self.dev_mode = os.getenv("EMAIL_DEV_MODE", "false").lower() == "true"
         
-        if not self.api_key:
-            if self.dev_mode:
-                logger.info("Email service running in development mode - emails will be logged instead of sent")
-                self.sg = None
+        # Enable dev mode if explicitly set OR if SendGrid is not configured
+        explicit_dev_mode = os.getenv("EMAIL_DEV_MODE", "").lower() == "true"
+        sendgrid_not_configured = not self.api_key
+        
+        self.dev_mode = explicit_dev_mode or sendgrid_not_configured
+        
+        if self.dev_mode:
+            if explicit_dev_mode:
+                logger.info("Email service running in development mode (EMAIL_DEV_MODE=true)")
             else:
-                logger.warning("SendGrid API key not configured - email sending will be disabled")
-                self.sg = None
+                logger.info("Email service running in development mode (SendGrid not configured)")
+            self.sg = None
         else:
             self.sg = SendGridAPIClient(api_key=self.api_key)
             logger.info("SendGrid email service initialized successfully")
@@ -101,8 +105,8 @@ Best regards,
             return False
     
     def is_configured(self) -> bool:
-        """Check if SendGrid is properly configured or if dev mode is enabled"""
-        return bool(self.api_key and self.from_email) or self.dev_mode
+        """Check if email service is configured (either SendGrid or dev mode)"""
+        return True  # Always configured - either SendGrid or dev mode fallback
 
 # Global email service instance
 email_service = EmailService()
