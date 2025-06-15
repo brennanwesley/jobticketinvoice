@@ -214,7 +214,7 @@ const JobTickets = () => {
             }}
             className="px-4 py-2 bg-orange-600 hover:bg-orange-700 focus:bg-orange-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-slate-900"
           >
-            Create Job Ticket
+            {t('manager.jobTickets.actions.createJobTicket')}
           </button>
           
           {/* Create Invoice Button */}
@@ -225,7 +225,7 @@ const JobTickets = () => {
             }}
             className="px-4 py-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900"
           >
-            Create Invoice
+            {t('manager.jobTickets.actions.createInvoice')}
           </button>
         </div>
       </div>

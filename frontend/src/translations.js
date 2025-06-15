@@ -523,6 +523,12 @@ const translations = {
           message: 'Are you sure you want to delete job ticket {{ticketNumber}}? This action cannot be undone.'
         },
         
+        // Action buttons
+        actions: {
+          createJobTicket: 'Create Job Ticket',
+          createInvoice: 'Create Invoice'
+        },
+        
         // Messages and notifications
         messages: {
           errorLoading: 'Error loading job tickets. Please try again.',
@@ -1188,6 +1194,12 @@ const translations = {
         deleteModal: {
           title: 'Confirmar Eliminación',
           message: '¿Está seguro de que desea eliminar la boleta de trabajo {{ticketNumber}}? Esta acción no se puede deshacer.'
+        },
+        
+        // Action buttons
+        actions: {
+          createJobTicket: 'Crear Boleta de Trabajo',
+          createInvoice: 'Crear Factura'
         },
         
         // Messages and notifications
