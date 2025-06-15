@@ -332,7 +332,7 @@ const translations = {
           // Placeholders
           enterFullName: 'Enter technician\'s full name',
           enterEmail: 'Enter email address',
-          enterPhone: 'Enter phone number',
+          enterPhone: '(XXX) XXX-XXXX',
           enterPassword: 'Enter password',
           confirmPasswordPlaceholder: 'Confirm password',
           enterTechnicianName: 'Enter technician\'s name',
@@ -947,7 +947,7 @@ const translations = {
           // Placeholders
           enterFullName: 'Ingrese el nombre completo del técnico',
           enterEmail: 'Ingrese la dirección de correo electrónico',
-          enterPhone: 'Ingrese el número de teléfono',
+          enterPhone: '(XXX) XXX-XXXX',
           enterPassword: 'Ingrese la contraseña',
           confirmPasswordPlaceholder: 'Confirme la contraseña',
           enterTechnicianName: 'Ingrese el nombre del técnico',

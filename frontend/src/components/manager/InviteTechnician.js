@@ -6,6 +6,28 @@ import { authenticatedFetch } from '../../utils/auth';
 import { auditTechnicianAction, AUDIT_ACTIONS } from '../../utils/audit';
 
 /**
+ * Format phone number as user types: (XXX) XXX-XXXX
+ * @param {string} value - The input value
+ * @returns {string} - Formatted phone number
+ */
+const formatPhoneNumber = (value) => {
+  // Remove all non-digit characters
+  const cleaned = value.replace(/\D/g, '');
+  
+  // Limit to 10 digits
+  const limited = cleaned.substring(0, 10);
+  
+  // Apply formatting based on length
+  if (limited.length <= 3) {
+    return limited;
+  } else if (limited.length <= 6) {
+    return `(${limited.substring(0, 3)}) ${limited.substring(3)}`;
+  } else {
+    return `(${limited.substring(0, 3)}) ${limited.substring(3, 6)}-${limited.substring(6)}`;
+  }
+};
+
+/**
  * InviteTechnician Modal Component
  * Provides three ways to invite technicians: Create Your Own, Send Email, Send SMS
  */
@@ -64,6 +86,18 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
 
   // Early return after all hooks
   if (!isOpen) return null;
+
+  // Handle phone number changes for Create Your Own form
+  const handleCreatePhoneChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, ''); // Store only digits
+    setCreateForm({...createForm, phone: rawValue});
+  };
+
+  // Handle phone number changes for SMS form
+  const handleSmsPhoneChange = (e) => {
+    const rawValue = e.target.value.replace(/\D/g, ''); // Store only digits
+    setSmsForm({...smsForm, phone: rawValue});
+  };
 
   // Handle form submissions
   const handleCreateSubmit = async (e) => {
@@ -398,8 +432,8 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="tel"
-                  value={createForm.phone}
-                  onChange={(e) => setCreateForm({...createForm, phone: e.target.value})}
+                  value={formatPhoneNumber(createForm.phone)}
+                  onChange={handleCreatePhoneChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder={t('manager.techManagement.inviteForm.enterPhone')}
                 />
@@ -514,8 +548,8 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
                 <input
                   type="tel"
                   required
-                  value={smsForm.phone}
-                  onChange={(e) => setSmsForm({...smsForm, phone: e.target.value})}
+                  value={formatPhoneNumber(smsForm.phone)}
+                  onChange={handleSmsPhoneChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder={t('manager.techManagement.inviteForm.enterPhone')}
                 />
