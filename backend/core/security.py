@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from .config import settings
 from database import get_db
@@ -89,8 +89,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     # Import User model here to avoid circular imports
     from models.user import User
     
-    # Get user from database
-    user = db.query(User).filter(User.id == int(user_id)).first()
+    # Get user from database with company relationship loaded
+    user = db.query(User).options(joinedload(User.company)).filter(User.id == int(user_id)).first()
     
     if user is None:
         raise credentials_exception

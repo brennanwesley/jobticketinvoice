@@ -370,12 +370,12 @@ async def send_tech_invite_email(
     Creates invite record and sends secure onboarding link via email
     """
     try:
-        # Check if SendGrid is configured
-        if not email_service.is_configured():
-            logger.error("SendGrid email service not configured")
+        # Validate user has company access
+        if not current_user.company:
+            logger.error(f"User {current_user.email} does not have an associated company")
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Email service not available"
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User must be associated with a company to send invitations"
             )
         
         # Check if user already exists with this email
