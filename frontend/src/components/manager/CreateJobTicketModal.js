@@ -48,13 +48,6 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
   const driveStartTime = watch('drive_start_time');
   const driveEndTime = watch('drive_end_time');
 
-  // Auto-fill manager and company information when modal opens
-  useEffect(() => {
-    if (isOpen && user && companyProfile) {
-      setValue('company_name', companyProfile.name || '');
-    }
-  }, [isOpen, user, companyProfile, setValue]);
-
   // Calculate hours automatically
   useEffect(() => {
     if (workStartTime && workEndTime) {
@@ -176,8 +169,7 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
               type="text"
               {...register('company_name', { required: 'Company name is required' })}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter company name"
-              readOnly
+              placeholder="Enter customer company name"
             />
             {errors.company_name && (
               <p className="mt-1 text-sm text-red-400">{errors.company_name.message}</p>

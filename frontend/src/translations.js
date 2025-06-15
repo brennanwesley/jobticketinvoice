@@ -546,7 +546,7 @@ const translations = {
           title: 'Create Job Ticket',
           submit: 'Create Job Ticket',
           fields: {
-            companyName: 'Company Name',
+            companyName: 'Customer Company Name',
             customerName: 'Customer Name',
             location: 'Location',
             workDescription: 'Work Description',
@@ -1291,7 +1291,7 @@ const translations = {
           title: 'Crear Boleta de Trabajo',
           submit: 'Crear Boleta de Trabajo',
           fields: {
-            companyName: 'Nombre de la Empresa',
+            companyName: 'Nombre de la Empresa del Cliente',
             customerName: 'Nombre del Cliente',
             location: 'Ubicación',
             workDescription: 'Descripción del Trabajo',
