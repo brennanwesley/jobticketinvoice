@@ -73,13 +73,18 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
 
   // Handle form submission
   const onSubmit = async (formData) => {
+    console.log('=== JOB TICKET CREATION DEBUG ===');
+    console.log('1. Form submitted with data:', formData);
+    
     setIsSubmitting(true);
-
+    
     try {
-      // Generate job ticket number (YY######)
+      // Generate job ticket number
       const currentYear = new Date().getFullYear().toString().slice(-2);
       const randomNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
       const jobTicketNumber = `${currentYear}${randomNumber}`;
+      
+      console.log('2. Generated job ticket number:', jobTicketNumber);
 
       // Prepare payload
       const payload = {
@@ -103,40 +108,61 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         created_by_role: 'manager',
         status: 'not_assigned_to_invoice'
       };
+      
+      console.log('3. Prepared payload:', payload);
 
       // Submit to backend
-      const response = await authenticatedFetch('/job-tickets', {
+      console.log('4. Sending request to /job-tickets/');
+      const response = await authenticatedFetch('/job-tickets/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       });
+      
+      console.log('5. Response received:', {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('6. Error response data:', errorData);
         throw new Error(errorData.message || 'Failed to create job ticket');
       }
 
       const newJobTicket = await response.json();
+      console.log('7. Successfully created job ticket:', newJobTicket);
 
       // Success feedback
       toast.success(t('manager.jobTickets.messages.createSuccess'));
+      console.log('8. Success toast shown');
       
       // Notify parent component
       if (onJobTicketCreated) {
+        console.log('9. Calling onJobTicketCreated callback');
         onJobTicketCreated(newJobTicket);
+      } else {
+        console.log('9. WARNING: onJobTicketCreated callback not provided');
       }
 
       // Reset form and close modal
+      console.log('10. Resetting form and closing modal');
       reset();
       onClose();
+      console.log('11. Job ticket creation process completed successfully');
 
     } catch (error) {
-      console.error('Error creating job ticket:', error);
+      console.error('=== JOB TICKET CREATION ERROR ===');
+      console.error('Error details:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
       toast.error(error.message || t('manager.jobTickets.messages.createError'));
     } finally {
       setIsSubmitting(false);
+      console.log('12. isSubmitting set to false');
     }
   };
 

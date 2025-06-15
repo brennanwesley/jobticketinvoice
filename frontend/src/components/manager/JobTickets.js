@@ -59,6 +59,26 @@ const JobTickets = () => {
     }
   }, [t]);
 
+  // Handle job ticket creation
+  const handleJobTicketCreated = useCallback(async (newJobTicket) => {
+    console.log('=== HANDLE JOB TICKET CREATED CALLBACK ===');
+    console.log('1. Callback received new job ticket:', newJobTicket);
+    
+    try {
+      console.log('2. Refreshing job tickets list...');
+      // Refresh the job tickets list to include the new ticket
+      await fetchJobTickets();
+      console.log('3. Job tickets list refreshed successfully');
+      
+      // Show success message
+      console.log('4. Job ticket created successfully:', newJobTicket);
+    } catch (error) {
+      console.error('5. Error refreshing job tickets after creation:', error);
+      // Still show success since the ticket was created, just refresh manually
+      toast.info('Job ticket created! Please refresh the page to see it in the list.');
+    }
+  }, [fetchJobTickets]);
+
   // Load job tickets on component mount
   useEffect(() => {
     fetchJobTickets();
@@ -166,15 +186,6 @@ const JobTickets = () => {
       setShowDeleteModal(false);
       setTicketToDelete(null);
     }
-  };
-
-  // Handle job ticket creation
-  const handleJobTicketCreated = (newJobTicket) => {
-    // Add the new job ticket to the list
-    setJobTickets(prev => [newJobTicket, ...prev]);
-    
-    // Refresh the data to get updated stats
-    fetchJobTickets();
   };
 
   // Format date for display
