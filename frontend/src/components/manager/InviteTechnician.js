@@ -85,17 +85,17 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
     }
 
     try {
-      // Call the new tech-accounts/create endpoint
-      const response = await authenticatedFetch('/tech-accounts/create', {
+      // Use the existing working endpoint that's already deployed
+      const response = await authenticatedFetch('/invitations/create-technician-direct', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          full_name: createForm.fullName,
           email: createForm.email,
-          phone: createForm.phone,
-          password: createForm.password
+          name: createForm.fullName,
+          job_type: 'other', // Using correct enum value
+          temporary_password: createForm.password
         })
       });
 
@@ -145,7 +145,7 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
           // Server responded with error status
           errorDetails.push(`Status: ${err.response.status}`);
           errorDetails.push(`Status Text: ${err.response.statusText}`);
-          errorDetails.push(`URL: ${err.response.url || '/tech-accounts/create'}`);
+          errorDetails.push(`URL: ${err.response.url || '/invitations/create-technician-direct'}`);
           
           if (err.responseData) {
             if (typeof err.responseData === 'string') {
@@ -173,13 +173,13 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
         errorMessage,
         errorDetails,
         timestamp: new Date().toISOString(),
-        url: '/tech-accounts/create',
+        url: '/invitations/create-technician-direct',
         method: 'POST',
         requestBody: {
-          full_name: createForm.fullName,
           email: createForm.email,
-          phone: createForm.phone,
-          // Don't log password for security
+          name: createForm.fullName,
+          job_type: 'other',
+          temporary_password: createForm.password
         }
       });
       
