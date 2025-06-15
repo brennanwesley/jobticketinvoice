@@ -32,10 +32,10 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
       customer_name: '',
       location: '',
       work_description: '',
-      work_start_time: '',
-      work_end_time: '',
-      drive_start_time: '',
-      drive_end_time: '',
+      work_start_time: '08:00',
+      work_end_time: '17:00',
+      drive_start_time: '07:00',
+      drive_end_time: '18:00',
       total_work_hours: 0,
       total_travel_hours: 0,
       parts: []
@@ -239,7 +239,7 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
                   id="work_start_time"
                   type="time"
                   {...register('work_start_time')}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-32 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
@@ -248,7 +248,7 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
                   id="work_end_time"
                   type="time"
                   {...register('work_end_time')}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-32 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -275,7 +275,7 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
                   id="drive_start_time"
                   type="time"
                   {...register('drive_start_time')}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-32 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
@@ -284,7 +284,7 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
                   id="drive_end_time"
                   type="time"
                   {...register('drive_end_time')}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-32 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
