@@ -15,23 +15,29 @@ import { authenticatedFetch, getToken, isAuthenticated } from './auth';
  * @returns {Promise<boolean>} Success status
  */
 export const logAuditEvent = async (action, category, details = {}, targetId = null, targetType = null) => {
-  try {
-    // Check if we have proper authentication before attempting to log
-    if (!isAuthenticated() || !getToken()) {
-      console.warn('Skipping audit log - user not authenticated:', { action, category, details });
-      return false;
-    }
+  // Silently skip audit logging if not authenticated
+  if (!isAuthenticated()) {
+    console.log('Audit logging: User not authenticated, skipping log');
+    return false;
+  }
 
+  // Silently skip audit logging if no token
+  const token = getToken();
+  if (!token) {
+    console.log('Audit logging: No authentication token, skipping log');
+    return false;
+  }
+
+  try {
     const auditData = {
       action,
       category,
-      description: `${action} - ${category}`,
-      details: typeof details === 'string' ? { message: details } : details,
+      details: JSON.stringify(details),
       target_id: targetId,
       target_type: targetType,
       timestamp: new Date().toISOString(),
       user_agent: navigator.userAgent,
-      ip_address: null, // Will be populated by backend
+      ip_address: 'client-side' // Will be replaced by server
     };
 
     const response = await authenticatedFetch('/audit/log', {
@@ -43,18 +49,24 @@ export const logAuditEvent = async (action, category, details = {}, targetId = n
     });
 
     if (!response.ok) {
-      console.error('Failed to log audit event:', response.statusText);
-      return false;
+      // Silently fail for audit logging - don't disrupt user experience
+      if (response.status === 404) {
+        console.log('Audit logging: Endpoint not available (404), continuing without audit');
+        return false;
+      } else if (response.status === 500) {
+        console.log('Audit logging: Server error (500), continuing without audit');
+        return false;
+      } else {
+        console.log(`Audit logging: HTTP ${response.status}, continuing without audit`);
+        return false;
+      }
     }
 
-    return true;
+    const result = await response.json();
+    return result.success || true;
   } catch (error) {
-    // Only log error if it's not an authentication issue
-    if (error.message !== 'No authentication token found') {
-      console.error('Error logging audit event:', error);
-    } else {
-      console.warn('Skipping audit log - authentication token not available');
-    }
+    // Silently handle audit logging errors - never disrupt user flow
+    console.log('Audit logging error (non-critical):', error.message);
     return false;
   }
 };
@@ -67,6 +79,29 @@ export const logAuditEvent = async (action, category, details = {}, targetId = n
  * @returns {Promise<Object>} Audit logs data
  */
 export const fetchAuditLogs = async (filters = {}, page = 1, limit = 50) => {
+  // Check if user is authenticated before making request
+  if (!isAuthenticated()) {
+    console.log('Audit logs: User not authenticated, skipping fetch');
+    return {
+      success: false,
+      logs: [],
+      total: 0,
+      error: 'Authentication required'
+    };
+  }
+
+  // Check if token exists
+  const token = getToken();
+  if (!token) {
+    console.log('Audit logs: No authentication token found, skipping fetch');
+    return {
+      success: false,
+      logs: [],
+      total: 0,
+      error: 'No authentication token'
+    };
+  }
+
   try {
     const params = new URLSearchParams({
       page: page.toString(),
@@ -77,13 +112,54 @@ export const fetchAuditLogs = async (filters = {}, page = 1, limit = 50) => {
     const response = await authenticatedFetch(`/audit/logs?${params}`);
     
     if (!response.ok) {
-      throw new Error('Failed to fetch audit logs');
+      // Handle different HTTP status codes appropriately
+      if (response.status === 404) {
+        console.log('Audit logs: Endpoint not found (404), returning empty results');
+        return {
+          success: true,
+          logs: [],
+          total: 0,
+          message: 'Audit logging not yet implemented'
+        };
+      } else if (response.status === 500) {
+        console.log('Audit logs: Server error (500), returning empty results');
+        return {
+          success: true,
+          logs: [],
+          total: 0,
+          message: 'Audit logs temporarily unavailable'
+        };
+      } else if (response.status === 401 || response.status === 403) {
+        console.log('Audit logs: Authentication/authorization error, returning empty results');
+        return {
+          success: false,
+          logs: [],
+          total: 0,
+          error: 'Insufficient permissions'
+        };
+      } else {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
     }
 
-    return await response.json();
+    const data = await response.json();
+    return {
+      success: true,
+      logs: data.logs || data || [],
+      total: data.total || (data.logs ? data.logs.length : 0),
+      page: data.page || page,
+      limit: data.limit || limit
+    };
   } catch (error) {
     console.error('Error fetching audit logs:', error);
-    throw error;
+    
+    // Return graceful fallback instead of throwing
+    return {
+      success: false,
+      logs: [],
+      total: 0,
+      error: error.message || 'Failed to fetch audit logs'
+    };
   }
 };
 

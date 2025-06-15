@@ -4,8 +4,19 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Add Content Security Policy to allow eval for React development tools and Vercel scripts -->
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.tailwindcss.com https://vercel.live https://*.vercel.app; object-src 'none'; connect-src 'self' https://jobticketinvoice-backend.onrender.com ws: wss:; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com" />
+    <!-- Content Security Policy - Secure configuration for production with development tool support -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.tailwindcss.com https://vercel.live https://*.vercel.app https://*.vercel.com;
+      style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' data: https:;
+      connect-src 'self' https://jobticketinvoice-backend.onrender.com https://*.vercel.app https://*.vercel.com ws: wss:;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+    " />
     <title>JobTicketInvoice</title>
     <!-- Add Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>

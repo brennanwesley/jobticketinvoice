@@ -73,19 +73,41 @@ const AuditLogs = () => {
 
       const result = await fetchAuditLogs(params);
       
-      if (result.success) {
+      // Handle both success and graceful failure cases
+      if (result.success || result.logs !== undefined) {
         setLogs(result.logs || []);
         setPagination(prev => ({
           ...prev,
           total: result.total || 0,
           totalPages: Math.ceil((result.total || 0) / prev.limit)
         }));
+        
+        // Clear any previous errors if we got data (even if empty)
+        if (result.success) {
+          setError(null);
+        }
+        
+        // Show informational message if audit logs are not available
+        if (result.message && result.logs.length === 0) {
+          console.log('Audit logs info:', result.message);
+        }
       } else {
-        throw new Error(result.error || 'Failed to fetch audit logs');
+        // Only set error for actual failures, not when audit system is unavailable
+        if (result.error && !result.error.includes('Authentication') && !result.error.includes('token')) {
+          setError(result.error);
+        } else {
+          // For auth errors, just clear the logs silently
+          setLogs([]);
+          setPagination(prev => ({ ...prev, total: 0, totalPages: 0 }));
+          setError(null);
+        }
       }
     } catch (error) {
       console.error('Error loading audit logs:', error);
-      setError(error.message || t('common.errorOccurred'));
+      // Only show user-facing errors for unexpected failures
+      setError(t('common.errorOccurred'));
+      setLogs([]);
+      setPagination(prev => ({ ...prev, total: 0, totalPages: 0 }));
     } finally {
       setLoading(false);
     }
