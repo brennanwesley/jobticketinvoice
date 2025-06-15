@@ -128,8 +128,23 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.log('6. Error response data:', errorData);
+        console.log('6. Response not OK, attempting to parse error data...');
+        let errorData;
+        try {
+          errorData = await response.json();
+          console.log('6a. Error response data:', errorData);
+        } catch (jsonError) {
+          console.log('6b. Failed to parse error response as JSON:', jsonError);
+          // Try to get response as text
+          try {
+            const errorText = await response.text();
+            console.log('6c. Error response as text:', errorText);
+            errorData = { message: errorText || `HTTP ${response.status}: ${response.statusText}` };
+          } catch (textError) {
+            console.log('6d. Failed to get response as text:', textError);
+            errorData = { message: `HTTP ${response.status}: ${response.statusText}` };
+          }
+        }
         throw new Error(errorData.message || 'Failed to create job ticket');
       }
 
