@@ -100,8 +100,24 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || t('manager.techManagement.inviteForm.createError'));
+        // Try to get error details from response
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (parseErr) {
+          // If JSON parsing fails, try to get text
+          try {
+            errorData = { detail: await response.text() };
+          } catch (textErr) {
+            errorData = { detail: `HTTP ${response.status}: ${response.statusText}` };
+          }
+        }
+        
+        // Create a detailed error object
+        const error = new Error(errorData.detail || t('manager.techManagement.inviteForm.createError'));
+        error.response = response;
+        error.responseData = errorData;
+        throw error;
       }
 
       const result = await response.json();
@@ -118,7 +134,62 @@ const InviteTechnician = ({ isOpen, onClose, onSuccess }) => {
       }, 2000);
 
     } catch (err) {
-      setError(err.message);
+      console.error('Tech account creation error:', err);
+      
+      // Comprehensive error gathering
+      let errorMessage = t('manager.techManagement.inviteForm.createError');
+      let errorDetails = [];
+      
+      try {
+        if (err.response) {
+          // Server responded with error status
+          errorDetails.push(`Status: ${err.response.status}`);
+          errorDetails.push(`Status Text: ${err.response.statusText}`);
+          errorDetails.push(`URL: ${err.response.url || '/tech-accounts/create'}`);
+          
+          if (err.responseData) {
+            if (typeof err.responseData === 'string') {
+              errorDetails.push(`Response: ${err.responseData}`);
+            } else if (err.responseData.detail) {
+              errorMessage = err.responseData.detail;
+              errorDetails.push(`Detail: ${err.responseData.detail}`);
+            } else {
+              errorDetails.push(`Response: ${JSON.stringify(err.responseData)}`);
+            }
+          }
+        } else if (err.message) {
+          // Network or other error
+          errorMessage = err.message;
+          errorDetails.push(`Error: ${err.message}`);
+        }
+        
+      } catch (processingErr) {
+        errorDetails.push(`Error processing error: ${processingErr.message}`);
+      }
+      
+      // Log comprehensive error details to console
+      console.error('Comprehensive error details:', {
+        originalError: err,
+        errorMessage,
+        errorDetails,
+        timestamp: new Date().toISOString(),
+        url: '/tech-accounts/create',
+        method: 'POST',
+        requestBody: {
+          full_name: createForm.fullName,
+          email: createForm.email,
+          phone: createForm.phone,
+          // Don't log password for security
+        }
+      });
+      
+      // Show detailed error to user in development, generic in production
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      if (isDevelopment && errorDetails.length > 0) {
+        setError(`${errorMessage}\n\nDEBUG INFO:\n${errorDetails.join('\n')}`);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
