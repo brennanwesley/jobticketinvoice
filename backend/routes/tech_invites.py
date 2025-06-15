@@ -458,7 +458,7 @@ async def send_tech_invite_email(
             email_sent = await email_service.send_tech_invitation(
                 tech_name=email_request.tech_name,
                 tech_email=email_request.email,
-                company_name=current_user.company.company_name,
+                company_name=current_user.company.name,
                 invite_token=invite_token
             )
             logger.info(f"Step 5 RESULT: Email sent status: {email_sent}")
