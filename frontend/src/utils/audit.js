@@ -1,4 +1,4 @@
-import { authenticatedFetch } from './auth';
+import { authenticatedFetch, getToken, isAuthenticated } from './auth';
 
 /**
  * Audit logging utilities for tracking user actions and system events
@@ -16,10 +16,9 @@ import { authenticatedFetch } from './auth';
  */
 export const logAuditEvent = async (action, category, details = {}, targetId = null, targetType = null) => {
   try {
-    // Check if we have an authentication token before attempting to log
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.warn('Skipping audit log - no authentication token available:', { action, category, details });
+    // Check if we have proper authentication before attempting to log
+    if (!isAuthenticated() || !getToken()) {
+      console.warn('Skipping audit log - user not authenticated:', { action, category, details });
       return false;
     }
 
@@ -50,7 +49,12 @@ export const logAuditEvent = async (action, category, details = {}, targetId = n
 
     return true;
   } catch (error) {
-    console.error('Error logging audit event:', error);
+    // Only log error if it's not an authentication issue
+    if (error.message !== 'No authentication token found') {
+      console.error('Error logging audit event:', error);
+    } else {
+      console.warn('Skipping audit log - authentication token not available');
+    }
     return false;
   }
 };

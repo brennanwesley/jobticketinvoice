@@ -40,12 +40,27 @@ export const ManagerProvider = ({ children }) => {
   
   // Check if user has manager access
   const hasManagerAccess = useCallback(() => {
-    return !authLoading && isAuthenticated && user && (user.role === 'manager' || user.role === 'admin');
+    // Don't allow access if auth is still loading
+    if (authLoading) return false;
+    
+    // Must be authenticated with a valid user object
+    if (!isAuthenticated || !user) return false;
+    
+    // Must have manager or admin role
+    return user.role === 'manager' || user.role === 'admin';
   }, [authLoading, isAuthenticated, user]);
+
+  // Check if we should make API calls (authentication is complete and user has access)
+  const shouldFetchData = useCallback(() => {
+    return !authLoading && isAuthenticated && user && hasManagerAccess();
+  }, [authLoading, isAuthenticated, user, hasManagerAccess]);
   
   // Fetch technicians
   const fetchTechnicians = useCallback(async () => {
-    if (!hasManagerAccess()) return;
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping fetchTechnicians - authentication not ready or no access');
+      return;
+    }
     
     setLoadingTechnicians(true);
     setTechnicianError(null);
@@ -64,16 +79,16 @@ export const ManagerProvider = ({ children }) => {
     } finally {
       setLoadingTechnicians(false);
     }
-  }, [hasManagerAccess, t]);
+  }, [shouldFetchData, t]);
   
   // Fetch company profile
   const fetchCompanyProfile = useCallback(async () => {
     console.log('ManagerContext: fetchCompanyProfile called');
-    console.log('ManagerContext: isAuthenticated:', isAuthenticated, 'user:', user);
-    console.log('ManagerContext: hasManagerAccess():', hasManagerAccess());
+    console.log('ManagerContext: authLoading:', authLoading, 'isAuthenticated:', isAuthenticated, 'user:', user);
+    console.log('ManagerContext: shouldFetchData():', shouldFetchData());
     
-    if (!hasManagerAccess()) {
-      console.log('ManagerContext: No manager access, returning early');
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping fetchCompanyProfile - authentication not ready or no access');
       return;
     }
     
@@ -100,11 +115,14 @@ export const ManagerProvider = ({ children }) => {
     } finally {
       setLoadingCompany(false);
     }
-  }, [hasManagerAccess, isAuthenticated, user]);
+  }, [shouldFetchData, isAuthenticated, user]);
   
   // Fetch invitations
   const fetchInvitations = useCallback(async () => {
-    if (!hasManagerAccess()) return;
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping fetchInvitations - authentication not ready or no access');
+      return;
+    }
     
     setLoadingInvitations(true);
     
@@ -119,11 +137,14 @@ export const ManagerProvider = ({ children }) => {
     } finally {
       setLoadingInvitations(false);
     }
-  }, [hasManagerAccess]);
+  }, [shouldFetchData]);
   
   // Invite technician
   const inviteTechnician = useCallback(async (invitationData) => {
-    if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping inviteTechnician - authentication not ready or no access');
+      return { success: false, error: 'Unauthorized' };
+    }
     
     try {
       const response = await authenticatedFetch('/invitations/invite-technician', {
@@ -148,11 +169,14 @@ export const ManagerProvider = ({ children }) => {
       console.error('Error inviting technician:', error);
       return { success: false, error: 'Network error occurred' };
     }
-  }, [hasManagerAccess, fetchInvitations]);
+  }, [shouldFetchData, fetchInvitations]);
   
   // Update technician status
   const updateTechnicianStatus = useCallback(async (technicianId, action) => {
-    if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping updateTechnicianStatus - authentication not ready or no access');
+      return { success: false, error: 'Unauthorized' };
+    }
     
     try {
       let endpoint = '';
@@ -195,11 +219,14 @@ export const ManagerProvider = ({ children }) => {
       console.error(`Error ${action} technician:`, error);
       return { success: false, error: 'Network error occurred' };
     }
-  }, [hasManagerAccess, fetchTechnicians]);
+  }, [shouldFetchData, fetchTechnicians]);
   
   // Batch update technicians
   const batchUpdateTechnicians = useCallback(async (technicianIds, action) => {
-    if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping batchUpdateTechnicians - authentication not ready or no access');
+      return { success: false, error: 'Unauthorized' };
+    }
     
     const results = [];
     for (const id of technicianIds) {
@@ -225,11 +252,14 @@ export const ManagerProvider = ({ children }) => {
       failureCount,
       results
     };
-  }, [hasManagerAccess, updateTechnicianStatus]);
+  }, [shouldFetchData, updateTechnicianStatus]);
   
   // Resend invitation
   const resendInvitation = useCallback(async (invitationId) => {
-    if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping resendInvitation - authentication not ready or no access');
+      return { success: false, error: 'Unauthorized' };
+    }
     
     try {
       const response = await authenticatedFetch(`/invitations/${invitationId}/resend`, {
@@ -248,11 +278,14 @@ export const ManagerProvider = ({ children }) => {
       console.error('Error resending invitation:', error);
       return { success: false, error: 'Network error occurred' };
     }
-  }, [hasManagerAccess, fetchInvitations]);
+  }, [shouldFetchData, fetchInvitations]);
   
   // Update company profile
   const updateCompanyProfile = useCallback(async (profileData) => {
-    if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping updateCompanyProfile - authentication not ready or no access');
+      return { success: false, error: 'Unauthorized' };
+    }
     
     try {
       const response = await authenticatedFetch('/companies/current', {
@@ -276,11 +309,14 @@ export const ManagerProvider = ({ children }) => {
       console.error('Error updating company profile:', error);
       return { success: false, error: 'Network error occurred' };
     }
-  }, [hasManagerAccess]);
+  }, [shouldFetchData]);
   
   // Upload company logo
   const uploadCompanyLogo = useCallback(async (logoFile) => {
-    if (!hasManagerAccess()) return { success: false, error: 'Unauthorized' };
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping uploadCompanyLogo - authentication not ready or no access');
+      return { success: false, error: 'Unauthorized' };
+    }
     
     try {
       const formData = new FormData();
@@ -308,11 +344,14 @@ export const ManagerProvider = ({ children }) => {
       console.error('Error uploading logo:', error);
       return { success: false, error: 'Network error occurred' };
     }
-  }, [hasManagerAccess]);
+  }, [shouldFetchData]);
   
   // Fetch audit logs
   const fetchAuditLogs = useCallback(async (filters = {}) => {
-    if (!hasManagerAccess()) return { success: false, error: 'Access denied' };
+    if (!shouldFetchData()) {
+      console.log('ManagerContext: Skipping fetchAuditLogs - authentication not ready or no access');
+      return { success: false, error: 'Access denied' };
+    }
     
     setLoadingAuditLogs(true);
     setAuditError(null);
@@ -347,7 +386,7 @@ export const ManagerProvider = ({ children }) => {
     } finally {
       setLoadingAuditLogs(false);
     }
-  }, [hasManagerAccess, t]);
+  }, [shouldFetchData, t]);
   
   // Filter technicians based on current filter
   const filteredTechnicians = useCallback(() => {
@@ -380,12 +419,12 @@ export const ManagerProvider = ({ children }) => {
   // Load initial data when user changes
   useEffect(() => {
     // Only make API calls if authentication is not loading and user has manager access
-    if (!authLoading && hasManagerAccess()) {
+    if (shouldFetchData()) {
       fetchTechnicians();
       fetchCompanyProfile();
       fetchInvitations();
     }
-  }, [authLoading, hasManagerAccess, fetchTechnicians, fetchCompanyProfile, fetchInvitations]);
+  }, [shouldFetchData, fetchTechnicians, fetchCompanyProfile, fetchInvitations]);
   
   // Context value
   const contextValue = {
