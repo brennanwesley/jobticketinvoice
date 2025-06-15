@@ -10,6 +10,7 @@ const translations = {
     // Common translations
     common: {
       loading: 'Loading...',
+      creating: 'Creating...',
       back: 'Back',
       cancel: 'Cancel',
       confirm: 'Confirm',
@@ -535,7 +536,28 @@ const translations = {
           editSuccess: 'Job ticket updated successfully',
           editError: 'Error updating job ticket. Please try again.',
           deleteSuccess: 'Job ticket deleted successfully',
-          deleteError: 'Error deleting job ticket. Please try again.'
+          deleteError: 'Error deleting job ticket. Please try again.',
+          createSuccess: 'Job ticket created successfully',
+          createError: 'Error creating job ticket. Please try again.'
+        },
+        
+        // Create Job Ticket Modal
+        createModal: {
+          title: 'Create Job Ticket',
+          submit: 'Create Job Ticket',
+          fields: {
+            companyName: 'Company Name',
+            customerName: 'Customer Name',
+            location: 'Location',
+            workDescription: 'Work Description',
+            workStartTime: 'Work Start Time',
+            workEndTime: 'Work End Time',
+            driveStartTime: 'Travel Start Time',
+            driveEndTime: 'Travel End Time',
+            totalWorkHours: 'Total Work Hours',
+            totalTravelHours: 'Total Travel Hours',
+            additionalNotes: 'Additional Notes'
+          }
         }
       },
       
@@ -753,7 +775,8 @@ const translations = {
       password: 'Contraseña',
       confirmPassword: 'Confirmar Contraseña',
       jobType: 'Tipo de Trabajo',
-      goHome: 'Ir al Inicio'
+      goHome: 'Ir al Inicio',
+      creating: 'Creando...'
     },
     
     // Job Ticket related translations
@@ -1258,7 +1281,28 @@ const translations = {
           editSuccess: 'Boleta de trabajo actualizada exitosamente',
           editError: 'Error al actualizar boleta de trabajo. Por favor, inténtelo de nuevo.',
           deleteSuccess: 'Boleta de trabajo eliminada exitosamente',
-          deleteError: 'Error al eliminar boleta de trabajo. Por favor, inténtelo de nuevo.'
+          deleteError: 'Error al eliminar boleta de trabajo. Por favor, inténtelo de nuevo.',
+          createSuccess: 'Boleta de trabajo creada exitosamente',
+          createError: 'Error al crear boleta de trabajo. Por favor, inténtelo de nuevo.'
+        },
+        
+        // Create Job Ticket Modal
+        createModal: {
+          title: 'Crear Boleta de Trabajo',
+          submit: 'Crear Boleta de Trabajo',
+          fields: {
+            companyName: 'Nombre de la Empresa',
+            customerName: 'Nombre del Cliente',
+            location: 'Ubicación',
+            workDescription: 'Descripción del Trabajo',
+            workStartTime: 'Hora de Inicio del Trabajo',
+            workEndTime: 'Hora de Fin del Trabajo',
+            driveStartTime: 'Hora de Inicio del Viaje',
+            driveEndTime: 'Hora de Fin del Viaje',
+            totalWorkHours: 'Total de Horas de Trabajo',
+            totalTravelHours: 'Total de Horas de Viaje',
+            additionalNotes: 'Notas Adicionales'
+          }
         }
       },
       

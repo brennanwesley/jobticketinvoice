@@ -13,6 +13,7 @@ import {
   CheckIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
+import CreateJobTicketModal from './CreateJobTicketModal';
 
 /**
  * Job Tickets Management Component
@@ -34,6 +35,7 @@ const JobTickets = () => {
     drive_total_hours: '',
     customer_name: ''
   });
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Fetch job tickets from API
   const fetchJobTickets = useCallback(async () => {
@@ -166,6 +168,15 @@ const JobTickets = () => {
     }
   };
 
+  // Handle job ticket creation
+  const handleJobTicketCreated = (newJobTicket) => {
+    // Add the new job ticket to the list
+    setJobTickets(prev => [newJobTicket, ...prev]);
+    
+    // Refresh the data to get updated stats
+    fetchJobTickets();
+  };
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return '-';
@@ -208,10 +219,7 @@ const JobTickets = () => {
         <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
           {/* Create Job Ticket Button */}
           <button
-            onClick={() => {
-              // TODO: Implement create job ticket functionality
-              console.log('Create Job Ticket clicked - functionality to be implemented');
-            }}
+            onClick={() => setShowCreateModal(true)}
             className="px-4 py-2 bg-orange-600 hover:bg-orange-700 focus:bg-orange-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-slate-900"
           >
             {t('manager.jobTickets.actions.createJobTicket')}
@@ -223,7 +231,7 @@ const JobTickets = () => {
               // TODO: Implement create invoice functionality
               console.log('Create Invoice clicked - functionality to be implemented');
             }}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
           >
             {t('manager.jobTickets.actions.createInvoice')}
           </button>
@@ -467,6 +475,13 @@ const JobTickets = () => {
             </div>
           </div>
         </div>
+      )}
+      {showCreateModal && (
+        <CreateJobTicketModal 
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)} 
+          onJobTicketCreated={handleJobTicketCreated} 
+        />
       )}
     </div>
   );
