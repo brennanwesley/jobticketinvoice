@@ -369,24 +369,43 @@ async def send_tech_invite_email(
     Send tech invite via email using SendGrid (Manager/Admin only)
     Creates invite record and sends secure onboarding link via email
     """
+    import os
+    import traceback
+    
+    # Debug logging for environment variables
+    logger.info(f"=== DEBUG: Email Invite Request Started ===")
+    logger.info(f"SENDGRID_API_KEY present: {os.getenv('SENDGRID_API_KEY') is not None}")
+    logger.info(f"SENDGRID_FROM_EMAIL: {os.getenv('SENDGRID_FROM_EMAIL', 'NOT SET')}")
+    logger.info(f"EMAIL_DEV_MODE: {os.getenv('EMAIL_DEV_MODE', 'NOT SET')}")
+    logger.info(f"Current user: {current_user.email}, Role: {current_user.role}")
+    logger.info(f"Request data: tech_name={email_request.tech_name}, email={email_request.email}")
+    
     try:
-        # Validate user has company access
+        # Step 1: Validate user has company access
+        logger.info("Step 1: Validating user company access...")
         if not current_user.company:
-            logger.error(f"User {current_user.email} does not have an associated company")
+            logger.error(f"STEP 1 FAILED: User {current_user.email} does not have an associated company")
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="User must be associated with a company to send invitations"
+                detail="DEBUG: User must be associated with a company to send invitations"
             )
         
-        # Check if user already exists with this email
+        logger.info(f"Step 1 SUCCESS: User company: {current_user.company.name} (ID: {current_user.company.company_id})")
+        
+        # Step 2: Check if user already exists with this email
+        logger.info("Step 2: Checking for existing user...")
         existing_user = db.query(User).filter(User.email == email_request.email).first()
         if existing_user:
+            logger.error(f"STEP 2 FAILED: User with email {email_request.email} already exists")
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="User with this email already exists"
+                detail=f"DEBUG: User with email {email_request.email} already exists"
             )
         
-        # Check if there's already a pending invite for this email in this company
+        logger.info("Step 2 SUCCESS: No existing user found")
+        
+        # Step 3: Check for existing pending invites
+        logger.info("Step 3: Checking for existing pending invites...")
         existing_invite = db.query(TechInvite).filter(
             TechInvite.email == email_request.email,
             TechInvite.company_id == current_user.company.company_id,
@@ -396,9 +415,10 @@ async def send_tech_invite_email(
         if existing_invite:
             # Update existing invite
             invite_record = existing_invite
-            logger.info(f"Updating existing invite for {email_request.email}")
+            logger.info(f"Step 3: Updating existing invite for {email_request.email}")
         else:
             # Create new invite record
+            logger.info("Step 3: Creating new invite record...")
             invite_record = TechInvite(
                 tech_name=email_request.tech_name,
                 email=email_request.email,
@@ -411,36 +431,67 @@ async def send_tech_invite_email(
         # Update delivery method and status
         invite_record.delivery_method = "email"
         invite_record.status = "pending"
+        logger.info("Step 3 SUCCESS: Invite record prepared")
         
-        # Generate secure invite token
-        token_service = InviteTokenService()
-        invite_token = token_service.create_invite_token(
-            invite_id=invite_record.invite_id,
-            tech_name=email_request.tech_name,
-            email=email_request.email,
-            company_id=current_user.company.company_id
-        )
+        # Step 4: Generate secure invite token
+        logger.info("Step 4: Generating invite token...")
+        try:
+            token_service = InviteTokenService()
+            invite_token = token_service.create_invite_token(
+                invite_id=invite_record.invite_id,
+                tech_name=email_request.tech_name,
+                email=email_request.email,
+                company_id=current_user.company.company_id
+            )
+            logger.info(f"Step 4 SUCCESS: Token generated (length: {len(invite_token)})")
+        except Exception as token_error:
+            logger.error(f"STEP 4 FAILED: Token generation error: {str(token_error)}")
+            logger.error(f"Token error traceback: {traceback.format_exc()}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"DEBUG: Token generation failed: {str(token_error)}"
+            )
         
-        # Send email via SendGrid
-        email_sent = await email_service.send_tech_invitation(
-            tech_name=email_request.tech_name,
-            tech_email=email_request.email,
-            company_name=current_user.company.company_name,
-            invite_token=invite_token
-        )
+        # Step 5: Send email via SendGrid
+        logger.info("Step 5: Sending email via SendGrid...")
+        try:
+            email_sent = await email_service.send_tech_invitation(
+                tech_name=email_request.tech_name,
+                tech_email=email_request.email,
+                company_name=current_user.company.company_name,
+                invite_token=invite_token
+            )
+            logger.info(f"Step 5 RESULT: Email sent status: {email_sent}")
+        except Exception as email_error:
+            logger.error(f"STEP 5 FAILED: Email sending error: {str(email_error)}")
+            logger.error(f"Email error traceback: {traceback.format_exc()}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"DEBUG: Email sending failed: {str(email_error)}"
+            )
         
         if not email_sent:
             db.rollback()
-            logger.error(f"Failed to send email to {email_request.email}")
-            return TechInviteEmailResponse(
-                success=False,
-                message="Unable to send invite. Please try again later."
+            logger.error(f"Step 5 FAILED: Email service returned False for {email_request.email}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="DEBUG: Email service returned failure status"
             )
         
-        # Commit the database changes
-        db.commit()
+        # Step 6: Commit the database changes
+        logger.info("Step 6: Committing database changes...")
+        try:
+            db.commit()
+            logger.info("Step 6 SUCCESS: Database changes committed")
+        except Exception as db_error:
+            logger.error(f"STEP 6 FAILED: Database commit error: {str(db_error)}")
+            logger.error(f"Database error traceback: {traceback.format_exc()}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"DEBUG: Database commit failed: {str(db_error)}"
+            )
         
-        logger.info(f"Tech invite email sent successfully to {email_request.email}")
+        logger.info(f"=== SUCCESS: Tech invite email sent successfully to {email_request.email} ===")
         return TechInviteEmailResponse(
             success=True,
             message=f"Invitation sent successfully to {email_request.email}",
@@ -452,8 +503,11 @@ async def send_tech_invite_email(
         raise
     except Exception as e:
         db.rollback()
-        logger.error(f"Error sending tech invite email: {str(e)}")
+        logger.error(f"=== UNEXPECTED ERROR in send_tech_invite_email ===")
+        logger.error(f"Error type: {type(e).__name__}")
+        logger.error(f"Error message: {str(e)}")
+        logger.error(f"Full traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to send invitation email"
+            detail=f"DEBUG: Unexpected error - {type(e).__name__}: {str(e)}"
         )
