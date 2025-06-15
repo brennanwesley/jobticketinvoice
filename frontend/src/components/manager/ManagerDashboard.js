@@ -5,7 +5,7 @@ import { useManagerAccess } from '../../hooks/useManagerAccess';
 import { useAuth } from '../../context/AuthContext';
 import TechnicianManagement from './TechnicianManagement';
 import CompanyProfile from './CompanyProfile';
-import Invoicing from './Invoicing';
+import Invoices from './Invoices'; // Update import statement
 import JobTickets from './JobTickets';
 import AuditLogs from './AuditLogs';
 import InviteTechnician from './InviteTechnician';
@@ -90,7 +90,7 @@ const ManagerDashboard = () => {
       id: 'invoicing',
       label: t('manager.invoicing.title'),
       icon: DocumentTextIcon,
-      component: <Invoicing />
+      component: <Invoices /> // Update component name
     },
     {
       id: 'jobTickets',

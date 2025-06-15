@@ -611,6 +611,56 @@ const translations = {
         description: 'Create, manage, and track invoices for your technician services.'
       },
       
+      // Invoices Management
+      invoices: {
+        title: 'Invoices',
+        subtitle: 'Manage and track all invoices for your company',
+        
+        // Status statistics cards
+        stats: {
+          totalInvoices: 'Total Invoices',
+          draftInvoices: 'Draft Invoices',
+          submittedInvoices: 'Submitted Invoices'
+        },
+        
+        // Data table headers and content
+        table: {
+          title: 'Invoices Overview',
+          headers: {
+            invoiceNumber: 'Invoice Number',
+            createdOn: 'Created On',
+            createdBy: 'Created By',
+            customerName: 'Customer Name',
+            totalAmount: 'Total Amount',
+            status: 'Status',
+            actions: 'Actions'
+          },
+          status: {
+            draft: 'Draft',
+            submitted: 'Submitted'
+          }
+        },
+        
+        // Empty state messages
+        empty: {
+          title: 'No Invoices Yet',
+          description: 'Invoices will appear here once you start creating them from job tickets.'
+        },
+        
+        // Action buttons
+        actions: {
+          createInvoice: 'Create Invoice',
+          edit: 'Edit'
+        },
+        
+        // Messages and notifications
+        messages: {
+          errorLoading: 'Error loading invoices. Please try again.',
+          editSuccess: 'Invoice updated successfully',
+          editError: 'Error updating invoice. Please try again.'
+        }
+      },
+      
       // Help and onboarding
       help: {
         techManagementHelp: 'Manage your team of technicians. You can invite new technicians, activate or deactivate existing ones, and track their status.',
@@ -1282,6 +1332,56 @@ const translations = {
         subtitle: 'Administre facturas y cobros',
         comingSoon: 'Funcionalidad de facturación por venir',
         description: 'Cree, administre y rastree facturas para sus servicios técnicos.'
+      },
+      
+      // Invoices Management
+      invoices: {
+        title: 'Facturas',
+        subtitle: 'Administre y rastree todas las facturas para su empresa',
+        
+        // Status statistics cards
+        stats: {
+          totalInvoices: 'Total de Facturas',
+          draftInvoices: 'Facturas en Borrador',
+          submittedInvoices: 'Facturas Enviadas'
+        },
+        
+        // Data table headers and content
+        table: {
+          title: 'Resumen de Facturas',
+          headers: {
+            invoiceNumber: 'Número de Factura',
+            createdOn: 'Fecha de Creación',
+            createdBy: 'Creado Por',
+            customerName: 'Nombre del Cliente',
+            totalAmount: 'Monto Total',
+            status: 'Estado',
+            actions: 'Acciones'
+          },
+          status: {
+            draft: 'Borrador',
+            submitted: 'Enviada'
+          }
+        },
+        
+        // Empty state messages
+        empty: {
+          title: 'No se encontraron facturas',
+          description: 'Las facturas aparecerán aquí una vez que comience a crearlas desde las boletas de trabajo.'
+        },
+        
+        // Action buttons
+        actions: {
+          createInvoice: 'Crear Factura',
+          edit: 'Editar'
+        },
+        
+        // Messages and notifications
+        messages: {
+          errorLoading: 'Error al cargar facturas. Por favor, inténtelo de nuevo.',
+          editSuccess: 'Factura actualizada exitosamente',
+          editError: 'Error al actualizar factura. Por favor, inténtelo de nuevo.'
+        }
       },
       
       // Help and onboarding
