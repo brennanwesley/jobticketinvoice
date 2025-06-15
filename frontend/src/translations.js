@@ -251,6 +251,11 @@ const translations = {
       manageTechnicians: 'Manage your team of technicians',
       manageCompany: 'Manage your company profile and settings',
       
+      // Dashboard stat cards
+      activeTickets: 'Active Tickets',
+      pendingInvoices: 'Pending Invoices',
+      companyStatus: 'Company Status',
+      
       // Technician Management
       techManagement: {
         title: 'Technician Management',
@@ -860,6 +865,11 @@ const translations = {
       createJobTicket: 'Crear Boleta de Trabajo',
       manageTechnicians: 'Administre su equipo de técnicos',
       manageCompany: 'Administre su perfil de empresa y configuración',
+      
+      // Dashboard stat cards
+      activeTickets: 'Boletas Activas',
+      pendingInvoices: 'Facturas Pendientes',
+      companyStatus: 'Estado de la Empresa',
       
       // Technician Management
       techManagement: {
