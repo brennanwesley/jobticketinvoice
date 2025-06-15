@@ -13,6 +13,11 @@ const translations = {
       back: 'Back',
       cancel: 'Cancel',
       confirm: 'Confirm',
+      save: 'Save',
+      edit: 'Edit',
+      delete: 'Delete',
+      retry: 'Retry',
+      notAvailable: 'N/A',
       loggedInAs: 'Logged in as',
       select: 'Select an option',
       add: 'Add',
@@ -473,6 +478,61 @@ const translations = {
         },
       },
       
+      // Job Tickets Management
+      jobTickets: {
+        title: 'Job Tickets',
+        subtitle: 'Manage and track all job tickets for your company',
+        
+        // Status statistics
+        stats: {
+          totalTickets: 'Total Tickets',
+          assignedToInvoice: 'Assigned to Invoice',
+          notAssigned: 'Not Assigned'
+        },
+        
+        // Data table
+        table: {
+          title: 'Job Tickets Overview',
+          headers: {
+            ticketNumber: 'Ticket Number',
+            submittedBy: 'Submitted By',
+            customerName: 'Customer Name',
+            workHours: 'Work Hours',
+            travelHours: 'Travel Hours',
+            invoiceLink: 'Invoice Status',
+            actions: 'Actions'
+          },
+          placeholders: {
+            customerName: 'Enter customer name'
+          },
+          status: {
+            linked: 'Linked',
+            notLinked: 'Not Linked'
+          }
+        },
+        
+        // Empty state
+        empty: {
+          title: 'No Job Tickets Found',
+          description: 'Job tickets will appear here once technicians start submitting them.'
+        },
+        
+        // Delete confirmation modal
+        deleteModal: {
+          title: 'Confirm Delete',
+          message: 'Are you sure you want to delete job ticket {{ticketNumber}}? This action cannot be undone.'
+        },
+        
+        // Messages and notifications
+        messages: {
+          errorLoading: 'Error loading job tickets. Please try again.',
+          editSuccess: 'Job ticket updated successfully',
+          editError: 'Error updating job ticket. Please try again.',
+          deleteSuccess: 'Job ticket deleted successfully',
+          deleteError: 'Error deleting job ticket. Please try again.'
+        }
+      },
+      
       // Company Profile Management
       companyProfile: {
         title: 'Company Profile',
@@ -543,14 +603,6 @@ const translations = {
         subtitle: 'Manage invoices and billing',
         comingSoon: 'Invoicing functionality coming soon',
         description: 'Create, manage, and track invoices for your technician services.'
-      },
-      
-      // Job Tickets
-      jobTickets: {
-        title: 'Job Tickets',
-        subtitle: 'Manage work orders and job tickets',
-        comingSoon: 'Job Tickets functionality coming soon',
-        description: 'Create, assign, and track job tickets for your technician team.'
       },
       
       // Help and onboarding
@@ -628,6 +680,11 @@ const translations = {
       back: 'Atrás',
       cancel: 'Cancelar',
       confirm: 'Confirmar',
+      save: 'Guardar',
+      edit: 'Editar',
+      delete: 'Eliminar',
+      retry: 'Reintentar',
+      notAvailable: 'No disponible',
       loggedInAs: 'Conectado como',
       select: 'Seleccionar una opción',
       add: 'Agregar',
@@ -1088,6 +1145,61 @@ const translations = {
         },
       },
       
+      // Job Tickets Management
+      jobTickets: {
+        title: 'Boletas de Trabajo',
+        subtitle: 'Administre y rastree todas las boletas de trabajo para su empresa',
+        
+        // Status statistics
+        stats: {
+          totalTickets: 'Total de Boletas',
+          assignedToInvoice: 'Asignadas a Factura',
+          notAssigned: 'No Asignadas'
+        },
+        
+        // Data table
+        table: {
+          title: 'Resumen de Boletas de Trabajo',
+          headers: {
+            ticketNumber: 'Número de Boleta',
+            submittedBy: 'Enviado Por',
+            customerName: 'Nombre del Cliente',
+            workHours: 'Horas de Trabajo',
+            travelHours: 'Horas de Viaje',
+            invoiceLink: 'Estado de Factura',
+            actions: 'Acciones'
+          },
+          placeholders: {
+            customerName: 'Ingrese nombre del cliente'
+          },
+          status: {
+            linked: 'Enlazada',
+            notLinked: 'No Enlazada'
+          }
+        },
+        
+        // Empty state
+        empty: {
+          title: 'No se encontraron boletas de trabajo',
+          description: 'Las boletas de trabajo aparecerán aquí una vez que los técnicos comiencen a enviarlas.'
+        },
+        
+        // Delete confirmation modal
+        deleteModal: {
+          title: 'Confirmar Eliminación',
+          message: '¿Está seguro de que desea eliminar la boleta de trabajo {{ticketNumber}}? Esta acción no se puede deshacer.'
+        },
+        
+        // Messages and notifications
+        messages: {
+          errorLoading: 'Error al cargar boletas de trabajo. Por favor, inténtelo de nuevo.',
+          editSuccess: 'Boleta de trabajo actualizada exitosamente',
+          editError: 'Error al actualizar boleta de trabajo. Por favor, inténtelo de nuevo.',
+          deleteSuccess: 'Boleta de trabajo eliminada exitosamente',
+          deleteError: 'Error al eliminar boleta de trabajo. Por favor, inténtelo de nuevo.'
+        }
+      },
+      
       // Company Profile Management
       companyProfile: {
         title: 'Perfil de la Empresa',
@@ -1158,14 +1270,6 @@ const translations = {
         subtitle: 'Administre facturas y cobros',
         comingSoon: 'Funcionalidad de facturación por venir',
         description: 'Cree, administre y rastree facturas para sus servicios técnicos.'
-      },
-      
-      // Job Tickets
-      jobTickets: {
-        title: 'Boletas de Trabajo',
-        subtitle: 'Administre órdenes de trabajo y boletas de trabajo',
-        comingSoon: 'Funcionalidad de boletas de trabajo por venir',
-        description: 'Cree, asigne y rastree boletas de trabajo para su equipo técnico.'
       },
       
       // Help and onboarding
