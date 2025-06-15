@@ -193,14 +193,41 @@ const JobTickets = () => {
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 md:p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-2">
-          {t('manager.jobTickets.title')}
-        </h1>
-        <p className="text-gray-400">
-          {t('manager.jobTickets.subtitle')}
-        </p>
+      {/* Header with Action Buttons */}
+      <div className="mb-8 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold text-white mb-2">
+            {t('manager.jobTickets.title')}
+          </h1>
+          <p className="text-gray-400">
+            {t('manager.jobTickets.subtitle')}
+          </p>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 lg:flex-shrink-0">
+          {/* Create Job Ticket Button */}
+          <button
+            onClick={() => {
+              // TODO: Implement create job ticket functionality
+              console.log('Create Job Ticket clicked - functionality to be implemented');
+            }}
+            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 focus:bg-orange-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+          >
+            Create Job Ticket
+          </button>
+          
+          {/* Create Invoice Button */}
+          <button
+            onClick={() => {
+              // TODO: Implement create invoice functionality
+              console.log('Create Invoice clicked - functionality to be implemented');
+            }}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+          >
+            Create Invoice
+          </button>
+        </div>
       </div>
 
       {/* Status Summary Cards */}
