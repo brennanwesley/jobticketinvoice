@@ -8,6 +8,7 @@ import {
   DocumentTextIcon, 
   CheckIcon,
   EyeIcon,
+  TrashIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import CreateJobTicketModal from './CreateJobTicketModal';
@@ -66,6 +67,30 @@ const JobTickets = () => {
     console.log('📝 Job ticket updated, refreshing list...');
     fetchJobTickets(); // Refresh the entire list
     toast.success(t('manager.jobTickets.messages.editSuccess'));
+  }, [fetchJobTickets, t]);
+
+  // Handle job ticket deletion
+  const handleDeleteJobTicket = useCallback(async (ticketId, ticketNumber) => {
+    try {
+      console.log(`🗑️ Deleting job ticket ${ticketNumber} (ID: ${ticketId})...`);
+      
+      const response = await authenticatedFetch(`/job-tickets/${ticketId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        console.log('✅ Job ticket deleted successfully');
+        toast.success(t('manager.jobTickets.messages.deleteSuccess'));
+        fetchJobTickets(); // Refresh the list
+      } else {
+        const errorText = await response.text();
+        console.error('❌ Delete response error:', response.status, errorText);
+        throw new Error(`Failed to delete job ticket: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('❌ Error deleting job ticket:', error);
+      toast.error(t('manager.jobTickets.messages.deleteError'));
+    }
   }, [fetchJobTickets, t]);
 
   // Load job tickets on component mount
@@ -319,6 +344,17 @@ const JobTickets = () => {
                           title={t('common.view')}
                         >
                           <EyeIcon className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (window.confirm(t('manager.jobTickets.confirmDelete'))) {
+                              handleDeleteJobTicket(ticket.id, ticket.ticket_number);
+                            }
+                          }}
+                          className="text-red-400 hover:text-red-300 p-1 rounded transition-colors duration-200"
+                          title={t('common.delete')}
+                        >
+                          <TrashIcon className="h-4 w-4" />
                         </button>
                       </div>
                     </td>

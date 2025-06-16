@@ -568,7 +568,18 @@ const translations = {
           title: 'Edit Job Ticket',
           subtitle: 'Ticket Number:',
           submit: 'Update Job Ticket'
-        }
+        },
+        
+        // Messages
+        messages: {
+          editSuccess: 'Job ticket updated successfully!',
+          editError: 'Failed to update job ticket. Please try again.',
+          deleteSuccess: 'Job ticket deleted successfully!',
+          deleteError: 'Failed to delete job ticket. Please try again.'
+        },
+        
+        // Confirmation messages
+        confirmDelete: 'Are you sure you want to delete this job ticket? This action cannot be undone.'
       },
       
       // Company Profile Management
@@ -1324,7 +1335,18 @@ const translations = {
           title: 'Editar Boleta de Trabajo',
           subtitle: 'Número de Boleta:',
           submit: 'Actualizar Boleta de Trabajo'
-        }
+        },
+        
+        // Messages
+        messages: {
+          editSuccess: 'Boleta de trabajo actualizada exitosamente!',
+          editError: 'Error al actualizar boleta de trabajo. Por favor, inténtelo de nuevo.',
+          deleteSuccess: 'Boleta de trabajo eliminada exitosamente!',
+          deleteError: 'Error al eliminar boleta de trabajo. Por favor, inténtelo de nuevo.'
+        },
+        
+        // Confirmation messages
+        confirmDelete: '¿Está seguro de que desea eliminar esta boleta de trabajo? Esta acción no se puede deshacer.'
       },
       
       // Company Profile Management
