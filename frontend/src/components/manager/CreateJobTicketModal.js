@@ -84,27 +84,42 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
       const jobTicketNumber = `${currentYear}${randomNumber}`;
       console.log('🎫 Generated job ticket number:', jobTicketNumber);
 
-      // Prepare payload
+      // Prepare payload with all required fields matching backend schema
       const payload = {
-        job_ticket_number: jobTicketNumber,
-        company_name: formData.company_name,
-        customer_name: formData.customer_name,
-        location: formData.location,
-        work_description: formData.work_description,
-        total_work_hours: parseFloat(formData.total_work_hours) || 0,
-        total_travel_hours: parseFloat(formData.total_travel_hours) || 0,
+        // Backend expects job_number, not job_ticket_number
+        job_number: jobTicketNumber,
+        company_name: formData.company_name?.trim(),
+        customer_name: formData.customer_name?.trim(),
+        location: formData.location?.trim(),
+        work_description: formData.work_description?.trim(),
         work_start_time: formData.work_start_time,
         work_end_time: formData.work_end_time,
+        work_total_hours: parseFloat(formData.total_work_hours) || 0,
         drive_start_time: formData.drive_start_time,
         drive_end_time: formData.drive_end_time,
-        additional_notes: formData.additional_notes || '',
-        job_type: 'generic',
+        drive_total_hours: parseFloat(formData.total_travel_hours) || 0,
+        submitted_by: user.name || `${user.first_name} ${user.last_name}` || 'Manager',
         status: 'not_assigned_to_invoice',
-        created_by_role: 'manager',
-        submitted_by: user.name || `${user.first_name} ${user.last_name}` || 'Manager'
+        // Optional fields
+        work_type: 'generic',
+        equipment: '',
+        travel_type: 'roundTrip',
+        parts_used: JSON.stringify([]),
+        additional_notes: formData.additional_notes?.trim() || ''
       };
+      
+      // Validate required fields before sending
+      const requiredFields = ['company_name', 'submitted_by'];
+      const missingFields = requiredFields.filter(field => !payload[field]);
+      
+      if (missingFields.length > 0) {
+        console.error('❌ Missing required fields:', missingFields);
+        throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+      }
+      
       console.log('📦 Prepared payload:', payload);
       console.log('👤 User context:', user);
+      console.log('✅ All required fields present');
 
       // Submit to backend
       console.log('🌐 Making API call to /job-tickets/');
