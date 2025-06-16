@@ -31,7 +31,7 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
       company_name: '',
       customer_name: '',
       location: '',
-      work_description: '',
+      description: '',
       work_start_time: '08:00',
       work_end_time: '17:00',
       drive_start_time: '07:00',
@@ -89,9 +89,9 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         // Backend expects job_number, not job_ticket_number
         job_number: jobTicketNumber,
         company_name: formData.company_name?.trim(),
-        customer_name: formData.customer_name?.trim(),
-        location: formData.location?.trim(),
-        work_description: formData.work_description?.trim(),
+        customer_name: formData.customer_name?.trim() || '',
+        location: formData.location?.trim() || '',
+        work_description: formData.description?.trim() || '', 
         work_start_time: formData.work_start_time,
         work_end_time: formData.work_end_time,
         work_total_hours: parseFloat(formData.total_work_hours) || 0,
@@ -301,18 +301,18 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
 
         {/* Work Description */}
         <div>
-          <label htmlFor="work_description" className="block text-sm font-medium text-gray-300 mb-2">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
             {t('manager.jobTickets.createModal.fields.workDescription')}
           </label>
           <textarea
-            id="work_description"
-            {...register('work_description', { required: 'Work description is required' })}
+            id="description"
+            {...register('description', { required: 'Work description is required' })}
             rows={3}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Describe the work performed"
           />
-          {errors.work_description && (
-            <p className="mt-1 text-sm text-red-400">{errors.work_description.message}</p>
+          {errors.description && (
+            <p className="mt-1 text-sm text-red-400">{errors.description.message}</p>
           )}
         </div>
 
