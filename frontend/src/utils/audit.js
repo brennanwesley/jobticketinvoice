@@ -32,12 +32,11 @@ export const logAuditEvent = async (action, category, details = {}, targetId = n
     const auditData = {
       action,
       category,
-      details: JSON.stringify(details),
+      details: details, // Send as object, not JSON string - backend expects Dict[str, Any]
       target_id: targetId,
       target_type: targetType,
-      timestamp: new Date().toISOString(),
-      user_agent: navigator.userAgent,
-      ip_address: 'client-side' // Will be replaced by server
+      // Remove timestamp and ip_address - backend sets these
+      user_agent: navigator.userAgent
     };
 
     const response = await authenticatedFetch('/audit/log', {

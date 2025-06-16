@@ -1,6 +1,8 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
+from pydantic import ValidationError
 
 from database import get_db
 from models.user import User
@@ -74,26 +76,65 @@ async def create_job_ticket(
     db: Session = Depends(get_db)
 ):
     """Create a new job ticket"""
-    # Create new job ticket with data from request
-    ticket_data = job_ticket.dict()
-    
-    # Only generate a ticket number if the status is 'submitted'
-    # For drafts, we'll generate the ticket number when they're submitted
-    if ticket_data.get("status") == "submitted":
-        ticket_data["ticket_number"] = generate_ticket_number(db)
-    
-    db_job_ticket = JobTicket(
-        **ticket_data,
-        user_id=current_user.id,
-        company_id=current_user.company_id  # Required field - use current user's company
-    )
-    
-    # Save job ticket to database
-    db.add(db_job_ticket)
-    db.commit()
-    db.refresh(db_job_ticket)
-    
-    return db_job_ticket
+    try:
+        print(f"🎫 CREATE JOB TICKET DEBUG - User: {current_user.email} (ID: {current_user.id})")
+        print(f"🎫 User company_id: {current_user.company_id}")
+        
+        # Log the incoming request data
+        ticket_data = job_ticket.dict()
+        print(f"🎫 Incoming job ticket data: {ticket_data}")
+        
+        # Validate required fields
+        if not current_user.company_id:
+            print(f"❌ ERROR: User {current_user.email} has no company_id")
+            raise HTTPException(status_code=400, detail="User must be associated with a company")
+        
+        # Only generate a ticket number if the status is 'submitted'
+        # For drafts, we'll generate the ticket number when they're submitted
+        if ticket_data.get("status") == "submitted":
+            ticket_number = generate_ticket_number(db)
+            ticket_data["ticket_number"] = ticket_number
+            print(f"🎫 Generated ticket number: {ticket_number}")
+        
+        print(f"🎫 Creating JobTicket with data: {ticket_data}")
+        print(f"🎫 Setting user_id: {current_user.id}, company_id: {current_user.company_id}")
+        
+        db_job_ticket = JobTicket(
+            **ticket_data,
+            user_id=current_user.id,
+            company_id=current_user.company_id  # Required field - use current user's company
+        )
+        
+        print(f"🎫 JobTicket object created successfully")
+        
+        # Save job ticket to database
+        db.add(db_job_ticket)
+        print(f"🎫 Added to database session")
+        
+        db.commit()
+        print(f"🎫 Database commit successful")
+        
+        db.refresh(db_job_ticket)
+        print(f"🎫 Database refresh successful")
+        
+        print(f"🎫 Final job ticket: ID={db_job_ticket.id}, ticket_number={db_job_ticket.ticket_number}")
+        
+        return db_job_ticket
+        
+    except ValidationError as e:
+        print(f"❌ VALIDATION ERROR in create_job_ticket: {e}")
+        print(f"❌ Validation details: {e.errors()}")
+        raise HTTPException(status_code=422, detail=f"Validation error: {e}")
+    except IntegrityError as e:
+        print(f"❌ DATABASE INTEGRITY ERROR in create_job_ticket: {e}")
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Database constraint violation: {str(e)}")
+    except Exception as e:
+        print(f"❌ UNEXPECTED ERROR in create_job_ticket: {type(e).__name__}: {e}")
+        import traceback
+        print(f"❌ Full traceback: {traceback.format_exc()}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @router.get("/", response_model=JobTicketList)
 async def get_job_tickets(
