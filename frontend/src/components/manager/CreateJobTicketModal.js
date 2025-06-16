@@ -74,12 +74,15 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
   // Handle form submission
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
+    console.log('🚀 Starting job ticket creation...');
+    console.log('📝 Form data:', formData);
     
     try {
       // Generate job ticket number
       const currentYear = new Date().getFullYear().toString().slice(-2);
       const randomNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
       const jobTicketNumber = `${currentYear}${randomNumber}`;
+      console.log('🎫 Generated job ticket number:', jobTicketNumber);
 
       // Prepare payload
       const payload = {
@@ -103,8 +106,11 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         created_by_role: 'manager',
         status: 'not_assigned_to_invoice'
       };
+      console.log('📦 Prepared payload:', payload);
+      console.log('👤 User context:', user);
 
       // Submit to backend
+      console.log('🌐 Making API call to /job-tickets/');
       const response = await authenticatedFetch('/job-tickets/', {
         method: 'POST',
         headers: {
@@ -112,41 +118,77 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         },
         body: JSON.stringify(payload),
       });
+      
+      console.log('📡 Response received:', {
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries())
+      });
 
       if (!response.ok) {
+        console.log('❌ Response not OK, parsing error...');
         let errorData;
+        let responseText = '';
+        
         try {
-          errorData = await response.json();
-        } catch (jsonError) {
-          // Try to get response as text
-          try {
-            const errorText = await response.text();
-            errorData = { message: errorText || `HTTP ${response.status}: ${response.statusText}` };
-          } catch (textError) {
-            errorData = { message: `HTTP ${response.status}: ${response.statusText}` };
-          }
+          // Clone the response to read it multiple times
+          const responseClone = response.clone();
+          responseText = await responseClone.text();
+          console.log('📄 Raw response text:', responseText);
+          
+          // Try to parse as JSON
+          errorData = JSON.parse(responseText);
+          console.log('📋 Parsed error data:', errorData);
+        } catch (parseError) {
+          console.log('⚠️ Failed to parse response as JSON:', parseError);
+          errorData = { 
+            message: responseText || `HTTP ${response.status}: ${response.statusText}`,
+            status: response.status,
+            statusText: response.statusText
+          };
         }
+        
+        console.log('💥 Throwing error with message:', errorData.message);
         throw new Error(errorData.message || 'Failed to create job ticket');
       }
 
       const newJobTicket = await response.json();
+      console.log('✅ Successfully created job ticket:', newJobTicket);
 
       // Success feedback
       toast.success(t('manager.jobTickets.messages.createSuccess'));
+      console.log('🎉 Success toast shown');
       
       // Notify parent component
       if (onJobTicketCreated) {
+        console.log('📞 Calling onJobTicketCreated callback');
         onJobTicketCreated(newJobTicket);
+      } else {
+        console.log('⚠️ No onJobTicketCreated callback provided');
       }
 
       // Reset form and close modal
+      console.log('🔄 Resetting form and closing modal');
       reset();
       onClose();
+      console.log('✨ Job ticket creation completed successfully');
 
     } catch (error) {
-      console.error('Error creating job ticket:', error);
-      toast.error(error.message || t('manager.jobTickets.messages.createError'));
+      console.error('💀 COMPREHENSIVE ERROR DEBUG:');
+      console.error('Error object:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      console.error('Error name:', error.name);
+      console.error('Error cause:', error.cause);
+      
+      // Show error message to user
+      const errorMessage = error.message || t('manager.jobTickets.messages.createError');
+      console.error('🚨 Showing error toast:', errorMessage);
+      toast.error(errorMessage);
+      
     } finally {
+      console.log('🏁 Setting isSubmitting to false');
       setIsSubmitting(false);
     }
   };

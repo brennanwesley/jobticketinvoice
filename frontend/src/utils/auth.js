@@ -114,31 +114,51 @@ export const getAuthHeaders = () => {
  */
 export const authenticatedFetch = async (endpoint, options = {}) => {
   const token = getToken();
+  console.log('🔐 authenticatedFetch called with:', { endpoint, options });
+  console.log('🎫 Token exists:', !!token);
   
   if (!token) {
+    console.error('❌ No authentication token found');
     throw new Error('No authentication token found');
   }
   
   // Construct the full URL using the config
   // If the endpoint already starts with http, assume it's a full URL
   const url = endpoint.startsWith('http') ? endpoint : `${config.apiUrl}${endpoint}`;
+  console.log('🌐 Full URL constructed:', url);
+  console.log('⚙️ Config API URL:', config.apiUrl);
   
   const headers = {
     ...options.headers,
     'Authorization': `Bearer ${token}`
   };
+  console.log('📋 Request headers:', headers);
+  console.log('📦 Request body:', options.body);
   
   try {
-    console.log(`Making API request to: ${url}`);
+    console.log(`🚀 Making API request to: ${url}`);
     const response = await fetch(url, { ...options, headers });
+    console.log('📡 Raw response received:', {
+      ok: response.ok,
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+      headers: Object.fromEntries(response.headers.entries())
+    });
     return response;
   } catch (error) {
-    console.error(`API request failed for ${url}:`, error);
+    console.error(`💥 API request failed for ${url}:`, error);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
     // Return a mock response object to prevent undefined errors
     return {
       ok: false,
       status: 500,
-      json: async () => ({ error: 'API request failed' })
+      statusText: 'Network Error',
+      json: async () => ({ error: 'API request failed', details: error.message })
     };
   }
 };
