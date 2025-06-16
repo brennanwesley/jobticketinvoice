@@ -99,7 +99,7 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         drive_end_time: formData.drive_end_time,
         drive_total_hours: parseFloat(formData.total_travel_hours) || 0,
         submitted_by: user.name || `${user.first_name} ${user.last_name}` || 'Manager',
-        status: 'not_assigned_to_invoice',
+        status: 'submitted', // Backend only accepts: draft, submitted, complete
         // Optional fields
         work_type: 'generic',
         equipment: '',
