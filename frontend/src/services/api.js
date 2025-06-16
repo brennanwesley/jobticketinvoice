@@ -96,9 +96,9 @@ const apiService = {
   
   // Job Ticket endpoints
   jobTickets: {
-    getAll: () => apiRequest('/job-tickets', 'GET', null, true),
+    getAll: () => apiRequest('/job-tickets/', 'GET', null, true),
     getById: (id) => apiRequest(`/job-tickets/${id}`, 'GET', null, true),
-    create: (ticketData) => apiRequest('/job-tickets', 'POST', ticketData, true),
+    create: (ticketData) => apiRequest('/job-tickets/', 'POST', ticketData, true),
     update: (id, ticketData) => apiRequest(`/job-tickets/${id}`, 'PUT', ticketData, true),
     delete: (id) => apiRequest(`/job-tickets/${id}`, 'DELETE', null, true),
     

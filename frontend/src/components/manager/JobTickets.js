@@ -36,14 +36,16 @@ const JobTickets = () => {
       setError(null);
       
       console.log('🎫 Fetching job tickets...');
-      const response = await authenticatedFetch('/job-tickets?limit=100');
+      const response = await authenticatedFetch('/job-tickets/?limit=100');
       
       if (response.ok) {
         const data = await response.json();
         console.log('✅ Job tickets fetched:', data);
         setJobTickets(data.job_tickets || []);
       } else {
-        throw new Error('Failed to fetch job tickets');
+        const errorText = await response.text();
+        console.error('❌ Response error:', response.status, errorText);
+        throw new Error(`Failed to fetch job tickets: ${response.status}`);
       }
     } catch (error) {
       console.error('❌ Error fetching job tickets:', error);

@@ -20,7 +20,7 @@ const SubmittedTicketList = () => {
     isLoading: loading, 
     error: apiError,
     refetch
-  } = useApiCache('/api/job-tickets?status=submitted', {
+  } = useApiCache('/api/job-tickets/?status=submitted', {
     cacheTime: 3 * 60 * 1000, // 3 minutes cache
     onError: (err) => console.error('Error fetching submitted tickets:', err)
   });

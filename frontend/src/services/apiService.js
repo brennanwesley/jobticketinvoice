@@ -172,7 +172,7 @@ const apiService = {
   jobTickets: {
     getAll: () => 
       ticketsMiddleware(apiRequest, { 
-        endpoint: '/job-tickets', 
+        endpoint: '/job-tickets/', 
         method: 'GET', 
         requiresAuth: true 
       }),
@@ -186,7 +186,7 @@ const apiService = {
       
     create: (ticketData) => 
       ticketsMiddleware(apiRequest, { 
-        endpoint: '/job-tickets', 
+        endpoint: '/job-tickets/', 
         method: 'POST', 
         data: ticketData, 
         requiresAuth: true 
