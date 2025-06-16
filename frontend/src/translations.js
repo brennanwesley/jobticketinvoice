@@ -541,7 +541,7 @@ const translations = {
           editError: 'Failed to update job ticket. Please try again.',
           deleteSuccess: 'Job ticket deleted successfully!',
           deleteError: 'Failed to delete job ticket. Please try again.',
-          loadError: 'Failed to load job tickets. Please try again.'
+          loadError: 'Failed to load job tickets. Please try again.',
         },
         
         // Create Job Ticket Modal
@@ -568,14 +568,6 @@ const translations = {
           title: 'Edit Job Ticket',
           subtitle: 'Ticket Number:',
           submit: 'Update Job Ticket'
-        },
-        
-        // Messages
-        messages: {
-          editSuccess: 'Job ticket updated successfully!',
-          editError: 'Failed to update job ticket. Please try again.',
-          deleteSuccess: 'Job ticket deleted successfully!',
-          deleteError: 'Failed to delete job ticket. Please try again.'
         },
         
         // Confirmation messages
@@ -1335,14 +1327,6 @@ const translations = {
           title: 'Editar Boleta de Trabajo',
           subtitle: 'Número de Boleta:',
           submit: 'Actualizar Boleta de Trabajo'
-        },
-        
-        // Messages
-        messages: {
-          editSuccess: 'Boleta de trabajo actualizada exitosamente!',
-          editError: 'Error al actualizar boleta de trabajo. Por favor, inténtelo de nuevo.',
-          deleteSuccess: 'Boleta de trabajo eliminada exitosamente!',
-          deleteError: 'Error al eliminar boleta de trabajo. Por favor, inténtelo de nuevo.'
         },
         
         // Confirmation messages
