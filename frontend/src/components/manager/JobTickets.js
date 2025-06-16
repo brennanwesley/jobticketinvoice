@@ -260,7 +260,7 @@ const JobTickets = () => {
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-lg">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <CurrencyDollarIcon className="h-8 w-8 text-green-500" />
+              <CheckIcon className="h-8 w-8 text-green-500" />
             </div>
             <div className="ml-4">
               <p className="text-2xl font-bold text-white">{stats.assignedToInvoice}</p>
