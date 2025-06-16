@@ -55,6 +55,7 @@ class JobTicketResponse(JobTicketBase):
     id: int
     user_id: Optional[int] = None
     ticket_number: Optional[str] = None  # Include ticket_number in the response
+    submitted_by_name: Optional[str] = None  # User's name who submitted the ticket
     created_at: datetime
     updated_at: Optional[datetime] = None
     

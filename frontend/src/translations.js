@@ -498,13 +498,15 @@ const translations = {
             ticketNumber: 'Ticket Number',
             submittedBy: 'Submitted By',
             customerName: 'Customer Name',
+            companyName: 'Company Name',
             workHours: 'Work Hours',
             travelHours: 'Travel Hours',
             invoiceLink: 'Invoice Status',
             actions: 'Actions'
           },
           placeholders: {
-            customerName: 'Enter customer name'
+            customerName: 'Enter customer name',
+            companyName: 'Enter company name'
           },
           status: {
             linked: 'Linked',
@@ -1242,14 +1244,16 @@ const translations = {
           headers: {
             ticketNumber: 'Número de Boleta',
             submittedBy: 'Enviado Por',
-            customerName: 'Nombre del Cliente',
+            customerName: 'Nombre de la Empresa',
+            companyName: 'Nombre de la Empresa',
             workHours: 'Horas de Trabajo',
             travelHours: 'Horas de Viaje',
             invoiceLink: 'Estado de Factura',
             actions: 'Acciones'
           },
           placeholders: {
-            customerName: 'Ingrese nombre del cliente'
+            customerName: 'Ingrese nombre del cliente',
+            companyName: 'Ingrese nombre de la empresa'
           },
           status: {
             linked: 'Enlazada',

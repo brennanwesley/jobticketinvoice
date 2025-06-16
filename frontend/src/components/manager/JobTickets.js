@@ -33,7 +33,7 @@ const JobTickets = () => {
   const [editForm, setEditForm] = useState({
     work_total_hours: '',
     drive_total_hours: '',
-    customer_name: ''
+    company_name: ''
   });
   const [showCreateModal, setShowCreateModal] = useState(false);
 
@@ -100,7 +100,7 @@ const JobTickets = () => {
     setEditForm({
       work_total_hours: ticket.work_total_hours || '',
       drive_total_hours: ticket.drive_total_hours || '',
-      customer_name: ticket.customer_name || ''
+      company_name: ticket.company_name || ''
     });
   };
 
@@ -115,7 +115,7 @@ const JobTickets = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          customer_name: editForm.customer_name,
+          company_name: editForm.company_name,
           work_total_hours: parseFloat(editForm.work_total_hours) || 0,
           drive_total_hours: parseFloat(editForm.drive_total_hours) || 0,
         }),
@@ -129,7 +129,7 @@ const JobTickets = () => {
           )
         );
         setEditingTicket(null);
-        setEditForm({ work_total_hours: '', drive_total_hours: '', customer_name: '' });
+        setEditForm({ work_total_hours: '', drive_total_hours: '', company_name: '' });
         toast.success(t('manager.jobTickets.messages.editSuccess'));
       } else {
         throw new Error('Failed to update ticket');
@@ -146,7 +146,7 @@ const JobTickets = () => {
     setEditForm({
       work_total_hours: '',
       drive_total_hours: '',
-      customer_name: ''
+      company_name: ''
     });
   };
 
@@ -324,7 +324,7 @@ const JobTickets = () => {
                     {t('manager.jobTickets.table.headers.submittedBy')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    {t('manager.jobTickets.table.headers.customerName')}
+                    {t('manager.jobTickets.table.headers.companyName')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider hidden sm:table-cell">
                     {t('manager.jobTickets.table.headers.workHours')}
@@ -353,13 +353,13 @@ const JobTickets = () => {
                       {editingTicket === ticket.id ? (
                         <input
                           type="text"
-                          value={editForm.customer_name}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, customer_name: e.target.value }))}
+                          value={editForm.company_name}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, company_name: e.target.value }))}
                           className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('manager.jobTickets.table.placeholders.customerName')}
+                          placeholder={t('manager.jobTickets.table.placeholders.companyName')}
                         />
                       ) : (
-                        ticket.customer_name || t('common.notAvailable')
+                        ticket.company_name || t('common.notAvailable')
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 hidden sm:table-cell">

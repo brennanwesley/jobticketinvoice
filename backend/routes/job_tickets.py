@@ -243,10 +243,10 @@ async def get_job_tickets(
     print(f"   - Limit: {limit}")
     print(f"   - Status Filter: {status}")
     
-    # Start with base query
-    query = db.query(JobTicket)
+    # Start with base query and join with User table to get submitted_by_name
+    query = db.query(JobTicket).outerjoin(User, JobTicket.user_id == User.id)
     print(f"\n🗄️ BUILDING QUERY:")
-    print(f"   - Base query created")
+    print(f"   - Base query created with User join")
     
     # Apply company-level filtering for multi-tenancy
     if current_user.company_id:
@@ -291,12 +291,44 @@ async def get_job_tickets(
         for i, ticket in enumerate(all_tickets):
             print(f"   [{i+1}] ID: {ticket.id}, Company ID: {getattr(ticket, 'company_id', 'None')}, User ID: {getattr(ticket, 'user_id', 'None')}, Status: {getattr(ticket, 'status', 'None')}")
     
+    # Add submitted_by_name to each ticket
+    enriched_tickets = []
+    for ticket in job_tickets:
+        # Convert to dict to add the submitted_by_name field
+        ticket_dict = {
+            "id": ticket.id,
+            "user_id": ticket.user_id,
+            "company_id": ticket.company_id,
+            "job_number": ticket.job_number,
+            "ticket_number": ticket.ticket_number,
+            "company_name": ticket.company_name,
+            "customer_name": ticket.customer_name,
+            "location": ticket.location,
+            "work_type": ticket.work_type,
+            "equipment": ticket.equipment,
+            "work_start_time": ticket.work_start_time,
+            "work_end_time": ticket.work_end_time,
+            "work_total_hours": ticket.work_total_hours,
+            "drive_start_time": ticket.drive_start_time,
+            "drive_end_time": ticket.drive_end_time,
+            "drive_total_hours": ticket.drive_total_hours,
+            "travel_type": ticket.travel_type,
+            "parts_used": ticket.parts_used,
+            "work_description": ticket.work_description,
+            "submitted_by": ticket.submitted_by,
+            "submitted_by_name": ticket.user.name if ticket.user else None,
+            "status": ticket.status,
+            "created_at": ticket.created_at,
+            "updated_at": ticket.updated_at
+        }
+        enriched_tickets.append(ticket_dict)
+    
     print(f"\n✅ RETURNING RESPONSE:")
     print(f"   - Total: {total}")
-    print(f"   - Items: {len(job_tickets)}")
+    print(f"   - Items: {len(enriched_tickets)}")
     print(f"{'='*80}\n")
     
-    return {"job_tickets": job_tickets, "total": total}
+    return {"job_tickets": enriched_tickets, "total": total}
 
 @router.get("/{job_ticket_id}", response_model=JobTicketResponse)
 async def get_job_ticket(
