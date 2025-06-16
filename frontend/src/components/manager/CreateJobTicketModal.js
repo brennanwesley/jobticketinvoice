@@ -87,24 +87,21 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
       // Prepare payload
       const payload = {
         job_ticket_number: jobTicketNumber,
-        submitted_by: user.name || `${user.first_name} ${user.last_name}`,
         company_name: formData.company_name,
         customer_name: formData.customer_name,
         location: formData.location,
         work_description: formData.work_description,
         total_work_hours: parseFloat(formData.total_work_hours) || 0,
         total_travel_hours: parseFloat(formData.total_travel_hours) || 0,
+        work_start_time: formData.work_start_time,
+        work_end_time: formData.work_end_time,
+        drive_start_time: formData.drive_start_time,
+        drive_end_time: formData.drive_end_time,
+        additional_notes: formData.additional_notes || '',
         job_type: 'generic',
-        form_data: {
-          work_start_time: formData.work_start_time,
-          work_end_time: formData.work_end_time,
-          drive_start_time: formData.drive_start_time,
-          drive_end_time: formData.drive_end_time,
-          parts: formData.parts || [],
-          additional_notes: formData.additional_notes || ''
-        },
+        status: 'not_assigned_to_invoice',
         created_by_role: 'manager',
-        status: 'not_assigned_to_invoice'
+        submitted_by: user.name || `${user.first_name} ${user.last_name}` || 'Manager'
       };
       console.log('📦 Prepared payload:', payload);
       console.log('👤 User context:', user);
@@ -128,6 +125,9 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
 
       if (!response.ok) {
         console.log('❌ Response not OK, parsing error...');
+        console.log('📊 Response status:', response.status);
+        console.log('📋 Response status text:', response.statusText);
+        
         let errorData;
         let responseText = '';
         
@@ -140,6 +140,16 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
           // Try to parse as JSON
           errorData = JSON.parse(responseText);
           console.log('📋 Parsed error data:', errorData);
+          
+          // For 422 errors, show detailed validation errors
+          if (response.status === 422) {
+            console.log('🚫 VALIDATION ERROR (422) - Backend rejected payload:');
+            console.log('Validation details:', errorData);
+            if (errorData.detail) {
+              console.log('Field validation errors:', errorData.detail);
+            }
+          }
+          
         } catch (parseError) {
           console.log('⚠️ Failed to parse response as JSON:', parseError);
           errorData = { 
@@ -150,7 +160,18 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         }
         
         console.log('💥 Throwing error with message:', errorData.message);
-        throw new Error(errorData.message || 'Failed to create job ticket');
+        
+        // Create more specific error message for 422
+        let errorMessage = errorData.message || 'Failed to create job ticket';
+        if (response.status === 422) {
+          errorMessage = 'Validation error: Please check all required fields are filled correctly';
+          if (errorData.detail && Array.isArray(errorData.detail)) {
+            const fieldErrors = errorData.detail.map(err => `${err.loc?.join('.')}: ${err.msg}`).join(', ');
+            errorMessage = `Validation errors: ${fieldErrors}`;
+          }
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const newJobTicket = await response.json();
