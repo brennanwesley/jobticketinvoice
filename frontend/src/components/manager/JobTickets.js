@@ -31,37 +31,40 @@ const JobTickets = () => {
 
   // Fetch job tickets from API
   const fetchJobTickets = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    
     try {
-      const response = await authenticatedFetch('/job-tickets/');
+      setLoading(true);
+      setError(null);
+      
+      console.log('🎫 Fetching job tickets...');
+      const response = await authenticatedFetch('/job-tickets?limit=100');
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ Job tickets fetched:', data);
         setJobTickets(data.job_tickets || []);
       } else {
         throw new Error('Failed to fetch job tickets');
       }
     } catch (error) {
-      console.error('Error fetching job tickets:', error);
-      setError(t('manager.jobTickets.messages.errorLoading'));
-      toast.error(t('manager.jobTickets.messages.errorLoading'));
+      console.error('❌ Error fetching job tickets:', error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, []);
 
-  // Handle job ticket creation
-  const handleJobTicketCreated = useCallback(async (newJobTicket) => {
-    try {
-      // Refresh the job tickets list to include the new ticket
-      await fetchJobTickets();
-    } catch (error) {
-      console.error('Error refreshing job tickets after creation:', error);
-      // Still show success since the ticket was created, just refresh manually
-      toast.info('Job ticket created! Please refresh the page to see it in the list.');
-    }
+  // Handle job ticket created
+  const handleJobTicketCreated = useCallback((newJobTicket) => {
+    console.log('🆕 Job ticket created, refreshing list...');
+    fetchJobTickets(); // Refresh the entire list
   }, [fetchJobTickets]);
+
+  // Handle job ticket updated
+  const handleJobTicketUpdated = useCallback((updatedTicket) => {
+    console.log('📝 Job ticket updated, refreshing list...');
+    fetchJobTickets(); // Refresh the entire list
+    toast.success(t('manager.jobTickets.messages.editSuccess'));
+  }, [fetchJobTickets, t]);
 
   // Load job tickets on component mount
   useEffect(() => {
@@ -81,11 +84,6 @@ const JobTickets = () => {
     };
   }, [jobTickets]);
 
-  // Validate manager access
-  if (!validateAccess()) {
-    return null;
-  }
-
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return '-';
@@ -97,6 +95,41 @@ const JobTickets = () => {
     if (!hours) return '0';
     return parseFloat(hours).toFixed(1);
   };
+
+  // Manager access check
+  const { loading: accessLoading, error: accessError } = useManagerAccess();
+
+  if (accessLoading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-white">{t('common.loading')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (accessError) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-400 mb-4">Access Denied</h2>
+          <p className="text-gray-300 mb-4">{accessError}</p>
+          <button
+            onClick={() => window.history.back()}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+          >
+            {t('common.goHome')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!validateAccess()) {
+    return null;
+  }
 
   const stats = getStatusStats();
 
@@ -110,13 +143,6 @@ const JobTickets = () => {
       </div>
     );
   }
-
-  // Handle job ticket updated
-  const handleJobTicketUpdated = useCallback((updatedTicket) => {
-    console.log(' Job ticket updated, refreshing list...');
-    fetchJobTickets(); // Refresh the entire list
-    toast.success(t('manager.jobTickets.messages.editSuccess'));
-  }, [fetchJobTickets, t]);
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 md:p-6">

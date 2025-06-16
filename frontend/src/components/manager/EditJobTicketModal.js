@@ -135,10 +135,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
           {/* Company Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="companyName" className="block text-sm font-medium text-gray-300 mb-2">
                 {t('manager.jobTickets.createModal.fields.companyName')} *
               </label>
               <input
+                id="companyName"
                 type="text"
                 {...register('companyName', { required: 'Company name is required' })}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -150,10 +151,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="customerName" className="block text-sm font-medium text-gray-300 mb-2">
                 {t('manager.jobTickets.createModal.fields.customerName')}
               </label>
               <input
+                id="customerName"
                 type="text"
                 {...register('customerName')}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -165,10 +167,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
           {/* Location and Work Type */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-2">
                 {t('manager.jobTickets.createModal.fields.location')} *
               </label>
               <input
+                id="location"
                 type="text"
                 {...register('location', { required: 'Location is required' })}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -180,10 +183,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="workType" className="block text-sm font-medium text-gray-300 mb-2">
                 Work Type
               </label>
               <input
+                id="workType"
                 type="text"
                 {...register('workType')}
                 className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -194,10 +198,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
 
           {/* Equipment */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="equipment" className="block text-sm font-medium text-gray-300 mb-2">
               Equipment
             </label>
             <input
+              id="equipment"
               type="text"
               {...register('equipment')}
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -207,10 +212,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
 
           {/* Work Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="workDescription" className="block text-sm font-medium text-gray-300 mb-2">
               {t('manager.jobTickets.createModal.fields.workDescription')} *
             </label>
             <textarea
+              id="workDescription"
               {...register('workDescription', { required: 'Work description is required' })}
               rows={4}
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -227,10 +233,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
               <h3 className="text-lg font-medium text-white">Work Time</h3>
               
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="workStartTime" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('manager.jobTickets.createModal.fields.workStartTime')}
                 </label>
                 <input
+                  id="workStartTime"
                   type="time"
                   {...register('workStartTime')}
                   className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -238,10 +245,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="workEndTime" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('manager.jobTickets.createModal.fields.workEndTime')}
                 </label>
                 <input
+                  id="workEndTime"
                   type="time"
                   {...register('workEndTime')}
                   className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -249,10 +257,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="totalWorkHours" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('manager.jobTickets.createModal.fields.totalWorkHours')}
                 </label>
                 <input
+                  id="totalWorkHours"
                   type="number"
                   step="0.5"
                   min="0"
@@ -267,10 +276,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
               <h3 className="text-lg font-medium text-white">Travel Time</h3>
               
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="driveStartTime" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('manager.jobTickets.createModal.fields.driveStartTime')}
                 </label>
                 <input
+                  id="driveStartTime"
                   type="time"
                   {...register('driveStartTime')}
                   className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -278,10 +288,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="driveEndTime" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('manager.jobTickets.createModal.fields.driveEndTime')}
                 </label>
                 <input
+                  id="driveEndTime"
                   type="time"
                   {...register('driveEndTime')}
                   className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -289,10 +300,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="totalTravelHours" className="block text-sm font-medium text-gray-300 mb-2">
                   {t('manager.jobTickets.createModal.fields.totalTravelHours')}
                 </label>
                 <input
+                  id="totalTravelHours"
                   type="number"
                   step="0.5"
                   min="0"
@@ -306,10 +318,11 @@ const EditJobTicketModal = ({ isOpen, onClose, jobTicket, onJobTicketUpdated }) 
 
           {/* Additional Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="additionalNotes" className="block text-sm font-medium text-gray-300 mb-2">
               {t('manager.jobTickets.createModal.fields.additionalNotes')}
             </label>
             <textarea
+              id="additionalNotes"
               {...register('additionalNotes')}
               rows={3}
               className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
