@@ -84,7 +84,8 @@ async def create_job_ticket(
     
     db_job_ticket = JobTicket(
         **ticket_data,
-        user_id=current_user.id
+        user_id=current_user.id,
+        company_id=current_user.company_id  # Required field - use current user's company
     )
     
     # Save job ticket to database
