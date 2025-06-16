@@ -224,24 +224,77 @@ async def get_job_tickets(
     db: Session = Depends(get_db)
 ):
     """Get all job tickets (filtered by user role)"""
+    from datetime import datetime
+    
+    print(f"\n{'='*80}")
+    print(f"🔍 GET JOB TICKETS REQUEST - TIMESTAMP: {datetime.now().isoformat()}")
+    print(f"{'='*80}")
+    
+    # Log user context
+    print(f"\n👤 USER CONTEXT:")
+    print(f"   - User ID: {current_user.id}")
+    print(f"   - User Email: {current_user.email}")
+    print(f"   - User Role: {current_user.role}")
+    print(f"   - Company ID: {current_user.company_id}")
+    
+    # Log request parameters
+    print(f"\n📋 REQUEST PARAMETERS:")
+    print(f"   - Skip: {skip}")
+    print(f"   - Limit: {limit}")
+    print(f"   - Status Filter: {status}")
+    
     # Start with base query
     query = db.query(JobTicket)
+    print(f"\n🗄️ BUILDING QUERY:")
+    print(f"   - Base query created")
+    
+    # Apply company-level filtering for multi-tenancy
+    if current_user.company_id:
+        query = query.filter(JobTicket.company_id == current_user.company_id)
+        print(f"   - Added company filter: company_id = {current_user.company_id}")
+    else:
+        print(f"   - ⚠️ No company_id found for user")
     
     # Apply status filter if provided
     if status:
         query = query.filter(JobTicket.status == status)
+        print(f"   - Added status filter: status = {status}")
     
     # Filter by user role
     if current_user.role == "tech":
         # Techs can only see their own tickets
         query = query.filter(JobTicket.user_id == current_user.id)
-    # Managers and admins can see all tickets
+        print(f"   - Added tech filter: user_id = {current_user.id}")
+    # Managers and admins can see all tickets from their company
     
     # Get total count
     total = query.count()
+    print(f"\n📊 QUERY RESULTS:")
+    print(f"   - Total matching tickets: {total}")
     
     # Apply pagination
     job_tickets = query.offset(skip).limit(limit).all()
+    print(f"   - Tickets after pagination: {len(job_tickets)}")
+    
+    # Log each ticket found
+    print(f"\n🎫 TICKETS FOUND:")
+    for i, ticket in enumerate(job_tickets):
+        print(f"   [{i+1}] ID: {ticket.id}, Number: {getattr(ticket, 'ticket_number', 'None')}, Company: {getattr(ticket, 'company_name', 'None')}, Status: {getattr(ticket, 'status', 'None')}")
+    
+    if not job_tickets:
+        print(f"   ❌ No tickets found!")
+        
+        # Debug: Check if there are ANY tickets in the database
+        all_tickets = db.query(JobTicket).all()
+        print(f"\n🔍 DEBUG - ALL TICKETS IN DATABASE:")
+        print(f"   - Total tickets in DB: {len(all_tickets)}")
+        for i, ticket in enumerate(all_tickets):
+            print(f"   [{i+1}] ID: {ticket.id}, Company ID: {getattr(ticket, 'company_id', 'None')}, User ID: {getattr(ticket, 'user_id', 'None')}, Status: {getattr(ticket, 'status', 'None')}")
+    
+    print(f"\n✅ RETURNING RESPONSE:")
+    print(f"   - Total: {total}")
+    print(f"   - Items: {len(job_tickets)}")
+    print(f"{'='*80}\n")
     
     return {"job_tickets": job_tickets, "total": total}
 
