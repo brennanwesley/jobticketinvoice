@@ -131,11 +131,11 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         body: JSON.stringify(payload),
       });
       
-      console.log('📡 Response received:', {
+      console.log('📡 Raw response received:', {
         ok: response.ok,
         status: response.status,
         statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries())
+        headers: response.headers ? Object.fromEntries(response.headers.entries()) : 'Headers not available (CORS error)'
       });
 
       if (!response.ok) {
