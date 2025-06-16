@@ -46,7 +46,7 @@ const JobTickets = () => {
       const response = await authenticatedFetch('/job-tickets/');
       if (response.ok) {
         const data = await response.json();
-        setJobTickets(data.items || []);
+        setJobTickets(data.job_tickets || []);
       } else {
         throw new Error('Failed to fetch job tickets');
       }
