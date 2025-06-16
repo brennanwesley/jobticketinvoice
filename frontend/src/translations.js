@@ -10,12 +10,13 @@ const translations = {
     // Common translations
     common: {
       loading: 'Loading...',
-      creating: 'Creating...',
       back: 'Back',
       cancel: 'Cancel',
       confirm: 'Confirm',
       save: 'Save',
+      saving: 'Saving...',
       edit: 'Edit',
+      view: 'View',
       delete: 'Delete',
       retry: 'Retry',
       notAvailable: 'N/A',
@@ -534,13 +535,13 @@ const translations = {
         
         // Messages and notifications
         messages: {
-          errorLoading: 'Error loading job tickets. Please try again.',
-          editSuccess: 'Job ticket updated successfully',
-          editError: 'Error updating job ticket. Please try again.',
-          deleteSuccess: 'Job ticket deleted successfully',
-          deleteError: 'Error deleting job ticket. Please try again.',
-          createSuccess: 'Job ticket created successfully',
-          createError: 'Error creating job ticket. Please try again.'
+          createSuccess: 'Job ticket created successfully!',
+          createError: 'Failed to create job ticket. Please try again.',
+          editSuccess: 'Job ticket updated successfully!',
+          editError: 'Failed to update job ticket. Please try again.',
+          deleteSuccess: 'Job ticket deleted successfully!',
+          deleteError: 'Failed to delete job ticket. Please try again.',
+          loadError: 'Failed to load job tickets. Please try again.'
         },
         
         // Create Job Ticket Modal
@@ -560,6 +561,13 @@ const translations = {
             totalTravelHours: 'Total Travel Hours',
             additionalNotes: 'Additional Notes'
           }
+        },
+        
+        // Edit Job Ticket Modal
+        editModal: {
+          title: 'Edit Job Ticket',
+          subtitle: 'Ticket Number:',
+          submit: 'Update Job Ticket'
         }
       },
       
@@ -761,7 +769,9 @@ const translations = {
       cancel: 'Cancelar',
       confirm: 'Confirmar',
       save: 'Guardar',
+      saving: 'Guardando...',
       edit: 'Editar',
+      view: 'Ver',
       delete: 'Eliminar',
       retry: 'Reintentar',
       notAvailable: 'No disponible',
@@ -1281,13 +1291,13 @@ const translations = {
         
         // Messages and notifications
         messages: {
-          errorLoading: 'Error al cargar boletas de trabajo. Por favor, inténtelo de nuevo.',
-          editSuccess: 'Boleta de trabajo actualizada exitosamente',
+          createSuccess: 'Boleta de trabajo creada exitosamente!',
+          createError: 'Error al crear boleta de trabajo. Por favor, inténtelo de nuevo.',
+          editSuccess: 'Boleta de trabajo actualizada exitosamente!',
           editError: 'Error al actualizar boleta de trabajo. Por favor, inténtelo de nuevo.',
-          deleteSuccess: 'Boleta de trabajo eliminada exitosamente',
+          deleteSuccess: 'Boleta de trabajo eliminada exitosamente!',
           deleteError: 'Error al eliminar boleta de trabajo. Por favor, inténtelo de nuevo.',
-          createSuccess: 'Boleta de trabajo creada exitosamente',
-          createError: 'Error al crear boleta de trabajo. Por favor, inténtelo de nuevo.'
+          loadError: 'Error al cargar boletas de trabajo. Por favor, inténtelo de nuevo.'
         },
         
         // Create Job Ticket Modal
@@ -1307,6 +1317,13 @@ const translations = {
             totalTravelHours: 'Total de Horas de Viaje',
             additionalNotes: 'Notas Adicionales'
           }
+        },
+        
+        // Edit Job Ticket Modal
+        editModal: {
+          title: 'Editar Boleta de Trabajo',
+          subtitle: 'Número de Boleta:',
+          submit: 'Actualizar Boleta de Trabajo'
         }
       },
       

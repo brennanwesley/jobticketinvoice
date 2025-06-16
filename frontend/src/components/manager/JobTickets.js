@@ -6,14 +6,12 @@ import { toast } from 'react-toastify';
 import { 
   ClipboardDocumentListIcon, 
   DocumentTextIcon, 
-  CurrencyDollarIcon,
-  PencilIcon,
-  TrashIcon,
-  XMarkIcon,
   CheckIcon,
+  EyeIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import CreateJobTicketModal from './CreateJobTicketModal';
+import EditJobTicketModal from './EditJobTicketModal';
 
 /**
  * Job Tickets Management Component
@@ -27,15 +25,9 @@ const JobTickets = () => {
   const [jobTickets, setJobTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingTicket, setEditingTicket] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [ticketToDelete, setTicketToDelete] = useState(null);
-  const [editForm, setEditForm] = useState({
-    work_total_hours: '',
-    drive_total_hours: '',
-    company_name: ''
-  });
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   // Fetch job tickets from API
   const fetchJobTickets = useCallback(async () => {
@@ -94,92 +86,6 @@ const JobTickets = () => {
     return null;
   }
 
-  // Handle edit ticket
-  const handleEditTicket = (ticket) => {
-    setEditingTicket(ticket.id);
-    setEditForm({
-      work_total_hours: ticket.work_total_hours || '',
-      drive_total_hours: ticket.drive_total_hours || '',
-      company_name: ticket.company_name || ''
-    });
-  };
-
-  // Handle save edit
-  const handleSaveEdit = async (ticketId) => {
-    if (!ticketId) return;
-
-    try {
-      const response = await authenticatedFetch(`/job-tickets/${ticketId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          company_name: editForm.company_name,
-          work_total_hours: parseFloat(editForm.work_total_hours) || 0,
-          drive_total_hours: parseFloat(editForm.drive_total_hours) || 0,
-        }),
-      });
-
-      if (response.ok) {
-        const updatedTicket = await response.json();
-        setJobTickets(prev => 
-          prev.map(ticket => 
-            ticket.id === ticketId ? { ...ticket, ...updatedTicket } : ticket
-          )
-        );
-        setEditingTicket(null);
-        setEditForm({ work_total_hours: '', drive_total_hours: '', company_name: '' });
-        toast.success(t('manager.jobTickets.messages.editSuccess'));
-      } else {
-        throw new Error('Failed to update ticket');
-      }
-    } catch (error) {
-      console.error('Error updating job ticket:', error);
-      toast.error(t('manager.jobTickets.messages.editError'));
-    }
-  };
-
-  // Handle cancel edit
-  const handleCancelEdit = () => {
-    setEditingTicket(null);
-    setEditForm({
-      work_total_hours: '',
-      drive_total_hours: '',
-      company_name: ''
-    });
-  };
-
-  // Handle delete ticket
-  const handleDeleteTicket = (ticket) => {
-    setTicketToDelete(ticket);
-    setShowDeleteModal(true);
-  };
-
-  // Confirm delete ticket
-  const confirmDeleteTicket = async () => {
-    if (!ticketToDelete) return;
-
-    try {
-      const response = await authenticatedFetch(`/job-tickets/${ticketToDelete.id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setJobTickets(prev => prev.filter(ticket => ticket.id !== ticketToDelete.id));
-        toast.success(t('manager.jobTickets.messages.deleteSuccess'));
-      } else {
-        throw new Error('Failed to delete ticket');
-      }
-    } catch (error) {
-      console.error('Error deleting ticket:', error);
-      toast.error(t('manager.jobTickets.messages.deleteError'));
-    } finally {
-      setShowDeleteModal(false);
-      setTicketToDelete(null);
-    }
-  };
-
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return '-';
@@ -204,6 +110,13 @@ const JobTickets = () => {
       </div>
     );
   }
+
+  // Handle job ticket updated
+  const handleJobTicketUpdated = useCallback((updatedTicket) => {
+    console.log(' Job ticket updated, refreshing list...');
+    fetchJobTickets(); // Refresh the entire list
+    toast.success(t('manager.jobTickets.messages.editSuccess'));
+  }, [fetchJobTickets, t]);
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 md:p-6">
@@ -294,7 +207,7 @@ const JobTickets = () => {
         {error ? (
           <div className="flex flex-col items-center justify-center py-12">
             <ExclamationTriangleIcon className="h-12 w-12 text-red-500 mb-4" />
-            <p className="text-red-400 mb-4">{t('manager.jobTickets.messages.errorLoading')}</p>
+            <p className="text-red-400 mb-4">{t('manager.jobTickets.messages.loadError')}</p>
             <button
               onClick={fetchJobTickets}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
@@ -350,45 +263,13 @@ const JobTickets = () => {
                       {ticket.submitted_by_name || t('common.notAvailable')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      {editingTicket === ticket.id ? (
-                        <input
-                          type="text"
-                          value={editForm.company_name}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, company_name: e.target.value }))}
-                          className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={t('manager.jobTickets.table.placeholders.companyName')}
-                        />
-                      ) : (
-                        ticket.company_name || t('common.notAvailable')
-                      )}
+                      {ticket.company_name || t('common.notAvailable')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 hidden sm:table-cell">
-                      {editingTicket === ticket.id ? (
-                        <input
-                          type="number"
-                          step="0.5"
-                          min="0"
-                          value={editForm.work_total_hours}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, work_total_hours: e.target.value }))}
-                          className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      ) : (
-                        formatHours(ticket.work_total_hours)
-                      )}
+                      {formatHours(ticket.work_total_hours)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 hidden sm:table-cell">
-                      {editingTicket === ticket.id ? (
-                        <input
-                          type="number"
-                          step="0.5"
-                          min="0"
-                          value={editForm.drive_total_hours}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, drive_total_hours: e.target.value }))}
-                          className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm w-20 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      ) : (
-                        formatHours(ticket.drive_total_hours)
-                      )}
+                      {formatHours(ticket.drive_total_hours)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -401,41 +282,16 @@ const JobTickets = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       <div className="flex items-center space-x-2">
-                        {editingTicket === ticket.id ? (
-                          <>
-                            <button
-                              onClick={() => handleSaveEdit(ticket.id)}
-                              className="text-green-400 hover:text-green-300 p-1 rounded transition-colors duration-200"
-                              title={t('common.save')}
-                            >
-                              <CheckIcon className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              className="text-gray-400 hover:text-gray-300 p-1 rounded transition-colors duration-200"
-                              title={t('common.cancel')}
-                            >
-                              <XMarkIcon className="h-4 w-4" />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => handleEditTicket(ticket)}
-                              className="text-blue-400 hover:text-blue-300 p-1 rounded transition-colors duration-200"
-                              title={t('common.edit')}
-                            >
-                              <PencilIcon className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteTicket(ticket)}
-                              className="text-red-400 hover:text-red-300 p-1 rounded transition-colors duration-200"
-                              title={t('common.delete')}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </>
-                        )}
+                        <button
+                          onClick={() => {
+                            setSelectedTicket(ticket);
+                            setShowEditModal(true);
+                          }}
+                          className="text-orange-400 hover:text-orange-300 p-1 rounded transition-colors duration-200"
+                          title={t('common.view')}
+                        >
+                          <EyeIcon className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -446,44 +302,22 @@ const JobTickets = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && ticketToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md border border-gray-700">
-            <div className="flex items-center mb-4">
-              <ExclamationTriangleIcon className="h-6 w-6 text-red-500 mr-3" />
-              <h3 className="text-lg font-semibold text-white">
-                {t('manager.jobTickets.deleteModal.title')}
-              </h3>
-            </div>
-            <p className="text-gray-300 mb-6">
-              {t('manager.jobTickets.deleteModal.message', { ticketNumber: ticketToDelete.ticket_number })}
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setTicketToDelete(null);
-                }}
-                className="px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                onClick={confirmDeleteTicket}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200"
-              >
-                {t('common.delete')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       {showCreateModal && (
         <CreateJobTicketModal 
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)} 
           onJobTicketCreated={handleJobTicketCreated} 
+        />
+      )}
+      {showEditModal && selectedTicket && (
+        <EditJobTicketModal 
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedTicket(null);
+          }} 
+          jobTicket={selectedTicket}
+          onJobTicketUpdated={handleJobTicketUpdated}
         />
       )}
     </div>
