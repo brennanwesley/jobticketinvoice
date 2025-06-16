@@ -20,6 +20,7 @@ class JobTicket(Base):
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     job_number = Column(String, index=True)
     ticket_number = Column(String(8), index=True, unique=True)
+    company_name = Column(String, nullable=False)  # Customer company name
     customer_name = Column(String)
     
     # Add a unique constraint to ensure ticket_number is unique

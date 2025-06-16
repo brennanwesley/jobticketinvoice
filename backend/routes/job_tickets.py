@@ -76,65 +76,144 @@ async def create_job_ticket(
     db: Session = Depends(get_db)
 ):
     """Create a new job ticket"""
+    import traceback
+    from datetime import datetime
+    
+    # COMPREHENSIVE LOGGING START
+    timestamp = datetime.now().isoformat()
+    print(f"\n{'='*80}")
+    print(f"🎫 CREATE JOB TICKET DEBUG - TIMESTAMP: {timestamp}")
+    print(f"{'='*80}")
+    
     try:
-        print(f"🎫 CREATE JOB TICKET DEBUG - User: {current_user.email} (ID: {current_user.id})")
-        print(f"🎫 User company_id: {current_user.company_id}")
+        # 1. LOG USER CONTEXT
+        print(f"👤 USER CONTEXT:")
+        print(f"   - Email: {current_user.email}")
+        print(f"   - ID: {current_user.id}")
+        print(f"   - Company ID: {current_user.company_id}")
+        print(f"   - Role: {getattr(current_user, 'role', 'Unknown')}")
+        print(f"   - First Name: {getattr(current_user, 'first_name', 'Unknown')}")
+        print(f"   - Last Name: {getattr(current_user, 'last_name', 'Unknown')}")
         
-        # Log the incoming request data
+        # 2. LOG INCOMING REQUEST DATA
+        print(f"\n📦 INCOMING REQUEST DATA:")
         ticket_data = job_ticket.dict()
-        print(f"🎫 Incoming job ticket data: {ticket_data}")
+        for key, value in ticket_data.items():
+            print(f"   - {key}: {repr(value)} (type: {type(value).__name__})")
         
-        # Validate required fields
+        # 3. VALIDATE USER COMPANY
         if not current_user.company_id:
-            print(f"❌ ERROR: User {current_user.email} has no company_id")
+            error_msg = f"User {current_user.email} has no company_id"
+            print(f"❌ VALIDATION ERROR: {error_msg}")
             raise HTTPException(status_code=400, detail="User must be associated with a company")
         
-        # Only generate a ticket number if the status is 'submitted'
-        # For drafts, we'll generate the ticket number when they're submitted
+        # 4. VALIDATE REQUIRED FIELDS
+        print(f"\n🔍 SCHEMA VALIDATION:")
+        required_fields = ['company_name']  # Add other required fields as needed
+        missing_fields = []
+        
+        for field in required_fields:
+            if field not in ticket_data or not ticket_data[field]:
+                missing_fields.append(field)
+                print(f"   ❌ Missing required field: {field}")
+            else:
+                print(f"   ✅ Required field present: {field} = {repr(ticket_data[field])}")
+        
+        if missing_fields:
+            error_msg = f"Missing required fields: {missing_fields}"
+            print(f"❌ VALIDATION ERROR: {error_msg}")
+            raise HTTPException(status_code=422, detail=error_msg)
+        
+        # 5. GENERATE TICKET NUMBER IF NEEDED
         if ticket_data.get("status") == "submitted":
             ticket_number = generate_ticket_number(db)
             ticket_data["ticket_number"] = ticket_number
             print(f"🎫 Generated ticket number: {ticket_number}")
+        else:
+            print(f"🎫 Status is '{ticket_data.get('status')}', not generating ticket number yet")
         
-        print(f"🎫 Creating JobTicket with data: {ticket_data}")
-        print(f"🎫 Setting user_id: {current_user.id}, company_id: {current_user.company_id}")
-        
-        db_job_ticket = JobTicket(
+        # 6. PREPARE FINAL DATA FOR DATABASE
+        print(f"\n🗄️ PREPARING DATABASE OBJECT:")
+        final_data = {
             **ticket_data,
-            user_id=current_user.id,
-            company_id=current_user.company_id  # Required field - use current user's company
-        )
+            "user_id": current_user.id,
+            "company_id": current_user.company_id
+        }
         
-        print(f"🎫 JobTicket object created successfully")
+        print(f"   Final data keys: {list(final_data.keys())}")
+        for key, value in final_data.items():
+            print(f"   - {key}: {repr(value)} (type: {type(value).__name__})")
         
-        # Save job ticket to database
+        # 7. CREATE DATABASE OBJECT
+        print(f"\n💾 CREATING JOBTICKET OBJECT:")
+        db_job_ticket = JobTicket(**final_data)
+        print(f"   ✅ JobTicket object created successfully")
+        
+        # 8. DATABASE OPERATIONS
+        print(f"\n🗄️ DATABASE OPERATIONS:")
+        print(f"   Adding to session...")
         db.add(db_job_ticket)
-        print(f"🎫 Added to database session")
+        print(f"   ✅ Added to database session")
         
+        print(f"   Committing transaction...")
         db.commit()
-        print(f"🎫 Database commit successful")
+        print(f"   ✅ Database commit successful")
         
+        print(f"   Refreshing object...")
         db.refresh(db_job_ticket)
-        print(f"🎫 Database refresh successful")
+        print(f"   ✅ Database refresh successful")
         
-        print(f"🎫 Final job ticket: ID={db_job_ticket.id}, ticket_number={db_job_ticket.ticket_number}")
+        # 9. LOG FINAL RESULT
+        print(f"\n🎉 SUCCESS:")
+        print(f"   - Job Ticket ID: {db_job_ticket.id}")
+        print(f"   - Ticket Number: {getattr(db_job_ticket, 'ticket_number', 'None')}")
+        print(f"   - Company Name: {getattr(db_job_ticket, 'company_name', 'None')}")
+        print(f"   - Status: {getattr(db_job_ticket, 'status', 'None')}")
+        print(f"   - Created At: {getattr(db_job_ticket, 'created_at', 'None')}")
+        
+        print(f"{'='*80}")
+        print(f"🎫 CREATE JOB TICKET SUCCESS - TIMESTAMP: {datetime.now().isoformat()}")
+        print(f"{'='*80}\n")
         
         return db_job_ticket
         
     except ValidationError as e:
-        print(f"❌ VALIDATION ERROR in create_job_ticket: {e}")
-        print(f"❌ Validation details: {e.errors()}")
+        print(f"\n❌ PYDANTIC VALIDATION ERROR:")
+        print(f"   Error: {e}")
+        print(f"   Error details: {e.errors()}")
+        print(f"   Full traceback: {traceback.format_exc()}")
+        print(f"{'='*80}\n")
+        db.rollback()
         raise HTTPException(status_code=422, detail=f"Validation error: {e}")
+        
     except IntegrityError as e:
-        print(f"❌ DATABASE INTEGRITY ERROR in create_job_ticket: {e}")
+        print(f"\n❌ DATABASE INTEGRITY ERROR:")
+        print(f"   Error: {e}")
+        print(f"   Full traceback: {traceback.format_exc()}")
+        print(f"{'='*80}\n")
         db.rollback()
         raise HTTPException(status_code=400, detail=f"Database constraint violation: {str(e)}")
-    except Exception as e:
-        print(f"❌ UNEXPECTED ERROR in create_job_ticket: {type(e).__name__}: {e}")
-        import traceback
-        print(f"❌ Full traceback: {traceback.format_exc()}")
+        
+    except HTTPException as e:
+        print(f"\n❌ HTTP EXCEPTION:")
+        print(f"   Status Code: {e.status_code}")
+        print(f"   Detail: {e.detail}")
+        print(f"   Full traceback: {traceback.format_exc()}")
+        print(f"{'='*80}\n")
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise e
+        
+    except Exception as e:
+        print(f"\n❌ UNEXPECTED ERROR:")
+        print(f"   Error Type: {type(e).__name__}")
+        print(f"   Error Message: {str(e)}")
+        print(f"   Full traceback: {traceback.format_exc()}")
+        print(f"{'='*80}\n")
+        db.rollback()
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Internal server error: {type(e).__name__}: {str(e)}"
+        )
 
 @router.get("/", response_model=JobTicketList)
 async def get_job_tickets(

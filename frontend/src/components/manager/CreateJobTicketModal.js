@@ -74,15 +74,31 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
   // Handle form submission
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
-    console.log('🚀 Starting job ticket creation...');
-    console.log('📝 Form data:', formData);
+    
+    // COMPREHENSIVE FRONTEND LOGGING
+    const timestamp = new Date().toISOString();
+    console.log('\n' + '='.repeat(80));
+    console.log(`🚀 FRONTEND JOB TICKET CREATION - TIMESTAMP: ${timestamp}`);
+    console.log('='.repeat(80));
+    
+    console.log('📝 RAW FORM DATA:');
+    Object.entries(formData).forEach(([key, value]) => {
+      console.log(`   - ${key}: ${JSON.stringify(value)} (type: ${typeof value})`);
+    });
+    
+    console.log('\n👤 USER CONTEXT:');
+    console.log(`   - Email: ${user?.email}`);
+    console.log(`   - Name: ${user?.name}`);
+    console.log(`   - First Name: ${user?.first_name}`);
+    console.log(`   - Last Name: ${user?.last_name}`);
+    console.log(`   - Company Profile: ${JSON.stringify(companyProfile)}`);
     
     try {
       // Generate job ticket number
       const currentYear = new Date().getFullYear().toString().slice(-2);
       const randomNumber = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
       const jobTicketNumber = `${currentYear}${randomNumber}`;
-      console.log('🎫 Generated job ticket number:', jobTicketNumber);
+      console.log(`\n🎫 Generated job ticket number: ${jobTicketNumber}`);
 
       // Prepare payload with all required fields matching backend schema
       const payload = {
@@ -108,21 +124,35 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         additional_notes: formData.additional_notes?.trim() || ''
       };
       
+      console.log('\n📦 PREPARED PAYLOAD FOR BACKEND:');
+      Object.entries(payload).forEach(([key, value]) => {
+        console.log(`   - ${key}: ${JSON.stringify(value)} (type: ${typeof value})`);
+      });
+      
       // Validate required fields before sending
       const requiredFields = ['company_name', 'submitted_by'];
       const missingFields = requiredFields.filter(field => !payload[field]);
       
+      console.log('\n🔍 PAYLOAD VALIDATION:');
+      requiredFields.forEach(field => {
+        const isPresent = payload[field] && payload[field].toString().trim();
+        console.log(`   ${isPresent ? '✅' : '❌'} ${field}: ${JSON.stringify(payload[field])}`);
+      });
+      
       if (missingFields.length > 0) {
-        console.error('❌ Missing required fields:', missingFields);
+        console.error(`❌ Missing required fields: ${missingFields}`);
         throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
       }
       
-      console.log('📦 Prepared payload:', payload);
-      console.log('👤 User context:', user);
       console.log('✅ All required fields present');
 
       // Submit to backend
-      console.log('🌐 Making API call to /job-tickets/');
+      console.log('\n🌐 MAKING API CALL:');
+      console.log(`   - URL: /job-tickets/`);
+      console.log(`   - Method: POST`);
+      console.log(`   - Headers: Content-Type: application/json`);
+      console.log(`   - Body: ${JSON.stringify(payload, null, 2)}`);
+      
       const response = await authenticatedFetch('/job-tickets/', {
         method: 'POST',
         headers: {
@@ -130,6 +160,22 @@ const CreateJobTicketModal = ({ isOpen, onClose, onJobTicketCreated }) => {
         },
         body: JSON.stringify(payload),
       });
+      
+      console.log('\n📡 API RESPONSE:');
+      console.log(`   - Status: ${response.status}`);
+      console.log(`   - Status Text: ${response.statusText}`);
+      console.log(`   - OK: ${response.ok}`);
+      
+      if (response.headers) {
+        console.log('   - Headers:');
+        try {
+          for (const [key, value] of response.headers.entries()) {
+            console.log(`     ${key}: ${value}`);
+          }
+        } catch (e) {
+          console.log('     Headers not available (CORS error)');
+        }
+      }
       
       console.log('📡 Raw response received:', {
         ok: response.ok,
