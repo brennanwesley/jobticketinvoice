@@ -10,15 +10,6 @@ class UserRole(str, enum.Enum):
     MANAGER = "manager"
     ADMIN = "admin"
 
-class JobType(str, enum.Enum):
-    """Job type enum"""
-    PUMP_TECH = "pump_service_technician"
-    ROUSTABOUT = "roustabout"
-    ELECTRICIAN = "electrician"
-    PIPELINE = "pipeline_operator"
-    TRUCK_DRIVER = "truck_driver"
-    OTHER = "other"
-
 class User(Base):
     """User model with multi-tenancy support"""
     __tablename__ = "users"
@@ -28,7 +19,6 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     role = Column(String, default=UserRole.TECH, nullable=False)
     name = Column(String, nullable=True)
-    job_type = Column(String, nullable=True)
     logo_url = Column(Text, nullable=True)
     
     # Multi-tenancy: Company relationship
@@ -46,6 +36,7 @@ class User(Base):
     # Relationships
     company = relationship("Company", back_populates="users")
     audit_logs = relationship("AuditLog", back_populates="user")
+    invoices = relationship("Invoice", back_populates="user")
     
     def __repr__(self):
         return f"<User {self.email} ({self.role})>"

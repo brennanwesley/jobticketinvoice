@@ -16,7 +16,6 @@ class TechnicianInvitation(Base):
     token = Column(String(64), unique=True, index=True, nullable=False, default=lambda: secrets.token_urlsafe(48))
     email = Column(String(255), nullable=False, index=True)
     name = Column(String(255), nullable=True)
-    job_type = Column(String(100), nullable=True)
     
     # Company and creator relationships
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)

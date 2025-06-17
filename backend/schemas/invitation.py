@@ -1,13 +1,11 @@
 from pydantic import BaseModel, Field, EmailStr, validator
 from typing import Optional
 from datetime import datetime
-from models.user import JobType
 
 class InvitationBase(BaseModel):
     """Base invitation schema"""
     email: EmailStr = Field(..., description="Email address of the technician to invite")
     name: Optional[str] = Field(None, max_length=255, description="Full name of the technician")
-    job_type: Optional[JobType] = Field(None, description="Job type for the technician")
     invitation_message: Optional[str] = Field(None, max_length=1000, description="Optional message from manager")
 
 class TechnicianInviteByEmail(InvitationBase):
@@ -32,7 +30,6 @@ class TechnicianCreateDirect(BaseModel):
     """Schema for directly creating a technician account"""
     email: EmailStr = Field(..., description="Email address of the technician")
     name: str = Field(..., min_length=2, max_length=255, description="Full name of the technician")
-    job_type: JobType = Field(..., description="Job type for the technician")
     temporary_password: str = Field(..., min_length=8, description="Temporary password (will be forced to reset)")
     
     @validator('email')
@@ -67,7 +64,6 @@ class InvitationResponse(BaseModel):
     id: int
     email: str
     name: Optional[str]
-    job_type: Optional[JobType]
     is_used: bool
     expires_at: datetime
     created_at: datetime
@@ -81,7 +77,6 @@ class InvitationListResponse(BaseModel):
     id: int
     email: str
     name: Optional[str]
-    job_type: Optional[JobType]
     is_used: bool
     expires_at: datetime
     created_at: datetime

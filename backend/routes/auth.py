@@ -69,7 +69,16 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     
-    return db_user
+    return UserResponse(
+        id=db_user.id,
+        email=db_user.email,
+        name=db_user.name,
+        role=db_user.role,
+        company_id=db_user.company_id,
+        is_active=db_user.is_active,
+        force_password_reset=db_user.force_password_reset,
+        created_at=db_user.created_at
+    )
 
 @router.post("/login", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -170,7 +179,6 @@ async def get_current_user_info(
         id=current_user.id,
         email=current_user.email,
         name=current_user.name,
-        job_type=current_user.job_type,
         role=current_user.role,
         company_id=current_user.company_id,
         is_active=current_user.is_active,

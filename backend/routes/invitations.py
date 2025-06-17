@@ -8,7 +8,7 @@ import logging
 
 from database import get_db
 from models import User, Company, TechnicianInvitation
-from models.user import UserRole, JobType
+from models.user import UserRole
 from schemas.invitation import (
     TechnicianInviteByEmail, TechnicianCreateDirect, InvitationAccept,
     InvitationResponse, InvitationListResponse, InvitationStatusResponse
@@ -55,7 +55,6 @@ async def invite_technician_by_email(
         new_invitation = TechnicianInvitation(
             email=invitation_data.email,
             name=invitation_data.name,
-            job_type=invitation_data.job_type,
             invitation_message=invitation_data.message,
             company_id=current_user.company_id,
             invited_by=current_user.id
@@ -133,7 +132,6 @@ async def create_technician_directly(
             hashed_password=hashed_password,
             name=technician_data.name,
             role=UserRole.TECH,
-            job_type=technician_data.job_type,
             company_id=current_user.company_id,
             is_active=True,
             force_password_reset=True  # Force password reset on first login
@@ -227,7 +225,6 @@ async def accept_invitation(
             hashed_password=hashed_password,
             name=user_name,
             role=UserRole.TECH,
-            job_type=invitation.job_type,
             company_id=invitation.company_id,
             is_active=True,
             force_password_reset=False
