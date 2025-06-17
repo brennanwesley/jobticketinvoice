@@ -44,21 +44,41 @@ const CreateInvoiceModal = ({
     notes: ''
   });
   
-  // Generate invoice number (format: YYXXXXXXXX)
+  // Generate unique invoice number (YY + 6-digit sequence)
   const generateInvoiceNumber = () => {
     const year = new Date().getFullYear().toString().slice(-2);
     const sequence = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
     return `${year}${sequence}`;
   };
   
-  // Initialize invoice data
+  // Initialize invoice data only when modal opens
   useEffect(() => {
     if (isOpen) {
+      // Generate invoice number only once when modal opens
+      const newInvoiceNumber = generateInvoiceNumber();
+      
       setInvoiceData(prev => ({
         ...prev,
-        invoice_number: generateInvoiceNumber(),
+        invoice_number: newInvoiceNumber,
         invoice_date: new Date().toISOString().split('T')[0],
-        line_items: mode === 'jobTickets' ? generateLineItemsFromJobTickets() : []
+        line_items: mode === 'jobTickets' ? generateLineItemsFromJobTickets() : [],
+        customer_name: mode === 'jobTickets' && selectedJobTickets.length > 0 
+          ? (selectedJobTickets[0].customer_name || selectedJobTickets[0].company_name || '')
+          : ''
+      }));
+    }
+  }, [isOpen]); // Only depend on isOpen, not on mode or selectedJobTickets
+  
+  // Handle job tickets changes separately to avoid regenerating invoice number
+  useEffect(() => {
+    if (isOpen && mode === 'jobTickets' && selectedJobTickets.length > 0) {
+      const lineItems = generateLineItemsFromJobTickets();
+      const customerName = selectedJobTickets[0].customer_name || selectedJobTickets[0].company_name || '';
+      
+      setInvoiceData(prev => ({
+        ...prev,
+        line_items: lineItems,
+        customer_name: customerName
       }));
     }
   }, [isOpen, mode, selectedJobTickets]);
@@ -73,12 +93,6 @@ const CreateInvoiceModal = ({
       toast.error('All job tickets must be from the same customer');
       return [];
     }
-    
-    // Set customer name from first ticket
-    setInvoiceData(prev => ({
-      ...prev,
-      customer_name: customers[0] || ''
-    }));
     
     // Generate line items with placeholder rates
     return selectedJobTickets.map(ticket => ({
@@ -160,9 +174,15 @@ const CreateInvoiceModal = ({
   };
   
   // Validate invoice data
-  const validateInvoice = () => {
+  const validateInvoice = async () => {
+    // Check required fields
     if (!invoiceData.customer_name.trim()) {
       toast.error('Customer name is required');
+      return false;
+    }
+    
+    if (!invoiceData.invoice_number.trim()) {
+      toast.error('Invoice number is required');
       return false;
     }
     
@@ -181,12 +201,34 @@ const CreateInvoiceModal = ({
       return false;
     }
     
+    // Check for duplicate invoice number
+    try {
+      // TODO: Replace with actual API call when backend is ready
+      // const response = await authenticatedFetch(`/invoices/check-duplicate/${encodeURIComponent(invoiceData.invoice_number)}`);
+      // if (response.ok) {
+      //   const { isDuplicate } = await response.json();
+      //   if (isDuplicate) {
+      //     toast.error('Duplicate invoice number, please edit and submit again');
+      //     return false;
+      //   }
+      // }
+      
+      // Simulate duplicate check for demo purposes
+      // In real implementation, this would be an API call
+      console.log('🔍 Checking for duplicate invoice number:', invoiceData.invoice_number);
+      
+    } catch (error) {
+      console.error('❌ Error checking invoice number:', error);
+      toast.error('Unable to verify invoice number. Please try again.');
+      return false;
+    }
+    
     return true;
   };
   
   // Save as draft
   const handleSaveAsDraft = async () => {
-    if (!validateInvoice()) return;
+    if (!await validateInvoice()) return;
     
     try {
       setLoading(true);
@@ -232,7 +274,7 @@ const CreateInvoiceModal = ({
   
   // Submit invoice
   const handleSubmitInvoice = async () => {
-    if (!validateInvoice()) return;
+    if (!await validateInvoice()) return;
     
     try {
       setLoading(true);
