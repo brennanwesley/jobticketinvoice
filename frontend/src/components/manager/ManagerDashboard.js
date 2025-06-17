@@ -86,7 +86,7 @@ const ManagerDashboard = () => {
       id: 'overview',
       label: t('manager.overview'),
       icon: HomeIcon,
-      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} />
+      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} setTriggerInvoiceModal={setTriggerInvoiceModal} />
     },
     {
       id: 'invoicing',
@@ -288,7 +288,7 @@ const ManagerDashboard = () => {
 };
 
 // Overview Tab Component
-const OverviewTab = ({ stats, setActiveTab, setShowInviteModal }) => {
+const OverviewTab = ({ stats, setActiveTab, setShowInviteModal, setTriggerInvoiceModal }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
 

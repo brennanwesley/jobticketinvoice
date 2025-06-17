@@ -132,6 +132,14 @@ const Invoices = ({ triggerInvoiceModal = false, setTriggerInvoiceModal }) => {
 
   const stats = getStatusStats();
 
+  // Handle trigger from Quick Actions
+  useEffect(() => {
+    if (triggerInvoiceModal) {
+      setShowCreateModal(true);
+      setTriggerInvoiceModal(false);
+    }
+  }, [triggerInvoiceModal, setTriggerInvoiceModal]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 p-4 md:p-6">
@@ -142,13 +150,6 @@ const Invoices = ({ triggerInvoiceModal = false, setTriggerInvoiceModal }) => {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (triggerInvoiceModal) {
-      setShowCreateModal(true);
-      setTriggerInvoiceModal(false);
-    }
-  }, [triggerInvoiceModal, setTriggerInvoiceModal]);
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 md:p-6">
