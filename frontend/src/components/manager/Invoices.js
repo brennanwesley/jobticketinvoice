@@ -88,7 +88,15 @@ const Invoices = ({ triggerInvoiceModal = false, setTriggerInvoiceModal }) => {
     fetchInvoices();
   }, [fetchInvoices]);
 
-  // Validate manager access - moved after hooks
+  // Handle trigger from Quick Actions
+  useEffect(() => {
+    if (triggerInvoiceModal) {
+      setShowCreateModal(true);
+      setTriggerInvoiceModal(false);
+    }
+  }, [triggerInvoiceModal, setTriggerInvoiceModal]);
+
+  // Validate manager access
   if (!validateAccess()) {
     return null;
   }
@@ -131,14 +139,6 @@ const Invoices = ({ triggerInvoiceModal = false, setTriggerInvoiceModal }) => {
   };
 
   const stats = getStatusStats();
-
-  // Handle trigger from Quick Actions
-  useEffect(() => {
-    if (triggerInvoiceModal) {
-      setShowCreateModal(true);
-      setTriggerInvoiceModal(false);
-    }
-  }, [triggerInvoiceModal, setTriggerInvoiceModal]);
 
   if (loading) {
     return (
