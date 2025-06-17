@@ -10,7 +10,7 @@ from database import get_db
 from models.user import User
 
 # OAuth2 scheme for token authentication
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.app.api_v1_str}/auth/login")
 
 def verify_access_token(token: str) -> dict:
     """Verify a JWT token and return the payload"""
@@ -18,8 +18,8 @@ def verify_access_token(token: str) -> dict:
         # Decode the JWT token
         payload = jwt.decode(
             token, 
-            settings.SECRET_KEY, 
-            algorithms=[settings.ALGORITHM]
+            settings.auth.secret_key.get_secret_value(), 
+            algorithms=[settings.auth.algorithm]
         )
         
         # Extract user ID from payload

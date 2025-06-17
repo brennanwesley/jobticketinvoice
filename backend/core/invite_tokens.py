@@ -59,7 +59,7 @@ class InviteTokenService:
             # Generate JWT token
             token = jwt.encode(
                 payload,
-                settings.SECRET_KEY,
+                settings.auth.secret_key.get_secret_value(),
                 algorithm="HS256"
             )
             
@@ -91,7 +91,7 @@ class InviteTokenService:
             # Decode and validate JWT token
             payload = jwt.decode(
                 token,
-                settings.SECRET_KEY,
+                settings.auth.secret_key.get_secret_value(),
                 algorithms=["HS256"],
                 options={
                     "verify_exp": True,

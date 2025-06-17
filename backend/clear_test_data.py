@@ -3,19 +3,20 @@
 import os
 from database import engine
 from sqlalchemy import text
+from core.config import settings
 
 def clear_test_data():
     """Clear all test data from the database - PRODUCTION SAFETY PROTECTED"""
     
     # PRODUCTION SAFETY CHECK - PREVENT ACCIDENTAL DATA LOSS
-    if os.getenv("ENVIRONMENT") == "production" or os.getenv("RENDER"):
+    if settings.app.environment == "production":
         print(" PRODUCTION SAFETY: This script is DISABLED in production environment!")
         print(" Cannot delete user data in production - this would wipe customer accounts!")
         print(" If you need to clear data, explicitly set ALLOW_DATA_DELETION=true environment variable")
         return
     
     # Additional safety check - require explicit confirmation
-    if not os.getenv("ALLOW_DATA_DELETION") == "true":
+    if not settings.features.allow_data_deletion:
         print(" DATA DELETION SAFETY: This script requires explicit permission")
         print(" Set ALLOW_DATA_DELETION=true environment variable to enable")
         print("  WARNING: This will DELETE ALL user accounts, companies, and data!")

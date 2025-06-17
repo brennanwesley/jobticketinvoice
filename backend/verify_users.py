@@ -5,7 +5,7 @@ Helps diagnose if users are being deleted during deployments
 """
 from database import engine
 from sqlalchemy import text
-import os
+from core.config import settings
 
 def check_user_accounts():
     try:
@@ -51,10 +51,11 @@ def check_user_accounts():
             print("❌ NO USERS FOUND - Database appears to be empty!")
             
         # Check database connection info
-        db_url = os.getenv("DATABASE_URL", "Not set")
+        db_url = settings.database.url
         db_type = "PostgreSQL" if db_url.startswith("postgresql") else "SQLite"
         print(f"\nDatabase type: {db_type}")
-        print(f"Environment: {os.getenv('ENVIRONMENT', 'development')}")
+        print(f"Database URL: {settings.database.url}")
+        print(f"Environment: {settings.app.environment}")
         
         conn.close()
         

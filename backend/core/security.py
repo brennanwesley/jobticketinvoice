@@ -30,15 +30,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.utcnow() + timedelta(minutes=settings.auth.access_token_expire_minutes)
     
     to_encode.update({"exp": expire})
     
     # Create JWT token
     encoded_jwt = jwt.encode(
         to_encode, 
-        settings.SECRET_KEY, 
-        algorithm=settings.ALGORITHM
+        settings.auth.secret_key.get_secret_value(), 
+        algorithm=settings.auth.algorithm
     )
     
     return encoded_jwt
@@ -59,6 +59,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """Get the current user from the JWT token with multi-tenancy validation"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"🔐 get_current_user called with token: {token[:20]}..." if token else "🔐 get_current_user called with NO TOKEN")
+    
     # Define the credentials exception
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -67,15 +72,20 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     )
     
     try:
+        logger.info("🔍 Attempting to decode JWT token...")
         # Decode the JWT token
         payload = jwt.decode(
             token, 
-            settings.SECRET_KEY, 
-            algorithms=[settings.ALGORITHM]
+            settings.auth.secret_key.get_secret_value(), 
+            algorithms=[settings.auth.algorithm]
         )
+        logger.info(f"✅ JWT token decoded successfully. Payload: {payload}")
+        
         user_id = payload.get("sub")
+        logger.info(f"👤 User ID from token: {user_id}")
         
         if user_id is None:
+            logger.error("❌ No user ID found in token payload")
             raise credentials_exception
             
         # Extract multi-tenancy claims
@@ -83,33 +93,52 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         token_role = payload.get("role")
         token_is_active = payload.get("is_active", True)
         
-    except JWTError:
+        logger.info(f"🏢 Token claims - Company ID: {token_company_id}, Role: {token_role}, Active: {token_is_active}")
+        
+    except JWTError as e:
+        logger.error(f"❌ JWT decode error: {str(e)}")
         raise credentials_exception
     
     # Import User model here to avoid circular imports
     from models.user import User
     
+    logger.info(f"🔍 Looking up user with ID: {user_id}")
     # Get user from database with company relationship loaded
     user = db.query(User).options(joinedload(User.company)).filter(User.id == int(user_id)).first()
     
     if user is None:
+        logger.error(f"❌ User not found in database with ID: {user_id}")
         raise credentials_exception
+    
+    logger.info(f"✅ User found: {user.email}, Role: {user.role}, Company ID: {user.company_id}, Active: {user.is_active}")
     
     # Validate user is still active
     if not user.is_active:
+        logger.error(f"❌ User account is deactivated: {user.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User account is deactivated"
         )
     
     # Validate token claims match current user state (prevent token reuse after changes)
+    logger.info(f"🔍 Validating token claims against current user state...")
+    logger.info(f"   Token company_id: {token_company_id} vs User company_id: {user.company_id}")
+    logger.info(f"   Token role: {token_role} vs User role: {user.role}")
+    logger.info(f"   Token is_active: {token_is_active} vs User is_active: {user.is_active}")
+    
     if (user.company_id != token_company_id or 
         user.role != token_role or 
         user.is_active != token_is_active):
+        logger.error(f"❌ Token claims mismatch! Token invalid.")
+        logger.error(f"   Company ID mismatch: {user.company_id} != {token_company_id}")
+        logger.error(f"   Role mismatch: {user.role} != {token_role}")
+        logger.error(f"   Active status mismatch: {user.is_active} != {token_is_active}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token is no longer valid. Please log in again."
         )
+    
+    logger.info(f"✅ Token validation successful for user: {user.email}")
     
     # Update last login timestamp
     user.last_login = datetime.utcnow()

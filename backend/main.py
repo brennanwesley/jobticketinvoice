@@ -37,7 +37,7 @@ async def get_documentation():
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=settings.security.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,16 +55,16 @@ def health_check():
     return {"status": "healthy"}
 
 # Include routers
-app.include_router(auth.router, prefix=settings.API_V1_STR)
-app.include_router(users.router, prefix=settings.API_V1_STR)
-app.include_router(job_tickets.router, prefix=settings.API_V1_STR)
-app.include_router(invoices.router, prefix=settings.API_V1_STR)
-app.include_router(companies.router, prefix=settings.API_V1_STR)
-app.include_router(invitations.router, prefix=settings.API_V1_STR)
-app.include_router(manager_signup.router, prefix=settings.API_V1_STR)
-app.include_router(audit.router, prefix=settings.API_V1_STR)
-app.include_router(tech_invites.router, prefix=settings.API_V1_STR)
-app.include_router(tech_accounts.router, prefix=settings.API_V1_STR)
+app.include_router(auth.router, prefix=settings.app.api_v1_str)
+app.include_router(users.router, prefix=settings.app.api_v1_str)
+app.include_router(job_tickets.router, prefix=settings.app.api_v1_str)
+app.include_router(invoices.router, prefix=settings.app.api_v1_str)
+app.include_router(companies.router, prefix=settings.app.api_v1_str)
+app.include_router(invitations.router, prefix=settings.app.api_v1_str)
+app.include_router(manager_signup.router, prefix=settings.app.api_v1_str)
+app.include_router(audit.router, prefix=settings.app.api_v1_str)
+app.include_router(tech_invites.router, prefix=settings.app.api_v1_str)
+app.include_router(tech_accounts.router, prefix=settings.app.api_v1_str)
 
 # Mount static files directory for serving logo uploads
 app.mount("/static", StaticFiles(directory="static"), name="static")

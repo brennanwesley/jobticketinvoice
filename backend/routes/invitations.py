@@ -107,18 +107,27 @@ async def create_technician_directly(
     """
     Create a technician account directly without email invitation (Manager/Admin only)
     """
+    logger.info("🚀 create_technician_directly endpoint called")
+    logger.info(f"👤 Current user: {current_user.email if current_user else 'None'}")
+    logger.info(f"🏢 Current user company: {current_user.company_id if current_user else 'None'}")
+    logger.info(f"📋 Technician data: {technician_data.dict()}")
+    
     try:
+        logger.info(f"🔍 Checking if user exists with email: {technician_data.email}")
         # Check if user already exists with this email
         existing_user = db.query(User).filter(User.email == technician_data.email).first()
         if existing_user:
+            logger.warning(f"❌ User already exists with email: {technician_data.email}")
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="User with this email already exists"
             )
         
+        logger.info("🔐 Hashing password...")
         # Create new technician user
         hashed_password = get_password_hash(technician_data.temporary_password)
         
+        logger.info("👤 Creating new user object...")
         new_user = User(
             email=technician_data.email,
             hashed_password=hashed_password,
@@ -130,28 +139,31 @@ async def create_technician_directly(
             force_password_reset=True  # Force password reset on first login
         )
         
+        logger.info(f"💾 Saving user to database: {new_user.email}")
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
         
-        logger.info(f"Technician account created directly for {technician_data.email} by user {current_user.id}")
+        logger.info(f"✅ Technician account created successfully for {technician_data.email} by user {current_user.id}")
         return new_user
         
     except HTTPException:
+        logger.error("❌ HTTPException occurred, re-raising")
         raise
     except IntegrityError as e:
         db.rollback()
-        logger.error(f"Database integrity error creating technician: {str(e)}")
+        logger.error(f"❌ Database integrity error creating technician: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="User with this email already exists"
         )
     except Exception as e:
         db.rollback()
-        logger.error(f"Error creating technician directly: {str(e)}")
+        logger.error(f"❌ Unexpected error creating technician: {str(e)}")
+        logger.error(f"❌ Exception type: {type(e).__name__}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create technician account"
+            detail=f"Failed to create technician account: {str(e)}"
         )
 
 @router.post("/accept/{token}", response_model=UserResponse, status_code=status.HTTP_201_CREATED)

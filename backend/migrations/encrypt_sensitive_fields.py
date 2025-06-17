@@ -25,10 +25,11 @@ from core.encryption import encrypt_field
 # Load environment variables
 load_dotenv()
 
-# Get database connection string from environment
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Get database connection string from centralized configuration
+from core.config import settings
+DATABASE_URL = settings.database.url
 if not DATABASE_URL:
-    print("DATABASE_URL environment variable not set")
+    print("DATABASE_URL not configured in settings")
     sys.exit(1)
 
 # For Docker, replace localhost with db service name

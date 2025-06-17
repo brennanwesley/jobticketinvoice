@@ -3,6 +3,7 @@ import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Optional
+from core.config import settings
 import os
 from jinja2 import Template
 
@@ -12,12 +13,12 @@ class EmailService:
     """Email service for sending invitations and notifications"""
     
     def __init__(self):
-        self.smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-        self.smtp_port = int(os.getenv("SMTP_PORT", "587"))
-        self.smtp_username = os.getenv("SMTP_USERNAME")
-        self.smtp_password = os.getenv("SMTP_PASSWORD")
-        self.from_email = os.getenv("FROM_EMAIL", self.smtp_username)
-        self.from_name = os.getenv("FROM_NAME", "JobTicketInvoice")
+        self.smtp_server = settings.email.smtp_server
+        self.smtp_port = settings.email.smtp_port
+        self.smtp_username = settings.email.smtp_username
+        self.smtp_password = settings.email.smtp_password.get_secret_value() if settings.email.smtp_password else None
+        self.from_email = settings.email.from_email
+        self.from_name = settings.email.from_name
         
     def _create_connection(self):
         """Create SMTP connection"""
@@ -36,13 +37,12 @@ class EmailService:
         company_name: str,
         inviter_name: str,
         invitation_token: str,
-        invitation_message: Optional[str] = None,
-        frontend_url: str = "http://localhost:3000"
+        invitation_message: Optional[str] = None
     ) -> bool:
         """Send technician invitation email"""
         try:
-            # Create invitation URL
-            invitation_url = f"{frontend_url}/accept-invitation?token={invitation_token}"
+            # Create invitation URL using centralized frontend URL
+            invitation_url = f"{settings.email.frontend_url}/accept-invitation?token={invitation_token}"
             
             # Email template
             html_template = Template("""
@@ -203,12 +203,11 @@ class EmailService:
         self,
         to_email: str,
         user_name: str,
-        reset_token: str,
-        frontend_url: str = "http://localhost:3000"
+        reset_token: str
     ) -> bool:
         """Send password reset email"""
         try:
-            reset_url = f"{frontend_url}/reset-password?token={reset_token}"
+            reset_url = f"{settings.email.frontend_url}/reset-password?token={reset_token}"
             
             html_content = f"""
             <html>

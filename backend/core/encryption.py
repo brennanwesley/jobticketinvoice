@@ -3,9 +3,9 @@ Encryption utilities for field-level encryption in the application.
 Uses AES-256 encryption via the Fernet implementation from the cryptography package.
 """
 from cryptography.fernet import Fernet
-import os
-from dotenv import load_dotenv
 import logging
+from dotenv import load_dotenv
+from core.config import settings
 
 # Load environment variables
 load_dotenv()
@@ -13,15 +13,9 @@ load_dotenv()
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Get encryption key from environment
-FERNET_KEY = os.getenv("FERNET_KEY")
-if not FERNET_KEY:
-    logger.warning("FERNET_KEY not found in environment variables. Using a temporary key for development.")
-    # Generate a temporary key for development - this should NEVER be used in production
-    FERNET_KEY = Fernet.generate_key().decode()
-    logger.warning(f"Temporary FERNET_KEY generated: {FERNET_KEY}")
-else:
-    logger.info("FERNET_KEY loaded from environment variables.")
+# Get encryption key from centralized configuration
+FERNET_KEY = settings.security.fernet_key.get_secret_value()
+logger.info("FERNET_KEY loaded from centralized configuration.")
 
 # Initialize Fernet cipher with the key
 fernet = Fernet(FERNET_KEY.encode())

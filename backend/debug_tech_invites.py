@@ -10,6 +10,7 @@ from sqlalchemy.orm import joinedload
 from models.user import User
 from models.company import Company
 from core.email_service import email_service
+from core.config import settings
 
 def debug_tech_invite_system():
     """Debug the tech invite system to find 500 error causes"""
@@ -70,7 +71,7 @@ def debug_tech_invite_system():
     print(f"\nEmail Service Status:")
     print(f"   - Configured: {email_service.is_configured()}")
     print(f"   - Dev Mode: {email_service.dev_mode}")
-    print(f"   - SendGrid API Key: {'SET' if os.getenv('SENDGRID_API_KEY') else 'NOT SET'}")
+    print(f"   - SendGrid API Key: {'SET' if settings.email.sendgrid_api_key else 'NOT SET'}")
     print(f"   - From Email: {email_service.from_email}")
     
     # Test user loading with company relationship
@@ -100,9 +101,9 @@ def debug_tech_invite_system():
     
     # Environment check
     print(f"\nEnvironment:")
-    print(f"   - DATABASE_URL: {os.getenv('DATABASE_URL', 'Not set')[:50]}...")
-    print(f"   - ENVIRONMENT: {os.getenv('ENVIRONMENT', 'Not set')}")
-    print(f"   - EMAIL_DEV_MODE: {os.getenv('EMAIL_DEV_MODE', 'Not set')}")
+    print(f"   - DATABASE_URL: {settings.database.url[:50]}...")
+    print(f"   - ENVIRONMENT: {settings.app.environment}")
+    print(f"   - EMAIL_DEV_MODE: {settings.email.dev_mode}")
     
     print(f"\n=== Debug Complete ===")
 

@@ -13,6 +13,7 @@ import logging
 from database import get_db
 from models import User, Company, TechInvite
 from models.user import UserRole
+from core.config import settings
 from schemas.tech_invite import (
     TechInviteCreate, TechInviteResponse, TechInviteTokenResponse,
     TechInviteValidationResponse, TechInviteRedemptionRequest, TechInviteRedemptionResponse,
@@ -21,7 +22,6 @@ from schemas.tech_invite import (
 from core.security import get_current_user, require_role, get_password_hash, create_user_token
 from core.invite_tokens import InviteTokenService
 from core.email_service import email_service
-from core.config import settings
 
 router = APIRouter(prefix="/tech-invites", tags=["tech-invites"])
 logger = logging.getLogger(__name__)
@@ -80,7 +80,7 @@ async def create_tech_invite(
         )
         
         # Generate signup links for SMS/Email
-        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
+        frontend_url = settings.email.frontend_url
         signup_link = InviteTokenService.generate_signup_link(token, frontend_url)
         
         logger.info(f"Created tech invite {tech_invite.invite_id} for {invite_data.email} by {current_user.email}")
@@ -374,9 +374,9 @@ async def send_tech_invite_email(
     
     # Debug logging for environment variables
     logger.info(f"=== DEBUG: Email Invite Request Started ===")
-    logger.info(f"SENDGRID_API_KEY present: {os.getenv('SENDGRID_API_KEY') is not None}")
-    logger.info(f"SENDGRID_FROM_EMAIL: {os.getenv('SENDGRID_FROM_EMAIL', 'NOT SET')}")
-    logger.info(f"EMAIL_DEV_MODE: {os.getenv('EMAIL_DEV_MODE', 'NOT SET')}")
+    logger.info(f"SENDGRID_API_KEY present: {settings.email.sendgrid_api_key is not None}")
+    logger.info(f"SENDGRID_FROM_EMAIL: {settings.email.sendgrid_from_email if hasattr(settings.email, 'sendgrid_from_email') else settings.email.from_email}")
+    logger.info(f"EMAIL_DEV_MODE: {settings.email.dev_mode}")
     logger.info(f"Current user: {current_user.email}, Role: {current_user.role}")
     logger.info(f"Request data: tech_name={email_request.tech_name}, email={email_request.email}")
     

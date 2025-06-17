@@ -3,11 +3,11 @@ SendGrid Email Service for QuickTicketAI
 Handles secure email delivery for technician invitations
 """
 
-import os
 import logging
 from typing import Optional
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, From, To, Subject, PlainTextContent
+from core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,22 +16,19 @@ class EmailService:
     
     def __init__(self):
         """Initialize SendGrid email service"""
-        self.api_key = os.getenv("SENDGRID_API_KEY")
-        self.from_email = os.getenv("SENDGRID_FROM_EMAIL", "noreply@jobticketinvoice.com")
+        self.api_key = settings.email.sendgrid_api_key.get_secret_value() if settings.email.sendgrid_api_key else None
+        self.from_email = settings.email.sendgrid_from_email if hasattr(settings.email, 'sendgrid_from_email') else settings.email.from_email
         
-        # Enable dev mode if explicitly set OR if SendGrid is not configured
-        explicit_dev_mode = os.getenv("EMAIL_DEV_MODE", "").lower() == "true"
-        sendgrid_not_configured = not self.api_key
-        
-        self.dev_mode = explicit_dev_mode or sendgrid_not_configured
+        # Use dev mode from centralized configuration
+        self.dev_mode = settings.email.dev_mode
         
         if self.dev_mode:
-            if explicit_dev_mode:
-                logger.info("Email service running in development mode (EMAIL_DEV_MODE=true)")
-            else:
-                logger.info("Email service running in development mode (SendGrid not configured)")
+            logger.info("Email service running in development mode (EMAIL_DEV_MODE=true)")
             self.sg = None
         else:
+            if not self.api_key:
+                logger.error("SendGrid API key not configured but dev mode is disabled")
+                raise ValueError("SendGrid API key required when dev mode is disabled")
             self.sg = SendGridAPIClient(api_key=self.api_key)
             logger.info("SendGrid email service initialized successfully")
     
@@ -64,7 +61,7 @@ class EmailService:
                 logger.info(f"  Invite Token: {invite_token[:20]}..." if invite_token else "No token")
                 
                 # Create signup URL for logging
-                signup_url = f"{os.getenv('FRONTEND_URL', 'http://localhost:3000')}/signup-tech?token={invite_token}"
+                signup_url = f"{settings.email.frontend_url}/signup-tech?token={invite_token}"
                 logger.info(f"  Signup URL: {signup_url}")
                 
                 logger.info(f"[DEV MODE] Email would be sent successfully - returning True")
@@ -86,9 +83,7 @@ class EmailService:
             logger.info(f"Email subject: {subject}")
             
             # Create signup URL with token
-            frontend_url = os.getenv('FRONTEND_URL', 'http://localhost:3000')
-            signup_url = f"{frontend_url}/signup-tech?token={invite_token}"
-            logger.info(f"Frontend URL: {frontend_url}")
+            signup_url = f"{settings.email.frontend_url}/signup-tech?token={invite_token}"
             logger.info(f"Signup URL: {signup_url}")
             
             plain_content = f"""

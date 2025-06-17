@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine, event
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import os
 import logging
 from dotenv import load_dotenv
+from core.config import settings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv()
 
-# Get database URL from environment variables with SQLite fallback for local development
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+# Get database URL from centralized configuration
+DATABASE_URL = settings.database.url
 
 # If using PostgreSQL in Docker, replace localhost with db service name
 if DATABASE_URL.startswith("postgresql") and "localhost" in DATABASE_URL:
