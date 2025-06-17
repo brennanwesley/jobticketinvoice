@@ -10,6 +10,7 @@ import {
   PencilIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
+import CreateInvoiceModal from './CreateInvoiceModal';
 
 /**
  * Invoices Management Component
@@ -23,6 +24,7 @@ const Invoices = () => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Fetch invoices from backend (placeholder for future implementation)
   const fetchInvoices = useCallback(async () => {
@@ -157,11 +159,7 @@ const Invoices = () => {
         {/* Create Invoice Button */}
         <div className="lg:flex-shrink-0">
           <button
-            onClick={() => {
-              // TODO: Implement create invoice functionality
-              console.log('Create Invoice clicked - functionality to be implemented');
-              toast.info('Invoice creation functionality will be implemented in future updates');
-            }}
+            onClick={() => setShowCreateModal(true)}
             className="px-4 py-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900"
           >
             {t('manager.invoices.actions.createInvoice')}
@@ -311,6 +309,17 @@ const Invoices = () => {
           </div>
         )}
       </div>
+      {showCreateModal && (
+        <CreateInvoiceModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onInvoiceCreated={() => {
+            fetchInvoices(); // Refresh invoices list
+            setShowCreateModal(false);
+          }}
+          mode="manual"
+        />
+      )}
     </div>
   );
 };

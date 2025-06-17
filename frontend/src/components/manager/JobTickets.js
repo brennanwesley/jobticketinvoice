@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import CreateJobTicketModal from './CreateJobTicketModal';
 import EditJobTicketModal from './EditJobTicketModal';
+import CreateInvoiceModal from './CreateInvoiceModal';
 
 /**
  * Job Tickets Management Component
@@ -29,6 +30,8 @@ const JobTickets = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [selectedTickets, setSelectedTickets] = useState([]); // New state for bulk selection
+  const [showCreateInvoiceModal, setShowCreateInvoiceModal] = useState(false); // New state for CreateInvoiceModal
 
   // Fetch job tickets from API
   const fetchJobTickets = useCallback(async () => {
@@ -196,10 +199,7 @@ const JobTickets = () => {
           
           {/* Create Invoice Button */}
           <button
-            onClick={() => {
-              // TODO: Implement create invoice functionality
-              console.log('Create Invoice clicked - functionality to be implemented');
-            }}
+            onClick={() => setShowCreateInvoiceModal(true)}
             className="px-4 py-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
           >
             {t('manager.jobTickets.actions.createInvoice')}
@@ -252,9 +252,43 @@ const JobTickets = () => {
       {/* Job Tickets Table */}
       <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
         <div className="px-6 py-4 border-b border-gray-700">
-          <h2 className="text-lg font-semibold text-white">
-            {t('manager.jobTickets.table.title')}
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-white">
+              {t('manager.jobTickets.table.title')}
+            </h2>
+            
+            {/* Bulk Actions Bar */}
+            {selectedTickets.length > 0 && (
+              <div className="flex items-center gap-4 bg-blue-900/20 border border-blue-700 rounded-lg px-4 py-2">
+                <span className="text-sm text-blue-300">
+                  {selectedTickets.length} ticket{selectedTickets.length !== 1 ? 's' : ''} selected
+                </span>
+                <button
+                  onClick={() => {
+                    const selectedJobTickets = jobTickets.filter(ticket => selectedTickets.includes(ticket.id));
+                    
+                    // Validate all tickets are from same customer
+                    const customers = [...new Set(selectedJobTickets.map(ticket => ticket.customer_name || ticket.company_name))];
+                    if (customers.length > 1) {
+                      toast.error('All selected job tickets must be from the same customer');
+                      return;
+                    }
+                    
+                    setShowCreateInvoiceModal(true);
+                  }}
+                  className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded transition-colors duration-200"
+                >
+                  Create Invoice from Selected
+                </button>
+                <button
+                  onClick={() => setSelectedTickets([])}
+                  className="px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded transition-colors duration-200"
+                >
+                  Clear Selection
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {error ? (
@@ -284,6 +318,20 @@ const JobTickets = () => {
               <thead className="bg-gray-700">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                    <input
+                      type="checkbox"
+                      checked={selectedTickets.length === jobTickets.length && jobTickets.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedTickets(jobTickets.map(ticket => ticket.id));
+                        } else {
+                          setSelectedTickets([]);
+                        }
+                      }}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded bg-gray-700 border-gray-600"
+                    />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                     {t('manager.jobTickets.table.headers.ticketNumber')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
@@ -309,6 +357,20 @@ const JobTickets = () => {
               <tbody className="bg-gray-800 divide-y divide-gray-700">
                 {jobTickets.map((ticket) => (
                   <tr key={ticket.id} className="hover:bg-gray-750 transition-colors duration-150">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
+                      <input
+                        type="checkbox"
+                        checked={selectedTickets.includes(ticket.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedTickets([...selectedTickets, ticket.id]);
+                          } else {
+                            setSelectedTickets(selectedTickets.filter(id => id !== ticket.id));
+                          }
+                        }}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded bg-gray-700 border-gray-600"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                       {ticket.ticket_number}
                     </td>
@@ -382,6 +444,22 @@ const JobTickets = () => {
           }} 
           jobTicket={selectedTicket}
           onJobTicketUpdated={handleJobTicketUpdated}
+        />
+      )}
+      {showCreateInvoiceModal && (
+        <CreateInvoiceModal 
+          isOpen={showCreateInvoiceModal}
+          onClose={() => {
+            setShowCreateInvoiceModal(false);
+            setSelectedTickets([]); // Clear selection when modal closes
+          }}
+          onInvoiceCreated={() => {
+            setShowCreateInvoiceModal(false);
+            setSelectedTickets([]);
+            fetchJobTickets(); // Refresh job tickets
+          }}
+          selectedJobTickets={jobTickets.filter(ticket => selectedTickets.includes(ticket.id))}
+          mode={selectedTickets.length > 0 ? 'jobTickets' : 'manual'}
         />
       )}
     </div>

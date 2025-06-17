@@ -9,6 +9,7 @@ import Invoices from './Invoices'; // Update import statement
 import JobTickets from './JobTickets';
 import AuditLogs from './AuditLogs';
 import InviteTechnician from './InviteTechnician';
+import CreateInvoiceModal from './CreateInvoiceModal';
 import { 
   HomeIcon, 
   UsersIcon, 
@@ -36,6 +37,7 @@ const ManagerDashboard = () => {
   const [accessError, setAccessError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showCreateInvoiceModal, setShowCreateInvoiceModal] = useState(false);
   const toggleButtonRef = useRef();
   const sidebarRef = useRef();
 
@@ -84,7 +86,7 @@ const ManagerDashboard = () => {
       id: 'overview',
       label: t('manager.overview'),
       icon: HomeIcon,
-      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} />
+      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} setShowCreateInvoiceModal={setShowCreateInvoiceModal} />
     },
     {
       id: 'invoicing',
@@ -281,12 +283,24 @@ const ManagerDashboard = () => {
           // Optionally refresh technician list or show additional success feedback
         }}
       />
+      
+      {/* Render the CreateInvoiceModal */}
+      <CreateInvoiceModal
+        isOpen={showCreateInvoiceModal}
+        onClose={() => setShowCreateInvoiceModal(false)}
+        onInvoiceCreated={() => {
+          console.log('Invoice created successfully');
+          setShowCreateInvoiceModal(false);
+          // Optionally refresh invoice list or show additional success feedback
+        }}
+        mode="manual"
+      />
     </div>
   );
 };
 
 // Overview Tab Component
-const OverviewTab = ({ stats, setActiveTab, setShowInviteModal }) => {
+const OverviewTab = ({ stats, setActiveTab, setShowInviteModal, setShowCreateInvoiceModal }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
 
@@ -392,13 +406,13 @@ const OverviewTab = ({ stats, setActiveTab, setShowInviteModal }) => {
       </div>
 
       {/* Quick Actions */}
-      <QuickActionsSection setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} />
+      <QuickActionsSection setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} setShowCreateInvoiceModal={setShowCreateInvoiceModal} />
     </div>
   );
 };
 
 // Quick Actions Section
-const QuickActionsSection = ({ setActiveTab, setShowInviteModal }) => {
+const QuickActionsSection = ({ setActiveTab, setShowInviteModal, setShowCreateInvoiceModal }) => {
   const { t } = useLanguage();
 
   return (
@@ -412,6 +426,13 @@ const QuickActionsSection = ({ setActiveTab, setShowInviteModal }) => {
           <UsersIcon className="h-5 w-5 text-white mr-3" />
           <span className="text-white font-medium">{t('manager.inviteTechnician')}</span>
         </button>
+        <button 
+          className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
+          onClick={() => setShowCreateInvoiceModal(true)}
+        >
+          <DocumentTextIcon className="h-5 w-5 text-white mr-3" />
+          <span className="text-white font-medium">{t('manager.createInvoice')}</span>
+        </button>
         <button className="flex items-center p-4 bg-gray-500 hover:bg-gray-600 rounded-lg transition-colors duration-200">
           <BuildingOfficeIcon className="h-5 w-5 text-white mr-3" />
           <span className="text-white font-medium">{t('manager.updateCompany')}</span>
@@ -419,13 +440,6 @@ const QuickActionsSection = ({ setActiveTab, setShowInviteModal }) => {
         <button className="flex items-center p-4 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors duration-200">
           <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
           <span className="text-white font-medium">{t('audit.viewReports')}</span>
-        </button>
-        <button 
-          className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
-          onClick={() => setActiveTab('invoicing')}
-        >
-          <ClipboardDocumentListIcon className="h-5 w-5 text-white mr-3" />
-          <span className="text-white font-medium">{t('manager.createInvoice')}</span>
         </button>
         <button 
           className="flex items-center p-4 bg-orange-600 hover:bg-orange-700 rounded-lg transition-colors duration-200"
