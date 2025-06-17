@@ -9,7 +9,10 @@ import {
   TrashIcon,
   PlusIcon,
   CalendarIcon,
-  CurrencyDollarIcon
+  CurrencyDollarIcon,
+  XMarkIcon,
+  EnvelopeIcon,
+  DocumentIcon
 } from '@heroicons/react/24/outline';
 
 /**
@@ -176,19 +179,35 @@ const CreateInvoiceModal = ({
     }));
   };
   
+  // Check for duplicate invoice number
+  const checkDuplicateInvoiceNumber = async (invoiceNumber) => {
+    try {
+      const response = await authenticatedFetch(`/api/v1/invoices/check-duplicate/${encodeURIComponent(invoiceNumber)}`);
+      if (response.ok) {
+        const { isDuplicate } = await response.json();
+        return isDuplicate;
+      }
+      return false;
+    } catch (error) {
+      console.error('❌ Error checking invoice number:', error);
+      throw error;
+    }
+  };
+
   // Validate invoice data
   const validateInvoice = async () => {
     // Check required fields
-    if (!invoiceData.customer_name.trim()) {
+    if (!invoiceData.customer_name?.trim()) {
       toast.error('Customer name is required');
       return false;
     }
     
-    if (!invoiceData.invoice_number.trim()) {
+    if (!invoiceData.invoice_number?.trim()) {
       toast.error('Invoice number is required');
       return false;
     }
     
+    // Check line items
     if (invoiceData.line_items.length === 0) {
       toast.error('At least one line item is required');
       return false;
@@ -196,7 +215,11 @@ const CreateInvoiceModal = ({
     
     // Check for empty line items
     const hasEmptyItems = invoiceData.line_items.some(item => 
-      !item.description.trim() || item.rate <= 0 || item.quantity <= 0
+      !item.description?.trim() || 
+      !item.rate || 
+      !item.quantity || 
+      item.rate <= 0 || 
+      item.quantity <= 0
     );
     
     if (hasEmptyItems) {
@@ -206,27 +229,40 @@ const CreateInvoiceModal = ({
     
     // Check for duplicate invoice number
     try {
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await authenticatedFetch(`/invoices/check-duplicate/${encodeURIComponent(invoiceData.invoice_number)}`);
-      // if (response.ok) {
-      //   const { isDuplicate } = await response.json();
-      //   if (isDuplicate) {
-      //     toast.error('Duplicate invoice number, please edit and submit again');
-      //     return false;
-      //   }
-      // }
-      
-      // Simulate duplicate check for demo purposes
-      // In real implementation, this would be an API call
-      console.log('🔍 Checking for duplicate invoice number:', invoiceData.invoice_number);
-      
+      const isDuplicate = await checkDuplicateInvoiceNumber(invoiceData.invoice_number);
+      if (isDuplicate) {
+        toast.error('Duplicate invoice number, please edit and submit again');
+        return false;
+      }
     } catch (error) {
-      console.error('❌ Error checking invoice number:', error);
       toast.error('Unable to verify invoice number. Please try again.');
       return false;
     }
     
     return true;
+  };
+
+  // Create invoice payload for API
+  const createInvoicePayload = (status) => {
+    return {
+      invoice_number: invoiceData.invoice_number,
+      invoice_date: new Date(invoiceData.invoice_date).toISOString(),
+      customer_name: invoiceData.customer_name,
+      company_name: user?.company_name || 'Unknown Company',
+      subtotal: parseFloat(totals.subtotal),
+      service_fee: parseFloat(totals.serviceFee),
+      tax: parseFloat(totals.tax),
+      total_amount: parseFloat(totals.total),
+      line_items: invoiceData.line_items.map(item => ({
+        description: item.description,
+        rate: parseFloat(item.rate),
+        quantity: parseFloat(item.quantity),
+        cost: parseFloat(item.cost)
+      })),
+      job_ticket_ids: selectedJobTickets.map(ticket => ticket.id),
+      status: status,
+      created_by: user?.name || 'Manager'
+    };
   };
   
   // Save as draft
@@ -236,368 +272,430 @@ const CreateInvoiceModal = ({
     try {
       setLoading(true);
       
-      const invoicePayload = {
-        ...invoiceData,
-        status: 'draft',
-        subtotal: parseFloat(totals.subtotal),
-        service_fee: parseFloat(totals.serviceFee),
-        tax: parseFloat(totals.tax),
-        total: parseFloat(totals.total),
-        created_on: new Date().toISOString().split('T')[0],
-        created_by: user?.name || 'Manager',
-        id: Date.now() // Temporary ID generation for demo
-      };
+      const invoicePayload = createInvoicePayload('draft');
       
       console.log('💾 Saving invoice as draft:', invoicePayload);
       
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await authenticatedFetch('/invoices', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(invoicePayload)
-      // });
+      const response = await authenticatedFetch('/api/v1/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invoicePayload)
+      });
       
-      // if (!response.ok) {
-      //   throw new Error('Failed to save invoice');
-      // }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Failed to save invoice');
+      }
       
-      // const savedInvoice = await response.json();
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const savedInvoice = await response.json();
       
       toast.success('Invoice saved as draft successfully');
       
       // Pass the created invoice data back to parent component
-      onInvoiceCreated?.(invoicePayload);
+      onInvoiceCreated?.(savedInvoice);
       onClose();
       
     } catch (error) {
       console.error('❌ Error saving invoice:', error);
-      toast.error('Failed to save invoice. Please try again.');
+      toast.error(`Failed to save invoice: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
   
-  // Submit invoice
+  // Submit invoice and show delivery options
   const handleSubmitInvoice = async () => {
     if (!await validateInvoice()) return;
     
     try {
       setLoading(true);
       
-      const invoicePayload = {
-        ...invoiceData,
-        status: 'submitted',
-        subtotal: parseFloat(totals.subtotal),
-        service_fee: parseFloat(totals.serviceFee),
-        tax: parseFloat(totals.tax),
-        total: parseFloat(totals.total),
-        created_on: new Date().toISOString().split('T')[0],
-        created_by: user?.name || 'Manager',
-        id: Date.now() // Temporary ID generation for demo
-      };
+      const invoicePayload = createInvoicePayload('submitted');
       
       console.log('📤 Submitting invoice:', invoicePayload);
       
-      // TODO: Replace with actual API call when backend is ready
-      // const response = await authenticatedFetch('/invoices', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(invoicePayload)
-      // });
+      const response = await authenticatedFetch('/api/v1/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invoicePayload)
+      });
       
-      // if (!response.ok) {
-      //   throw new Error('Failed to submit invoice');
-      // }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Failed to submit invoice');
+      }
       
-      // const submittedInvoice = await response.json();
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const submittedInvoice = await response.json();
       
       toast.success('Invoice submitted successfully');
       
       // Pass the created invoice data back to parent component
-      onInvoiceCreated?.(invoicePayload);
+      onInvoiceCreated?.(submittedInvoice);
+      
+      // Close the invoice modal and show delivery options
       onClose();
+      setShowDeliveryModal(true);
       
     } catch (error) {
       console.error('❌ Error submitting invoice:', error);
-      toast.error('Failed to submit invoice. Please try again.');
+      toast.error(`Failed to submit invoice: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
-  
-  // Download PDF placeholder
-  const handleDownloadPDF = () => {
-    toast.info('PDF download functionality will be implemented in the next phase');
+
+  // State for delivery options modal
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+  const [deliveryLoading, setDeliveryLoading] = useState(false);
+
+  // Delivery options handlers
+  const handleSendEmail = async () => {
+    setDeliveryLoading(true);
+    try {
+      // TODO: Implement email delivery
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      toast.info('Email delivery feature coming soon!');
+    } catch (error) {
+      toast.error('Failed to send email');
+    } finally {
+      setDeliveryLoading(false);
+    }
+  };
+
+  const handleSendToQuickBooks = async () => {
+    setDeliveryLoading(true);
+    try {
+      // TODO: Implement QuickBooks integration
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      toast.info('QuickBooks integration coming soon!');
+    } catch (error) {
+      toast.error('Failed to send to QuickBooks');
+    } finally {
+      setDeliveryLoading(false);
+    }
+  };
+
+  const handleSaveAsDraftFromDelivery = () => {
+    toast.success('Invoice saved as draft');
+    setShowDeliveryModal(false);
+  };
+
+  const handleCloseDeliveryModal = () => {
+    setShowDeliveryModal(false);
   };
   
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Create Invoice"
-      size="2xl"
-      footer={
-        <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-          >
-            Cancel
-          </button>
-          
-          <button
-            type="button"
-            onClick={handleDownloadPDF}
-            disabled={loading || invoiceData.line_items.length === 0}
-            className="px-4 py-2 text-sm font-medium text-gray-900 bg-gray-200 border border-gray-300 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-          >
-            Download PDF
-          </button>
-          
-          <button
-            type="button"
-            onClick={handleSaveAsDraft}
-            disabled={loading || invoiceData.line_items.length === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-          >
-            {loading ? 'Saving...' : 'Save as Draft'}
-          </button>
-          
-          <button
-            type="button"
-            onClick={handleSubmitInvoice}
-            disabled={loading || invoiceData.line_items.length === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-          >
-            {loading ? 'Submitting...' : 'Submit Invoice'}
-          </button>
-        </div>
-      }
-    >
-      <div className="space-y-6">
-        {/* Invoice Header */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left Column */}
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="invoice_number" className="block text-sm font-medium text-gray-300 mb-2">
-                  Invoice Number
-                </label>
-                <input
-                  id="invoice_number"
-                  type="text"
-                  value={invoiceData.invoice_number}
-                  onChange={(e) => handleInputChange('invoice_number', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Auto-generated"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="invoice_date" className="block text-sm font-medium text-gray-300 mb-2">
-                  Invoice Date
-                </label>
-                <div className="relative">
-                  <input
-                    id="invoice_date"
-                    type="date"
-                    value={invoiceData.invoice_date}
-                    onChange={(e) => handleInputChange('invoice_date', e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <CalendarIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Create Invoice"
+        size="2xl"
+        footer={
+          <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 border border-gray-600 rounded-lg hover:bg-gray-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            >
+              Cancel
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleSaveAsDraft}
+              disabled={loading}
+              className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-lg hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <DocumentIcon className="h-4 w-4 mr-2" />
+                  Save as Draft
+                </>
+              )}
+            </button>
+            
+            <button
+              type="button"
+              onClick={handleSubmitInvoice}
+              disabled={loading}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 flex items-center"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <PaperAirplaneIcon className="h-4 w-4 mr-2" />
+                  Submit Invoice
+                </>
+              )}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-6">
+          {/* Invoice Header */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-700 rounded-lg">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Invoice Number *
+              </label>
+              <input
+                type="text"
+                value={invoiceData.invoice_number}
+                onChange={(e) => setInvoiceData(prev => ({ ...prev, invoice_number: e.target.value }))}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="24000001"
+              />
             </div>
             
-            {/* Right Column */}
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="company_name" className="block text-sm font-medium text-gray-300 mb-2">
-                  Company Name
-                </label>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Invoice Date *
+              </label>
+              <div className="relative">
                 <input
-                  id="company_name"
-                  type="text"
-                  value={invoiceData.company_name}
-                  onChange={(e) => handleInputChange('company_name', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Your company name"
+                  type="date"
+                  value={invoiceData.invoice_date}
+                  onChange={(e) => setInvoiceData(prev => ({ ...prev, invoice_date: e.target.value }))}
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-              </div>
-              
-              <div>
-                <label htmlFor="customer_name" className="block text-sm font-medium text-gray-300 mb-2">
-                  Customer Name *
-                </label>
-                <input
-                  id="customer_name"
-                  type="text"
-                  value={invoiceData.customer_name}
-                  onChange={(e) => handleInputChange('customer_name', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Customer company name"
-                  disabled={mode === 'jobTickets' && selectedJobTickets.length > 0}
-                />
+                <CalendarIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Line Items Table */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-700">
-            <div className="flex items-center justify-between">
+
+          {/* Company and Customer Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Company Name
+              </label>
+              <input
+                type="text"
+                value={invoiceData.company_name}
+                onChange={(e) => setInvoiceData(prev => ({ ...prev, company_name: e.target.value }))}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Your company name"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Customer Name *
+              </label>
+              <input
+                type="text"
+                value={invoiceData.customer_name}
+                onChange={(e) => setInvoiceData(prev => ({ ...prev, customer_name: e.target.value }))}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Customer company name"
+                disabled={mode === 'jobTickets' && selectedJobTickets.length > 0}
+              />
+            </div>
+          </div>
+
+          {/* Line Items */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium text-white">Line Items</h3>
               <button
                 type="button"
                 onClick={addLineItem}
-                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+                className="flex items-center px-3 py-2 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
               >
-                <PlusIcon className="h-4 w-4" />
+                <PlusIcon className="h-4 w-4 mr-1" />
                 Add Item
               </button>
             </div>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-700">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Description
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Rate
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Quantity
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Total
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-700">
-                {invoiceData.line_items.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-8 text-center text-gray-400">
-                      No line items added yet. Click &quot;Add Item&quot; to get started.
-                    </td>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-600">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Description</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Rate</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Quantity</th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-gray-300">Cost</th>
+                    <th className="w-10"></th>
                   </tr>
-                ) : (
-                  invoiceData.line_items.map((item, index) => (
-                    <tr key={item.id} className="bg-gray-800">
-                      <td className="px-6 py-4">
+                </thead>
+                <tbody>
+                  {invoiceData.line_items.map((item, index) => (
+                    <tr key={index} className="border-b border-gray-700">
+                      <td className="py-3 px-4">
                         <input
                           type="text"
                           value={item.description}
-                          onChange={(e) => handleLineItemChange(index, 'description', e.target.value)}
-                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          onChange={(e) => updateLineItem(index, 'description', e.target.value)}
+                          className="w-full px-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                           placeholder="Service description"
                         />
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="py-3 px-4">
                         <div className="relative">
-                          <CurrencyDollarIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                          <CurrencyDollarIcon className="absolute left-2 top-1.5 h-4 w-4 text-gray-400" />
                           <input
                             type="number"
                             value={item.rate}
-                            onChange={(e) => handleLineItemChange(index, 'rate', parseFloat(e.target.value) || 0)}
-                            className="w-full pl-10 pr-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            onChange={(e) => updateLineItem(index, 'rate', e.target.value)}
+                            className="w-full pl-8 pr-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                             placeholder="0.00"
-                            min="0"
                             step="0.01"
+                            min="0"
                           />
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="py-3 px-4">
                         <input
                           type="number"
                           value={item.quantity}
-                          onChange={(e) => handleLineItemChange(index, 'quantity', parseFloat(e.target.value) || 0)}
-                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="0"
-                          min="0"
+                          onChange={(e) => updateLineItem(index, 'quantity', e.target.value)}
+                          className="w-full px-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          placeholder="1"
                           step="0.01"
+                          min="0"
                         />
                       </td>
-                      <td className="px-6 py-4 text-white font-medium">
-                        ${calculateLineItemTotal(item.rate, item.quantity).toFixed(2)}
+                      <td className="py-3 px-4">
+                        <div className="flex items-center text-white font-medium">
+                          ${item.cost.toFixed(2)}
+                        </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="py-3 px-4">
                         <button
                           type="button"
                           onClick={() => removeLineItem(index)}
-                          className="p-2 text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded transition-colors duration-200"
-                          title="Remove item"
+                          className="text-red-400 hover:text-red-300 transition-colors"
                         >
-                          <TrashIcon className="h-5 w-5" />
+                          <TrashIcon className="h-4 w-4" />
                         </button>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-        
-        {/* Invoice Totals */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-          <div className="max-w-md ml-auto space-y-3">
-            <div className="flex justify-between text-gray-300">
-              <span>Subtotal:</span>
-              <span>${totals.subtotal}</span>
-            </div>
-            
-            <div className="flex justify-between text-gray-300">
-              <span>Service Fee:</span>
-              <span>${totals.serviceFee}</span>
-            </div>
-            
-            <div className="flex justify-between text-gray-300">
-              <span>Tax:</span>
-              <span>${totals.tax}</span>
-            </div>
-            
-            <div className="border-t border-gray-600 pt-3">
-              <div className="flex justify-between text-lg font-bold text-white">
-                <span>Total:</span>
-                <span>${totals.total}</span>
+
+          {/* Totals */}
+          <div className="bg-gray-700 rounded-lg p-6">
+            <div className="space-y-3">
+              <div className="flex justify-between text-gray-300">
+                <span>Subtotal:</span>
+                <span>${totals.subtotal}</span>
+              </div>
+              <div className="flex justify-between text-gray-300">
+                <span>Service Fee:</span>
+                <span>${totals.serviceFee}</span>
+              </div>
+              <div className="flex justify-between text-gray-300">
+                <span>Tax:</span>
+                <span>${totals.tax}</span>
+              </div>
+              <div className="border-t border-gray-600 pt-3">
+                <div className="flex justify-between text-white font-semibold text-lg">
+                  <span>Total:</span>
+                  <span>${totals.total}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Notes Section */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
-            Notes (Optional)
-          </label>
-          <textarea
-            id="notes"
-            value={invoiceData.notes}
-            onChange={(e) => handleInputChange('notes', e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-            placeholder="Additional notes or terms..."
-          />
+      </Modal>
+      
+      {/* Delivery Options Modal */}
+      <Modal
+        isOpen={showDeliveryModal}
+        onClose={handleCloseDeliveryModal}
+        size="md"
+      >
+        <div className="bg-gray-800 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-white">
+              Delivery Options
+            </h2>
+            <button
+              onClick={handleCloseDeliveryModal}
+              className="text-gray-400 hover:text-white transition-colors"
+            >
+              <XMarkIcon className="h-6 w-6" />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-gray-300 mb-6">
+              Choose a delivery method for your invoice.
+            </p>
+
+            {/* Send Email Option */}
+            <button
+              onClick={handleSendEmail}
+              disabled={deliveryLoading}
+              className="w-full flex items-center justify-between p-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50"
+            >
+              <div className="flex items-center space-x-3">
+                <EnvelopeIcon className="h-6 w-6 text-blue-400" />
+                <div className="text-left">
+                  <div className="text-white font-medium">Send Email</div>
+                  <div className="text-gray-400 text-sm">Send the invoice to the customer via email.</div>
+                </div>
+              </div>
+              {deliveryLoading && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>}
+            </button>
+
+            {/* Send to QuickBooks Option */}
+            <button
+              onClick={handleSendToQuickBooks}
+              disabled={deliveryLoading}
+              className="w-full flex items-center justify-between p-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50"
+            >
+              <div className="flex items-center space-x-3">
+                <DocumentTextIcon className="h-6 w-6 text-green-400" />
+                <div className="text-left">
+                  <div className="text-white font-medium">Send to QuickBooks</div>
+                  <div className="text-gray-400 text-sm">Send the invoice to QuickBooks for further processing.</div>
+                </div>
+              </div>
+              {deliveryLoading && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-400"></div>}
+            </button>
+
+            {/* Save as Draft Option */}
+            <button
+              onClick={handleSaveAsDraftFromDelivery}
+              disabled={deliveryLoading}
+              className="w-full flex items-center justify-between p-4 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50"
+            >
+              <div className="flex items-center space-x-3">
+                <DocumentIcon className="h-6 w-6 text-yellow-400" />
+                <div className="text-left">
+                  <div className="text-white font-medium">Save as Draft</div>
+                  <div className="text-gray-400 text-sm">Save the invoice as a draft for later use.</div>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-gray-700">
+            <button
+              onClick={handleCloseDeliveryModal}
+              className="w-full px-4 py-2 text-gray-400 hover:text-white transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 
