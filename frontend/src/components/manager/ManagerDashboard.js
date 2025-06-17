@@ -37,7 +37,7 @@ const ManagerDashboard = () => {
   const [accessError, setAccessError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [showCreateInvoiceModal, setShowCreateInvoiceModal] = useState(false);
+  const [triggerInvoiceModal, setTriggerInvoiceModal] = useState(false);
   const toggleButtonRef = useRef();
   const sidebarRef = useRef();
 
@@ -86,13 +86,13 @@ const ManagerDashboard = () => {
       id: 'overview',
       label: t('manager.overview'),
       icon: HomeIcon,
-      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} setShowCreateInvoiceModal={setShowCreateInvoiceModal} />
+      component: <OverviewTab stats={getTechnicianStats()} setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} />
     },
     {
       id: 'invoicing',
       label: t('manager.invoicing.title'),
       icon: DocumentTextIcon,
-      component: <Invoices /> // Update component name
+      component: <Invoices triggerInvoiceModal={triggerInvoiceModal} setTriggerInvoiceModal={setTriggerInvoiceModal} />
     },
     {
       id: 'jobTickets',
@@ -283,24 +283,12 @@ const ManagerDashboard = () => {
           // Optionally refresh technician list or show additional success feedback
         }}
       />
-      
-      {/* Render the CreateInvoiceModal */}
-      <CreateInvoiceModal
-        isOpen={showCreateInvoiceModal}
-        onClose={() => setShowCreateInvoiceModal(false)}
-        onInvoiceCreated={(newInvoice) => {
-          console.log('✅ Invoice created from dashboard:', newInvoice);
-          setShowCreateInvoiceModal(false);
-          // Optionally refresh invoice list or show additional success feedback
-        }}
-        mode="manual"
-      />
     </div>
   );
 };
 
 // Overview Tab Component
-const OverviewTab = ({ stats, setActiveTab, setShowInviteModal, setShowCreateInvoiceModal }) => {
+const OverviewTab = ({ stats, setActiveTab, setShowInviteModal }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
 
@@ -406,13 +394,13 @@ const OverviewTab = ({ stats, setActiveTab, setShowInviteModal, setShowCreateInv
       </div>
 
       {/* Quick Actions */}
-      <QuickActionsSection setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} setShowCreateInvoiceModal={setShowCreateInvoiceModal} />
+      <QuickActionsSection setActiveTab={setActiveTab} setShowInviteModal={setShowInviteModal} setTriggerInvoiceModal={setTriggerInvoiceModal} />
     </div>
   );
 };
 
 // Quick Actions Section
-const QuickActionsSection = ({ setActiveTab, setShowInviteModal, setShowCreateInvoiceModal }) => {
+const QuickActionsSection = ({ setActiveTab, setShowInviteModal, setTriggerInvoiceModal }) => {
   const { t } = useLanguage();
 
   return (
@@ -428,7 +416,10 @@ const QuickActionsSection = ({ setActiveTab, setShowInviteModal, setShowCreateIn
         </button>
         <button 
           className="flex items-center p-4 bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200"
-          onClick={() => setShowCreateInvoiceModal(true)}
+          onClick={() => {
+            setActiveTab('invoicing');
+            setTriggerInvoiceModal(true);
+          }}
         >
           <DocumentTextIcon className="h-5 w-5 text-white mr-3" />
           <span className="text-white font-medium">{t('manager.createInvoice')}</span>

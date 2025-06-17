@@ -16,7 +16,7 @@ import CreateInvoiceModal from './CreateInvoiceModal';
  * Invoices Management Component
  * Provides comprehensive invoice management with status cards and data table
  */
-const Invoices = () => {
+const Invoices = ({ triggerInvoiceModal = false, setTriggerInvoiceModal }) => {
   const { t } = useLanguage();
   const { validateAccess } = useManagerAccess();
   
@@ -142,6 +142,13 @@ const Invoices = () => {
       </div>
     );
   }
+
+  useEffect(() => {
+    if (triggerInvoiceModal) {
+      setShowCreateModal(true);
+      setTriggerInvoiceModal(false);
+    }
+  }, [triggerInvoiceModal, setTriggerInvoiceModal]);
 
   return (
     <div className="min-h-screen bg-slate-900 p-4 md:p-6">
