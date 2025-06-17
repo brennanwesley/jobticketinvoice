@@ -288,8 +288,8 @@ const ManagerDashboard = () => {
       <CreateInvoiceModal
         isOpen={showCreateInvoiceModal}
         onClose={() => setShowCreateInvoiceModal(false)}
-        onInvoiceCreated={() => {
-          console.log('Invoice created successfully');
+        onInvoiceCreated={(newInvoice) => {
+          console.log('✅ Invoice created from dashboard:', newInvoice);
           setShowCreateInvoiceModal(false);
           // Optionally refresh invoice list or show additional success feedback
         }}

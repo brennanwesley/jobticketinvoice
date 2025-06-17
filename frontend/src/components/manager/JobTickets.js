@@ -453,7 +453,8 @@ const JobTickets = () => {
             setShowCreateInvoiceModal(false);
             setSelectedTickets([]); // Clear selection when modal closes
           }}
-          onInvoiceCreated={() => {
+          onInvoiceCreated={(newInvoice) => {
+            console.log('✅ Invoice created from job tickets:', newInvoice);
             setShowCreateInvoiceModal(false);
             setSelectedTickets([]);
             fetchJobTickets(); // Refresh job tickets

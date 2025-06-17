@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct Frontend Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Direct Frontend Test</h1>
+    
+    <div class="section">
+        <h2>1. Login Test</h2>
+        <input type="email" id="email" placeholder="Email" value="test@example.com">
+        <input type="password" id="password" placeholder="Password" value="password123">
+        <button onclick="testLogin()">Login</button>
+        <div id="loginResults"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Token Test</h2>
+        <button onclick="checkToken()">Check Token</button>
+        <button onclick="clearToken()">Clear Token</button>
+        <div id="tokenResults"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Create Technician Test</h2>
+        <input type="email" id="techEmail" placeholder="Technician Email" value="direct_test@example.com">
+        <input type="text" id="techName" placeholder="Technician Name" value="Direct Test Tech">
+        <input type="password" id="techPassword" placeholder="Password" value="directpass123">
+        <button onclick="createTechnician()">Create Technician</button>
+        <div id="createResults"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api/v1';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            element.innerHTML += `<div class="${className}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+        }
+        
+        async function testLogin() {
+            const loginResults = document.getElementById('loginResults');
+            loginResults.innerHTML = '';
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                log('loginResults', 'Attempting login...', 'info');
+                
+                const formData = new FormData();
+                formData.append('username', email);
+                formData.append('password', password);
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                log('loginResults', `Login response status: ${response.status}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    log('loginResults', 'Login successful! Token stored in localStorage.', 'success');
+                    log('loginResults', `Token: ${data.access_token.substring(0, 50)}...`, 'info');
+                } else {
+                    const error = await response.text();
+                    log('loginResults', `Login failed: ${error}`, 'error');
+                }
+            } catch (error) {
+                log('loginResults', `Login error: ${error.message}`, 'error');
+                console.error('Login error:', error);
+            }
+        }
+        
+        function checkToken() {
+            const tokenResults = document.getElementById('tokenResults');
+            tokenResults.innerHTML = '';
+            
+            const token = localStorage.getItem('token');
+            if (token) {
+                log('tokenResults', `Token found: ${token.substring(0, 50)}...`, 'success');
+                
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    log('tokenResults', `Token payload: <pre>${JSON.stringify(payload, null, 2)}</pre>`, 'info');
+                    
+                    const now = Math.floor(Date.now() / 1000);
+                    if (payload.exp && payload.exp < now) {
+                        log('tokenResults', 'Token is EXPIRED!', 'error');
+                    } else {
+                        log('tokenResults', 'Token is valid', 'success');
+                    }
+                } catch (e) {
+                    log('tokenResults', `Error decoding token: ${e.message}`, 'error');
+                }
+            } else {
+                log('tokenResults', 'No token found in localStorage', 'error');
+            }
+        }
+        
+        async function createTechnician() {
+            const createResults = document.getElementById('createResults');
+            createResults.innerHTML = '';
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                log('createResults', 'No token found. Please login first.', 'error');
+                return;
+            }
+            
+            const email = document.getElementById('techEmail').value;
+            const name = document.getElementById('techName').value;
+            const password = document.getElementById('techPassword').value;
+            
+            try {
+                log('createResults', 'Creating technician...', 'info');
+                
+                const payload = {
+                    email: email,
+                    name: name,
+                    job_type: 'other',
+                    temporary_password: password
+                };
+                
+                log('createResults', `Request URL: ${API_BASE}/invitations/create-technician-direct`, 'info');
+                log('createResults', `Request payload: <pre>${JSON.stringify(payload, null, 2)}</pre>`, 'info');
+                
+                const response = await fetch(`${API_BASE}/invitations/create-technician-direct`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                log('createResults', `Response status: ${response.status} ${response.statusText}`, 
+                    response.ok ? 'success' : 'error');
+                
+                log('createResults', `Response headers: <pre>${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}</pre>`, 'info');
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    log('createResults', `SUCCESS! Created technician: <pre>${JSON.stringify(responseData, null, 2)}</pre>`, 'success');
+                } else {
+                    const errorData = await response.json();
+                    log('createResults', `FAILED! Error: <pre>${JSON.stringify(errorData, null, 2)}</pre>`, 'error');
+                }
+                
+            } catch (error) {
+                log('createResults', `Network error: ${error.message}`, 'error');
+                console.error('Create technician error:', error);
+            }
+        }
+        
+        // Auto-check token on page load
+        window.onload = function() {
+            checkToken();
+        };
+    </script>
+</body>
+</html>

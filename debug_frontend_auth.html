@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Frontend Auth</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Frontend Authentication Debug Tool</h1>
+    
+    <div class="section">
+        <h2>1. Token Management</h2>
+        <button onclick="checkToken()">Check Current Token</button>
+        <button onclick="clearToken()">Clear Token</button>
+        <button onclick="testLogin()">Test Login</button>
+        <div id="tokenInfo"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. API Test</h2>
+        <button onclick="testTechnicianCreation()">Test Technician Creation</button>
+        <div id="apiResults"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Network Debug</h2>
+        <button onclick="testCORS()">Test CORS</button>
+        <button onclick="testEndpoint()">Test Endpoint Availability</button>
+        <div id="networkResults"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api/v1';
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            element.innerHTML += `<div class="${className}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+        }
+        
+        function checkToken() {
+            const tokenInfo = document.getElementById('tokenInfo');
+            tokenInfo.innerHTML = '';
+            
+            const token = localStorage.getItem('token');
+            if (token) {
+                log('tokenInfo', `Token found: ${token.substring(0, 50)}...`, 'success');
+                
+                // Try to decode JWT payload
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    log('tokenInfo', `Token payload: <pre>${JSON.stringify(payload, null, 2)}</pre>`, 'info');
+                    
+                    // Check expiration
+                    const now = Math.floor(Date.now() / 1000);
+                    if (payload.exp && payload.exp < now) {
+                        log('tokenInfo', 'Token is EXPIRED!', 'error');
+                    } else {
+                        log('tokenInfo', 'Token is valid', 'success');
+                    }
+                } catch (e) {
+                    log('tokenInfo', `Error decoding token: ${e.message}`, 'error');
+                }
+            } else {
+                log('tokenInfo', 'No token found in localStorage', 'error');
+            }
+        }
+        
+        function clearToken() {
+            localStorage.removeItem('token');
+            log('tokenInfo', 'Token cleared from localStorage', 'info');
+        }
+        
+        async function testLogin() {
+            const tokenInfo = document.getElementById('tokenInfo');
+            
+            try {
+                log('tokenInfo', 'Attempting login...', 'info');
+                
+                const formData = new FormData();
+                formData.append('username', 'test@example.com');
+                formData.append('password', 'password123');
+                
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.access_token);
+                    log('tokenInfo', 'Login successful! Token stored.', 'success');
+                    checkToken();
+                } else {
+                    const error = await response.text();
+                    log('tokenInfo', `Login failed: ${response.status} - ${error}`, 'error');
+                }
+            } catch (error) {
+                log('tokenInfo', `Login error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testTechnicianCreation() {
+            const apiResults = document.getElementById('apiResults');
+            apiResults.innerHTML = '';
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                log('apiResults', 'No token found. Please login first.', 'error');
+                return;
+            }
+            
+            try {
+                log('apiResults', 'Testing technician creation...', 'info');
+                
+                const payload = {
+                    email: `debug_test_${Date.now()}@example.com`,
+                    name: 'Debug Test Technician',
+                    job_type: 'other',
+                    temporary_password: 'debugpass123'
+                };
+                
+                log('apiResults', `Request payload: <pre>${JSON.stringify(payload, null, 2)}</pre>`, 'info');
+                
+                const response = await fetch(`${API_BASE}/invitations/create-technician-direct`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                log('apiResults', `Response status: ${response.status} ${response.statusText}`, 
+                    response.ok ? 'success' : 'error');
+                
+                const responseData = await response.json();
+                log('apiResults', `Response data: <pre>${JSON.stringify(responseData, null, 2)}</pre>`, 
+                    response.ok ? 'success' : 'error');
+                
+            } catch (error) {
+                log('apiResults', `API error: ${error.message}`, 'error');
+                console.error('Full error:', error);
+            }
+        }
+        
+        async function testCORS() {
+            const networkResults = document.getElementById('networkResults');
+            networkResults.innerHTML = '';
+            
+            try {
+                log('networkResults', 'Testing CORS...', 'info');
+                
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    method: 'OPTIONS'
+                });
+                
+                log('networkResults', `CORS preflight status: ${response.status}`, 
+                    response.ok ? 'success' : 'error');
+                
+                const corsHeaders = {};
+                response.headers.forEach((value, key) => {
+                    if (key.toLowerCase().includes('access-control')) {
+                        corsHeaders[key] = value;
+                    }
+                });
+                
+                log('networkResults', `CORS headers: <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>`, 'info');
+                
+            } catch (error) {
+                log('networkResults', `CORS test error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testEndpoint() {
+            const networkResults = document.getElementById('networkResults');
+            
+            try {
+                log('networkResults', 'Testing endpoint availability...', 'info');
+                
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET'
+                });
+                
+                log('networkResults', `Endpoint status: ${response.status} ${response.statusText}`, 
+                    response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const data = await response.text();
+                    log('networkResults', `Response: ${data}`, 'success');
+                }
+                
+            } catch (error) {
+                log('networkResults', `Endpoint test error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-check token on page load
+        window.onload = function() {
+            checkToken();
+        };
+    </script>
+</body>
+</html>

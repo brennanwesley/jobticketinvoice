@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 import { authenticatedFetch } from '../../utils/auth';
 import { toast } from 'react-toastify';
 import Modal from '../ui/Modal';
@@ -32,13 +33,14 @@ const CreateInvoiceModal = ({
   mode = 'manual' // 'jobTickets' or 'manual'
 }) => {
   const { t } = useLanguage();
+  const { user } = useAuth();
   
   // State management
   const [loading, setLoading] = useState(false);
   const [invoiceData, setInvoiceData] = useState({
     invoice_number: '',
     invoice_date: new Date().toISOString().split('T')[0],
-    company_name: '',
+    company_name: user?.company_name || '',
     customer_name: '',
     line_items: [],
     notes: ''
@@ -61,6 +63,7 @@ const CreateInvoiceModal = ({
         ...prev,
         invoice_number: newInvoiceNumber,
         invoice_date: new Date().toISOString().split('T')[0],
+        company_name: user?.company_name || '',
         line_items: mode === 'jobTickets' ? generateLineItemsFromJobTickets() : [],
         customer_name: mode === 'jobTickets' && selectedJobTickets.length > 0 
           ? (selectedJobTickets[0].customer_name || selectedJobTickets[0].company_name || '')
@@ -239,12 +242,15 @@ const CreateInvoiceModal = ({
         subtotal: parseFloat(totals.subtotal),
         service_fee: parseFloat(totals.serviceFee),
         tax: parseFloat(totals.tax),
-        total: parseFloat(totals.total)
+        total: parseFloat(totals.total),
+        created_on: new Date().toISOString().split('T')[0],
+        created_by: user?.name || 'Manager',
+        id: Date.now() // Temporary ID generation for demo
       };
       
       console.log('💾 Saving invoice as draft:', invoicePayload);
       
-      // TODO: Implement actual API call when backend is ready
+      // TODO: Replace with actual API call when backend is ready
       // const response = await authenticatedFetch('/invoices', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
@@ -261,7 +267,9 @@ const CreateInvoiceModal = ({
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.success('Invoice saved as draft successfully');
-      onInvoiceCreated?.();
+      
+      // Pass the created invoice data back to parent component
+      onInvoiceCreated?.(invoicePayload);
       onClose();
       
     } catch (error) {
@@ -285,12 +293,15 @@ const CreateInvoiceModal = ({
         subtotal: parseFloat(totals.subtotal),
         service_fee: parseFloat(totals.serviceFee),
         tax: parseFloat(totals.tax),
-        total: parseFloat(totals.total)
+        total: parseFloat(totals.total),
+        created_on: new Date().toISOString().split('T')[0],
+        created_by: user?.name || 'Manager',
+        id: Date.now() // Temporary ID generation for demo
       };
       
       console.log('📤 Submitting invoice:', invoicePayload);
       
-      // TODO: Implement actual API call when backend is ready
+      // TODO: Replace with actual API call when backend is ready
       // const response = await authenticatedFetch('/invoices', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
@@ -307,7 +318,9 @@ const CreateInvoiceModal = ({
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.success('Invoice submitted successfully');
-      onInvoiceCreated?.();
+      
+      // Pass the created invoice data back to parent component
+      onInvoiceCreated?.(invoicePayload);
       onClose();
       
     } catch (error) {
@@ -328,7 +341,7 @@ const CreateInvoiceModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Create Invoice"
-      size="xl"
+      size="2xl"
       footer={
         <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
           <button

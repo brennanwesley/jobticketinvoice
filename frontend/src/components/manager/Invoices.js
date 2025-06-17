@@ -313,8 +313,20 @@ const Invoices = () => {
         <CreateInvoiceModal
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
-          onInvoiceCreated={() => {
-            fetchInvoices(); // Refresh invoices list
+          onInvoiceCreated={(newInvoice) => {
+            // Add the new invoice to the beginning of the list
+            setInvoices(prevInvoices => [
+              {
+                id: newInvoice.id,
+                invoice_number: newInvoice.invoice_number,
+                created_on: newInvoice.created_on,
+                created_by: newInvoice.created_by,
+                customer_name: newInvoice.customer_name,
+                total_amount: newInvoice.total,
+                status: newInvoice.status
+              },
+              ...prevInvoices
+            ]);
             setShowCreateModal(false);
           }}
           mode="manual"
