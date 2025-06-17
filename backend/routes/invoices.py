@@ -7,7 +7,7 @@ from datetime import datetime
 from database import get_db
 from models.invoice import Invoice
 from schemas.invoice import InvoiceCreate, InvoiceUpdate, InvoiceResponse, InvoiceList
-from utils.auth import get_current_user
+from core.security import get_current_user
 from models.user import User
 
 router = APIRouter(prefix="/invoices", tags=["invoices"])
