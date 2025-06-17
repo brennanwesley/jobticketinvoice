@@ -12,7 +12,8 @@ import {
   CurrencyDollarIcon,
   XMarkIcon,
   EnvelopeIcon,
-  DocumentIcon
+  DocumentIcon,
+  PaperAirplaneIcon
 } from '@heroicons/react/24/outline';
 
 /**
@@ -152,6 +153,25 @@ const CreateInvoiceModal = ({
       line_items: prev.line_items.map((item, i) => 
         i === index ? { ...item, [field]: value } : item
       )
+    }));
+  };
+
+  // Update line item (alias for handleLineItemChange for consistency)
+  const updateLineItem = (index, field, value) => {
+    const numericValue = field === 'rate' || field === 'quantity' ? parseFloat(value) || 0 : value;
+    setInvoiceData(prev => ({
+      ...prev,
+      line_items: prev.line_items.map((item, i) => {
+        if (i === index) {
+          const updatedItem = { ...item, [field]: numericValue };
+          // Calculate cost when rate or quantity changes
+          if (field === 'rate' || field === 'quantity') {
+            updatedItem.cost = (updatedItem.rate || 0) * (updatedItem.quantity || 0);
+          }
+          return updatedItem;
+        }
+        return item;
+      })
     }));
   };
   
@@ -446,10 +466,11 @@ const CreateInvoiceModal = ({
           {/* Invoice Header */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-700 rounded-lg">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="invoice_number" className="block text-sm font-medium text-gray-300 mb-2">
                 Invoice Number *
               </label>
               <input
+                id="invoice_number"
                 type="text"
                 value={invoiceData.invoice_number}
                 onChange={(e) => setInvoiceData(prev => ({ ...prev, invoice_number: e.target.value }))}
@@ -459,11 +480,12 @@ const CreateInvoiceModal = ({
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="invoice_date" className="block text-sm font-medium text-gray-300 mb-2">
                 Invoice Date *
               </label>
               <div className="relative">
                 <input
+                  id="invoice_date"
                   type="date"
                   value={invoiceData.invoice_date}
                   onChange={(e) => setInvoiceData(prev => ({ ...prev, invoice_date: e.target.value }))}
@@ -477,10 +499,11 @@ const CreateInvoiceModal = ({
           {/* Company and Customer Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="company_name" className="block text-sm font-medium text-gray-300 mb-2">
                 Company Name
               </label>
               <input
+                id="company_name"
                 type="text"
                 value={invoiceData.company_name}
                 onChange={(e) => setInvoiceData(prev => ({ ...prev, company_name: e.target.value }))}
@@ -490,10 +513,11 @@ const CreateInvoiceModal = ({
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="customer_name" className="block text-sm font-medium text-gray-300 mb-2">
                 Customer Name *
               </label>
               <input
+                id="customer_name"
                 type="text"
                 value={invoiceData.customer_name}
                 onChange={(e) => setInvoiceData(prev => ({ ...prev, customer_name: e.target.value }))}
