@@ -576,12 +576,7 @@ const translations = {
           title: 'Cannot Create Invoice',
           content: 'You can only create an invoice using job tickets from the same customer. Please revise your selection to include tickets from only one customer company.'
         },
-        actions: {
-          view: 'View',
-          edit: 'Edit', 
-          delete: 'Delete',
-          createInvoice: 'Create Invoice'
-        },
+
       },
       
       // Company Profile Management
@@ -1345,12 +1340,7 @@ const translations = {
           title: 'No se puede crear factura',
           content: 'Solo puede crear una factura utilizando boletas de trabajo de un mismo cliente. Por favor, revise su selección para incluir boletas de un solo cliente.'
         },
-        actions: {
-          view: 'Ver',
-          edit: 'Editar', 
-          delete: 'Eliminar',
-          createInvoice: 'Crear Factura'
-        },
+
       },
       
       // Company Profile Management
