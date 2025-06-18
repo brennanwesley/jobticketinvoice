@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useManagerAccess } from '../../hooks/useManagerAccess';
 import { authenticatedFetch } from '../../utils/auth';
+import { validateSameCustomerCompany, getValidationErrorMessage } from '../../utils/invoiceValidation';
 import { toast } from 'react-toastify';
 import { 
   ClipboardDocumentListIcon, 
@@ -14,6 +15,7 @@ import {
 import CreateJobTicketModal from './CreateJobTicketModal';
 import EditJobTicketModal from './EditJobTicketModal';
 import CreateInvoiceModal from './CreateInvoiceModal';
+import Modal from '../ui/Modal';
 
 /**
  * Job Tickets Management Component
@@ -32,6 +34,8 @@ const JobTickets = () => {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [selectedTickets, setSelectedTickets] = useState([]); // New state for bulk selection
   const [showCreateInvoiceModal, setShowCreateInvoiceModal] = useState(false); // New state for CreateInvoiceModal
+  const [showWarningModal, setShowWarningModal] = useState(false); // New state for warning modal
+  const [validationError, setValidationError] = useState(null); // Store validation error details
 
   // Fetch job tickets from API
   const fetchJobTickets = useCallback(async () => {
@@ -199,7 +203,16 @@ const JobTickets = () => {
           
           {/* Create Invoice Button */}
           <button
-            onClick={() => setShowCreateInvoiceModal(true)}
+            onClick={() => {
+              const selectedJobTickets = jobTickets.filter(ticket => selectedTickets.includes(ticket.id));
+              const validation = validateSameCustomerCompany(selectedJobTickets);
+              if (!validation.isValid) {
+                setValidationError(validation);
+                setShowWarningModal(true);
+              } else {
+                setShowCreateInvoiceModal(true);
+              }
+            }}
             className="px-4 py-2 bg-green-600 hover:bg-green-700 focus:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200"
           >
             {t('manager.jobTickets.actions.createInvoice')}
@@ -266,15 +279,13 @@ const JobTickets = () => {
                 <button
                   onClick={() => {
                     const selectedJobTickets = jobTickets.filter(ticket => selectedTickets.includes(ticket.id));
-                    
-                    // Validate all tickets are from same customer
-                    const customers = [...new Set(selectedJobTickets.map(ticket => ticket.customer_name || ticket.company_name))];
-                    if (customers.length > 1) {
-                      toast.error('All selected job tickets must be from the same customer');
-                      return;
+                    const validation = validateSameCustomerCompany(selectedJobTickets);
+                    if (!validation.isValid) {
+                      setValidationError(validation);
+                      setShowWarningModal(true);
+                    } else {
+                      setShowCreateInvoiceModal(true);
                     }
-                    
-                    setShowCreateInvoiceModal(true);
                   }}
                   className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded transition-colors duration-200"
                 >
@@ -461,6 +472,20 @@ const JobTickets = () => {
           }}
           selectedJobTickets={jobTickets.filter(ticket => selectedTickets.includes(ticket.id))}
           mode={selectedTickets.length > 0 ? 'jobTickets' : 'manual'}
+        />
+      )}
+      {showWarningModal && (
+        <Modal
+          isOpen={showWarningModal}
+          onClose={() => setShowWarningModal(false)}
+          title={t('manager.jobTickets.warning.title')}
+          content={validationError ? getValidationErrorMessage(validationError.error, validationError.customerCompanies) : t('manager.jobTickets.warning.content')}
+          actions={[
+            {
+              label: t('common.ok'),
+              onClick: () => setShowWarningModal(false),
+            },
+          ]}
         />
       )}
     </div>

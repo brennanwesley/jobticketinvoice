@@ -571,7 +571,17 @@ const translations = {
         },
         
         // Confirmation messages
-        confirmDelete: 'Are you sure you want to delete this job ticket? This action cannot be undone.'
+        confirmDelete: 'Are you sure you want to delete this job ticket? This action cannot be undone.',
+        warning: {
+          title: 'Cannot Create Invoice',
+          content: 'You can only create an invoice using job tickets from the same customer. Please revise your selection to include tickets from only one customer company.'
+        },
+        actions: {
+          view: 'View',
+          edit: 'Edit', 
+          delete: 'Delete',
+          createInvoice: 'Create Invoice'
+        },
       },
       
       // Company Profile Management
@@ -1330,7 +1340,17 @@ const translations = {
         },
         
         // Confirmation messages
-        confirmDelete: '¿Está seguro de que desea eliminar esta boleta de trabajo? Esta acción no se puede deshacer.'
+        confirmDelete: '¿Está seguro de que desea eliminar esta boleta de trabajo? Esta acción no se puede deshacer.',
+        warning: {
+          title: 'No se puede crear factura',
+          content: 'Solo puede crear una factura utilizando boletas de trabajo de un mismo cliente. Por favor, revise su selección para incluir boletas de un solo cliente.'
+        },
+        actions: {
+          view: 'Ver',
+          edit: 'Editar', 
+          delete: 'Eliminar',
+          createInvoice: 'Crear Factura'
+        },
       },
       
       // Company Profile Management
