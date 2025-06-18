@@ -1,3 +1,4 @@
+// Job Ticket Invoice App - Testing Vercel Auto-Deploy (2025-06-17)
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { LanguageProvider } from './context/LanguageContext';
