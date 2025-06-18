@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
-import { authenticatedFetch } from '../../utils/auth';
 import { toast } from 'react-toastify';
 import Modal from '../ui/Modal';
 import { 
@@ -44,8 +43,8 @@ const CreateInvoiceModal = ({
   const [invoiceData, setInvoiceData] = useState({
     invoice_number: '',
     invoice_date: new Date().toISOString().split('T')[0],
-    company_name: user?.company_name || '',
-    customer_name: '',
+    company_name: '', // Customer's company name (who receives the invoice)
+    customer_name: '', // Individual contact name at customer company
     line_items: [],
     notes: ''
   });
@@ -67,10 +66,12 @@ const CreateInvoiceModal = ({
         ...prev,
         invoice_number: newInvoiceNumber,
         invoice_date: new Date().toISOString().split('T')[0],
-        company_name: user?.company_name || '',
+        company_name: mode === 'jobTickets' && selectedJobTickets.length > 0 
+          ? (selectedJobTickets[0].company_name || '') // Customer's company from job ticket
+          : '', // Empty for manual entry
         line_items: mode === 'jobTickets' ? generateLineItemsFromJobTickets() : [],
         customer_name: mode === 'jobTickets' && selectedJobTickets.length > 0 
-          ? (selectedJobTickets[0].customer_name || selectedJobTickets[0].company_name || '')
+          ? (selectedJobTickets[0].customer_name || '')
           : ''
       }));
     }
@@ -84,12 +85,14 @@ const CreateInvoiceModal = ({
         const lineItems = generateLineItemsFromJobTickets();
         console.log('Generated line items:', lineItems);
         
-        const customerName = selectedJobTickets[0].customer_name || selectedJobTickets[0].company_name || '';
+        const customerName = selectedJobTickets[0].customer_name || '';
+        const companyName = selectedJobTickets[0].company_name || '';
         
         setInvoiceData(prev => ({
           ...prev,
           line_items: lineItems,
-          customer_name: customerName
+          customer_name: customerName,
+          company_name: companyName
         }));
       } catch (error) {
         console.error('Error processing job tickets for invoice:', error);
@@ -98,7 +101,8 @@ const CreateInvoiceModal = ({
         setInvoiceData(prev => ({
           ...prev,
           line_items: [],
-          customer_name: ''
+          customer_name: '',
+          company_name: ''
         }));
       }
     }
@@ -108,10 +112,17 @@ const CreateInvoiceModal = ({
   const generateLineItemsFromJobTickets = () => {
     if (!selectedJobTickets || selectedJobTickets.length === 0) return [];
     
-    // Validate all job tickets are from same customer
-    const customers = [...new Set(selectedJobTickets.map(ticket => ticket.customer_name || ticket.company_name))];
-    if (customers.length > 1) {
-      toast.error('All job tickets must be from the same customer');
+    // Validate all job tickets are from same customer company
+    const customerCompanies = [...new Set(selectedJobTickets.map(ticket => ticket.company_name).filter(Boolean))];
+    if (customerCompanies.length > 1) {
+      console.error('Job tickets from multiple customer companies:', customerCompanies);
+      toast.error(`Cannot create invoice: Job tickets are from different customer companies (${customerCompanies.join(', ')}). Please select tickets from the same customer.`);
+      return [];
+    }
+    
+    if (customerCompanies.length === 0) {
+      console.error('No customer company found in selected job tickets');
+      toast.error('Cannot create invoice: Selected job tickets do not have customer company information.');
       return [];
     }
     
@@ -253,7 +264,12 @@ const CreateInvoiceModal = ({
   // Check for duplicate invoice number
   const checkDuplicateInvoiceNumber = async (invoiceNumber) => {
     try {
-      const response = await authenticatedFetch(`/api/v1/invoices/check-duplicate/${encodeURIComponent(invoiceNumber)}`);
+      const response = await fetch(`/api/v1/invoices/check-duplicate/${encodeURIComponent(invoiceNumber)}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       if (response.ok) {
         const { isDuplicate } = await response.json();
         return isDuplicate;
@@ -266,153 +282,123 @@ const CreateInvoiceModal = ({
   };
 
   // Validate invoice data
-  const validateInvoice = async () => {
-    // Check required fields
-    if (!invoiceData.customer_name?.trim()) {
-      toast.error('Customer name is required');
-      return false;
-    }
+  const validateInvoiceData = () => {
+    const errors = [];
     
+    // Validate required fields
     if (!invoiceData.invoice_number?.trim()) {
-      toast.error('Invoice number is required');
-      return false;
+      errors.push('Invoice number is required');
     }
     
-    // Check line items
-    if (invoiceData.line_items.length === 0) {
-      toast.error('At least one line item is required');
-      return false;
+    if (!invoiceData.company_name?.trim()) {
+      errors.push('Customer company name is required');
     }
     
-    // Check for empty line items
-    const hasEmptyItems = invoiceData.line_items.some(item => 
-      !item.description?.trim() || 
-      !item.rate || 
-      !item.quantity || 
-      item.rate <= 0 || 
-      item.quantity <= 0
-    );
-    
-    if (hasEmptyItems) {
-      toast.error('All line items must have description, rate, and quantity');
-      return false;
+    if (!invoiceData.line_items || invoiceData.line_items.length === 0) {
+      errors.push('At least one line item is required');
     }
     
-    // Check for duplicate invoice number
-    try {
-      const isDuplicate = await checkDuplicateInvoiceNumber(invoiceData.invoice_number);
-      if (isDuplicate) {
-        toast.error('Duplicate invoice number, please edit and submit again');
-        return false;
+    // Validate line items
+    invoiceData.line_items.forEach((item, index) => {
+      if (!item.description?.trim()) {
+        errors.push(`Line item ${index + 1}: Description is required`);
       }
-    } catch (error) {
-      toast.error('Unable to verify invoice number. Please try again.');
-      return false;
+      if (!item.rate || item.rate <= 0) {
+        errors.push(`Line item ${index + 1}: Rate must be greater than 0`);
+      }
+      if (!item.quantity || item.quantity <= 0) {
+        errors.push(`Line item ${index + 1}: Quantity must be greater than 0`);
+      }
+    });
+    
+    // Validate totals
+    const totalAmount = parseFloat(totals.total);
+    if (isNaN(totalAmount) || totalAmount <= 0) {
+      errors.push('Invoice total must be greater than 0');
     }
     
-    return true;
+    return errors;
   };
 
-  // Create invoice payload for API
-  const createInvoicePayload = (status) => {
-    return {
-      invoice_number: invoiceData.invoice_number,
-      invoice_date: new Date(invoiceData.invoice_date).toISOString(),
-      customer_name: invoiceData.customer_name,
-      company_name: user?.company_name || 'Unknown Company',
-      subtotal: parseFloat(totals.subtotal),
-      service_fee: parseFloat(totals.serviceFee),
-      tax: parseFloat(totals.tax),
-      total_amount: parseFloat(totals.total),
-      line_items: invoiceData.line_items.map(item => ({
-        description: item.description,
-        rate: parseFloat(item.rate),
-        quantity: parseFloat(item.quantity),
-        cost: parseFloat(item.cost)
-      })),
-      job_ticket_ids: selectedJobTickets.map(ticket => ticket.id),
-      status: status,
-      created_by: user?.name || 'Manager'
-    };
-  };
-  
-  // Save as draft
-  const handleSaveAsDraft = async () => {
-    if (!await validateInvoice()) return;
+  // Handle form submission
+  const handleSubmit = async (status = 'Draft') => {
+    // Validate invoice data
+    const validationErrors = validateInvoiceData();
+    if (validationErrors.length > 0) {
+      toast.error(`Please fix the following errors:\n${validationErrors.join('\n')}`);
+      return;
+    }
+
+    setLoading(true);
     
     try {
-      setLoading(true);
-      
-      const invoicePayload = createInvoicePayload('draft');
-      
-      console.log('💾 Saving invoice as draft:', invoicePayload);
-      
-      const response = await authenticatedFetch('/api/v1/invoices', {
+      const invoicePayload = {
+        invoice_number: invoiceData.invoice_number,
+        invoice_date: new Date(invoiceData.invoice_date).toISOString(),
+        customer_name: invoiceData.customer_name,
+        company_name: invoiceData.company_name, // Customer's company name
+        subtotal: parseFloat(totals.subtotal),
+        service_fee: parseFloat(totals.serviceFee),
+        tax: parseFloat(totals.tax),
+        total_amount: parseFloat(totals.total),
+        line_items: invoiceData.line_items.map(item => ({
+          description: item.description,
+          rate: parseFloat(item.rate),
+          quantity: parseFloat(item.quantity),
+          amount: parseFloat(item.cost || item.total || 0)
+        })),
+        job_ticket_ids: invoiceData.line_items
+          .filter(item => item.job_ticket_id)
+          .map(item => item.job_ticket_id),
+        status: status,
+        created_by: user?.name || 'Unknown User',
+        notes: invoiceData.notes || ''
+      };
+
+      console.log('Submitting invoice payload:', invoicePayload);
+
+      const response = await fetch('/api/v1/invoices', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
         body: JSON.stringify(invoicePayload)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.detail || 'Failed to save invoice');
       }
+
+      const result = await response.json();
+      console.log('Invoice created successfully:', result);
       
-      const savedInvoice = await response.json();
-      
-      toast.success('Invoice saved as draft successfully');
-      
-      // Pass the created invoice data back to parent component
-      onInvoiceCreated?.(savedInvoice);
+      toast.success(`Invoice ${status.toLowerCase()} successfully!`);
       onClose();
       
+      // Refresh invoices list if available
+      if (typeof onInvoiceCreated === 'function') {
+        onInvoiceCreated(result);
+      }
+      
     } catch (error) {
-      console.error('❌ Error saving invoice:', error);
-      toast.error(`Failed to save invoice: ${error.message}`);
+      console.error('Error creating invoice:', error);
+      toast.error(`Failed to create invoice: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
-  
+
+  // Save as draft
+  const handleSaveAsDraft = async () => {
+    await handleSubmit('Draft');
+  };
+
   // Submit invoice and show delivery options
   const handleSubmitInvoice = async () => {
-    if (!await validateInvoice()) return;
-    
-    try {
-      setLoading(true);
-      
-      const invoicePayload = createInvoicePayload('submitted');
-      
-      console.log('📤 Submitting invoice:', invoicePayload);
-      
-      const response = await authenticatedFetch('/api/v1/invoices', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(invoicePayload)
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || 'Failed to submit invoice');
-      }
-      
-      const submittedInvoice = await response.json();
-      
-      toast.success('Invoice submitted successfully');
-      
-      // Pass the created invoice data back to parent component
-      onInvoiceCreated?.(submittedInvoice);
-      
-      // Close the invoice modal and show delivery options
-      onClose();
-      setShowDeliveryModal(true);
-      
-    } catch (error) {
-      console.error('❌ Error submitting invoice:', error);
-      toast.error(`Failed to submit invoice: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+    await handleSubmit('Submitted');
+    setShowDeliveryModal(true);
   };
 
   // State for delivery options modal
@@ -551,7 +537,7 @@ const CreateInvoiceModal = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="company_name" className="block text-sm font-medium text-gray-300 mb-2">
-                Company Name
+                Customer Company Name *
               </label>
               <input
                 id="company_name"
@@ -559,13 +545,14 @@ const CreateInvoiceModal = ({
                 value={invoiceData.company_name}
                 onChange={(e) => setInvoiceData(prev => ({ ...prev, company_name: e.target.value }))}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Your company name"
+                placeholder="Customer company name"
+                disabled={mode === 'jobTickets' && selectedJobTickets.length > 0}
               />
             </div>
             
             <div>
               <label htmlFor="customer_name" className="block text-sm font-medium text-gray-300 mb-2">
-                Customer Name *
+                Customer Contact Name
               </label>
               <input
                 id="customer_name"
@@ -573,7 +560,7 @@ const CreateInvoiceModal = ({
                 value={invoiceData.customer_name}
                 onChange={(e) => setInvoiceData(prev => ({ ...prev, customer_name: e.target.value }))}
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Customer company name"
+                placeholder="Customer contact name"
                 disabled={mode === 'jobTickets' && selectedJobTickets.length > 0}
               />
             </div>
