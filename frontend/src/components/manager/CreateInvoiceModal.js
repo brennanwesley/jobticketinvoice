@@ -79,14 +79,28 @@ const CreateInvoiceModal = ({
   // Handle job tickets changes separately to avoid regenerating invoice number
   useEffect(() => {
     if (isOpen && mode === 'jobTickets' && selectedJobTickets.length > 0) {
-      const lineItems = generateLineItemsFromJobTickets();
-      const customerName = selectedJobTickets[0].customer_name || selectedJobTickets[0].company_name || '';
-      
-      setInvoiceData(prev => ({
-        ...prev,
-        line_items: lineItems,
-        customer_name: customerName
-      }));
+      try {
+        console.log('Processing job tickets for invoice:', selectedJobTickets);
+        const lineItems = generateLineItemsFromJobTickets();
+        console.log('Generated line items:', lineItems);
+        
+        const customerName = selectedJobTickets[0].customer_name || selectedJobTickets[0].company_name || '';
+        
+        setInvoiceData(prev => ({
+          ...prev,
+          line_items: lineItems,
+          customer_name: customerName
+        }));
+      } catch (error) {
+        console.error('Error processing job tickets for invoice:', error);
+        toast.error('Error processing job tickets. Please try again.');
+        // Set empty line items on error to prevent crash
+        setInvoiceData(prev => ({
+          ...prev,
+          line_items: [],
+          customer_name: ''
+        }));
+      }
     }
   }, [isOpen, mode, selectedJobTickets]);
   
@@ -101,15 +115,39 @@ const CreateInvoiceModal = ({
       return [];
     }
     
-    // Generate line items with placeholder rates
-    return selectedJobTickets.map(ticket => ({
-      id: `jt_${ticket.id}`,
-      job_ticket_id: ticket.id,
-      description: `Job Ticket #${ticket.id} - ${ticket.description || 'Service Work'}`,
-      rate: 100, // $100/hour placeholder for labor
-      quantity: (ticket.total_work_hours || 0) + (ticket.total_travel_hours || 0) * 0.5, // Travel at 50% rate
-      total: 0 // Will be calculated
-    }));
+    // Generate line items with proper error handling and fallbacks
+    return selectedJobTickets.map((ticket, index) => {
+      try {
+        // Safely extract values with fallbacks
+        const rate = parseFloat(ticket.rate) || 100; // $100/hour default
+        const workHours = parseFloat(ticket.total_work_hours) || 0;
+        const travelHours = parseFloat(ticket.total_travel_hours) || 0;
+        const quantity = workHours + (travelHours * 0.5); // Travel at 50% rate
+        const cost = rate * quantity;
+        
+        return {
+          id: `jt_${ticket.id}`,
+          job_ticket_id: ticket.id,
+          description: `Job Ticket #${ticket.id} - ${ticket.description || 'Service Work'}`,
+          rate: rate,
+          quantity: quantity,
+          cost: cost,
+          total: cost // Keep both for compatibility
+        };
+      } catch (error) {
+        console.error(`Error processing job ticket ${ticket.id}:`, error, ticket);
+        // Return a safe fallback item
+        return {
+          id: `jt_${ticket.id}_error`,
+          job_ticket_id: ticket.id,
+          description: `Job Ticket #${ticket.id} - Error processing data`,
+          rate: 0,
+          quantity: 0,
+          cost: 0,
+          total: 0
+        };
+      }
+    });
   };
   
   // Calculate line item totals
@@ -120,7 +158,11 @@ const CreateInvoiceModal = ({
   // Calculate invoice totals
   const totals = useMemo(() => {
     const subtotal = invoiceData.line_items.reduce((sum, item) => {
-      return sum + calculateLineItemTotal(item.rate, item.quantity);
+      // Safely calculate line item total with fallbacks
+      const rate = parseFloat(item.rate) || 0;
+      const quantity = parseFloat(item.quantity) || 0;
+      const itemTotal = rate * quantity;
+      return sum + itemTotal;
     }, 0);
     
     // Service fee calculation: $0.49 per job ticket + $0.99 invoice fee
@@ -131,10 +173,10 @@ const CreateInvoiceModal = ({
     const total = subtotal + serviceFee + tax;
     
     return {
-      subtotal: subtotal.toFixed(2),
-      serviceFee: serviceFee.toFixed(2),
-      tax: tax.toFixed(2),
-      total: total.toFixed(2)
+      subtotal: (subtotal || 0).toFixed(2),
+      serviceFee: (serviceFee || 0).toFixed(2),
+      tax: (tax || 0).toFixed(2),
+      total: (total || 0).toFixed(2)
     };
   }, [invoiceData.line_items]);
   
@@ -164,9 +206,13 @@ const CreateInvoiceModal = ({
       line_items: prev.line_items.map((item, i) => {
         if (i === index) {
           const updatedItem = { ...item, [field]: numericValue };
-          // Calculate cost when rate or quantity changes
+          // Calculate cost and total when rate or quantity changes
           if (field === 'rate' || field === 'quantity') {
-            updatedItem.cost = (updatedItem.rate || 0) * (updatedItem.quantity || 0);
+            const rate = parseFloat(updatedItem.rate) || 0;
+            const quantity = parseFloat(updatedItem.quantity) || 0;
+            const calculatedCost = rate * quantity;
+            updatedItem.cost = calculatedCost;
+            updatedItem.total = calculatedCost; // Keep both for compatibility
           }
           return updatedItem;
         }
@@ -177,12 +223,17 @@ const CreateInvoiceModal = ({
   
   // Add new line item
   const addLineItem = () => {
+    const rate = 100;
+    const quantity = 1;
+    const cost = rate * quantity;
+    
     const newItem = {
       id: `manual_${Date.now()}`,
       description: '',
-      rate: 100,
-      quantity: 1,
-      total: 0
+      rate: rate,
+      quantity: quantity,
+      cost: cost,
+      total: cost // Keep both for compatibility
     };
     
     setInvoiceData(prev => ({
@@ -554,12 +605,24 @@ const CreateInvoiceModal = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {invoiceData.line_items.map((item, index) => (
-                    <tr key={index} className="border-b border-gray-700">
+                  {invoiceData.line_items
+                    .filter(item => item && typeof item === 'object') // Safety filter
+                    .map((item, index) => {
+                      // Ensure all required fields exist with safe defaults
+                      const safeItem = {
+                        description: item.description || '',
+                        rate: parseFloat(item.rate) || 0,
+                        quantity: parseFloat(item.quantity) || 0,
+                        cost: item.cost ?? item.total ?? 0,
+                        ...item
+                      };
+                      
+                      return (
+                    <tr key={item.id || index} className="border-b border-gray-700">
                       <td className="py-3 px-4">
                         <input
                           type="text"
-                          value={item.description}
+                          value={safeItem.description}
                           onChange={(e) => updateLineItem(index, 'description', e.target.value)}
                           className="w-full px-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                           placeholder="Service description"
@@ -567,10 +630,10 @@ const CreateInvoiceModal = ({
                       </td>
                       <td className="py-3 px-4">
                         <div className="relative">
-                          <CurrencyDollarIcon className="absolute left-2 top-1.5 h-4 w-4 text-gray-400" />
+                          <CurrencyDollarIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                           <input
                             type="number"
-                            value={item.rate}
+                            value={safeItem.rate}
                             onChange={(e) => updateLineItem(index, 'rate', e.target.value)}
                             className="w-full pl-8 pr-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                             placeholder="0.00"
@@ -582,7 +645,7 @@ const CreateInvoiceModal = ({
                       <td className="py-3 px-4">
                         <input
                           type="number"
-                          value={item.quantity}
+                          value={safeItem.quantity}
                           onChange={(e) => updateLineItem(index, 'quantity', e.target.value)}
                           className="w-full px-2 py-1 bg-gray-800 border border-gray-600 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                           placeholder="1"
@@ -592,7 +655,7 @@ const CreateInvoiceModal = ({
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center text-white font-medium">
-                          ${item.cost.toFixed(2)}
+                          ${((safeItem.cost ?? safeItem.total ?? 0) || 0).toFixed(2)}
                         </div>
                       </td>
                       <td className="py-3 px-4">
@@ -605,7 +668,8 @@ const CreateInvoiceModal = ({
                         </button>
                       </td>
                     </tr>
-                  ))}
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
